@@ -1,3 +1,4 @@
 bin/
 *.o
 *.s16
+__pycache__/
