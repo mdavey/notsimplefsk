@@ -5,7 +5,8 @@ LDLIBS  += -lliquid -lm
 BINDIR  := bin
 SRC     := src
 
-BINS    := $(BINDIR)/fsk_tx $(BINDIR)/fsk_rx $(BINDIR)/modem_smoke $(BINDIR)/channel
+BINS    := $(BINDIR)/fsk_tx $(BINDIR)/fsk_rx $(BINDIR)/fsk_rx_stream \
+           $(BINDIR)/modem_smoke $(BINDIR)/channel
 
 all: $(BINS)
 
@@ -15,8 +16,13 @@ $(BINDIR):
 $(BINDIR)/fsk_tx: $(SRC)/fsk_tx.c $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
 	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_tx.c $(SRC)/common.c $(LDLIBS)
 
-$(BINDIR)/fsk_rx: $(SRC)/fsk_rx.c $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx.c $(SRC)/common.c $(LDLIBS)
+$(BINDIR)/fsk_rx: $(SRC)/fsk_rx.c $(SRC)/rx_core.c $(SRC)/rx_core.h \
+                   $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx.c $(SRC)/rx_core.c $(SRC)/common.c $(LDLIBS)
+
+$(BINDIR)/fsk_rx_stream: $(SRC)/fsk_rx_stream.c $(SRC)/rx_core.c $(SRC)/rx_core.h \
+                         $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx_stream.c $(SRC)/rx_core.c $(SRC)/common.c $(LDLIBS)
 
 $(BINDIR)/modem_smoke: tests/modem_smoke.c $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
 	$(CC) $(CFLAGS) -o $@ tests/modem_smoke.c $(SRC)/common.c $(LDLIBS)
@@ -26,6 +32,7 @@ $(BINDIR)/channel: tests/channel.c | $(BINDIR)
 
 test: all
 	sh tests/roundtrip.sh
+	sh tests/stream.sh
 
 clean:
 	rm -rf $(BINDIR)

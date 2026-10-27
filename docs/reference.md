@@ -77,6 +77,49 @@ Physically rejected by design (hard error or guaranteed CRC gate, never a
 false decode): fc <= dev + 0.85*Rs at the given k (mixer image cannot be
 filtered: k <= 10 @ fc=4000), h >= 1/3, non-integer-friendly band edges.
 
+Envelope note (probe-verified with 1024-byte frames): every PAIR of
+{ppm +-300, CFO 100, noise 0.01, gain} passes; stacking ppm+CFO+noise on
+top of a signal pulled to -24 dBFS fails (offline RX fails it too — it is
+a decoder envelope limit, not a streaming regression).
+
+## Streaming reception (fsk_rx_stream)
+
+    arecord -D default -f S16_LE -r 48000 -c 1 -B 2000000 | ./bin/fsk_rx_stream > out.bin
+
+Decodes as audio arrives — no EOF, no whole-file rescan. An energy gate
+(causal DDC + single-pass LPF reference) closes 20 ms after the carrier
+drops (the TX inter-frame gap is 40 ms); the burst's RAW samples are then
+re-run through the exact offline chain (zero-phase double pass) and the
+shared rx_run() detector on a self-contained slice. Payload bytes go to
+stdout per frame, whole, only after the CRC passes: latency per frame =
+payload time + 40 ms gap + decode (typ. 20-100 ms; full-grid worst case a
+few hundred ms, still under the arrival time of the next max-size frame).
+
+Differences from the offline receiver:
+
+  * ppm trials run per burst: the coarse grid {0, +-300, +-600, +-900,
+    +-1200} ordered with the previous burst's winner first, then (only if
+    nothing decoded) a +-150/-100/-50 sweep centred on the coarse winner.
+    Early exit on the first fully clean trial, so steady state is one
+    trial per burst. Inter-burst clock drift is absorbed by the per-burst
+    MF/prefix re-alignment, so the per-burst grid matches the offline
+    +-1200 ppm tolerance.
+  * sliding flat window (~2 max-size frames) trimmed to `retain` samples
+    after every decode and slid forward during silence (no frame can
+    start before the read cursor).
+  * joining mid-frame skips the partial burst (bounded reject sweeps,
+    then the gate idles to the next gap) and locks onto the first
+    complete frame; frames cut by EOF never deliver.
+  * exit code: 0 if >= 1 frame decoded, 1 otherwise — same rule for
+    clean EOF and Ctrl-C. Options: --max-frames N, --idle-exit SEC.
+  * single-threaded: decode runs between reads; the pipe plus arecord's
+    -B buffer absorb decode stalls (a decode never exceeds one frame's
+    arrival time on normal hardware).
+  * regression: tests/stream.sh (fast + paced feeds, impairments, joins,
+    idle gaps, --max-frames) is part of make test;
+    tests/stream_loopback.sh is the manual real-device e2e (snd-aloop or
+    two hosts) and is deliberately not run by make test.
+
 ## Detector design notes
 
 Full rationale lives in the source comments; the load-bearing facts:
@@ -100,9 +143,13 @@ Full rationale lives in the source comments; the load-bearing facts:
 ## Files
 
     src/common.{h,c}   wire format, NRZI/Gray/CRC, params, LPF+pad rule
+    src/rx_core.{h,c}  shared detector: filter slice + rx_run() burst scan
     src/fsk_tx.c       transmitter
-    src/fsk_rx.c       receiver (pipeline comment at top has the full design)
+    src/fsk_rx.c       offline receiver (pipeline comment has the design)
+    src/fsk_rx_stream.c live receiver (arecord | ...) + energy gate
     tests/roundtrip.sh regression battery (make test)
+    tests/stream.sh    streaming regression battery (make test)
+    tests/stream_loopback.sh manual audio-device e2e (NOT in make test)
     tests/channel.c    impairment simulator: -d int delay, -D fractional,
                        -r ppm, -g dB gain, -f Hz CFO (Hilbert SSB), -n sigma
                        AWGN, -s seed, -R rate
