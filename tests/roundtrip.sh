@@ -64,6 +64,12 @@ for n in 0 1 3 17 255 1023 1024; do run "size$n" $n; done
 echo "== multi-frame streams =="
 for n in 1025 2048 3000 5000; do run "multi$n" $n; done
 
+# Narrow-gaussian multi-frame: at bt<0.8 the ISI-narrowed eye makes the prefix
+# mis-count tie across +-1-sample alignments; the RX must break that tie on the
+# calibrated phase scale or every frame past the first CRC-fails (probe5.c).
+echo "== multi-frame at bt=0.5 =="
+PHY="-b 0.5"; for n in 3000 10000; do run "bt05multi$n" $n; done; PHY=""
+
 echo "== PHY sweep =="
 PHY="-k 16";              run "k16"    300
 PHY="-k 24";              run "k24"    300

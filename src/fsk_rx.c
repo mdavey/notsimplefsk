@@ -161,14 +161,18 @@ int main(int argc, char **argv)
         if (pfix)            ppm = atof(pfix);
         else                 ppm = (double)grid[t];
         rx_result *cur = &tr[t];
+        /* reject_limit: MF-strong-but-prefix-garbage candidates cost a full
+         * acquisition sweep each; unbounded (0) lets a bt<0.5 capture with a
+         * CRC-failing frame thrash the sweep every 4k samples for minutes.
+         * After the cap, idle to the next silence and re-arm. */
         if (ppm == 0.0) {
             rx_run(y, N, nf, tmpl, et, p, verbose > 1 ? verbose - 1 : verbose,
-                   0, cur);
+                   64u, cur);
         } else {
             size_t N2;
             float complex *y2 = resample_lin(y, N, 1.0 + ppm * 1e-6, &N2);
             rx_run(y2, N2, nf, tmpl, et, p,
-                   verbose > 1 ? verbose - 1 : verbose, 0, cur);
+                   verbose > 1 ? verbose - 1 : verbose, 64u, cur);
             free(y2);
         }
         double qn = cur->qual / (double)(cur->ndec + 1u);

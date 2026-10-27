@@ -391,7 +391,19 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                         if (detect_phi(unwrap_ph(phi_buf[q] - dphi_g), sc) !=
                             nsfsk_prefix_sym(&p, NSFSK_TMPL_SYM0(p) + q))
                             mis++;
-                    if ((long)mis < best_mis) {
+                    if ((long)mis < best_mis ||
+                        ((long)mis == best_mis && sc > best_dsc + 0.002f)) {
+                        /* Tie-break on calibrated scale: at bt<0.8 the ISI-
+                         * narrowed eye makes prefix mis count blind to +-1
+                         * sample alignment (every class can tie at mis=1),
+                         * but straddling a symbol boundary averages two
+                         * tones and pulls the LS phase amplitude down
+                         * (0.480 vs 0.501 at bt=0.5, tests/probe5.c), while
+                         * the data loop inherits ~0.3% uncorrectable errors
+                         * from the 1-sample-early lattice.  Max sc = eye
+                         * centre.  A wrong g (CFO +-600 Hz) never reaches
+                         * the tie pool: it blows up mis long before it can
+                         * inflate sc (dphi_g error is +-pi/2 here). */
                         best_mis = mis; best_dnb = dn; best_lag = lg;
                         best_dsc = sc; best_cfo = cg;
                     }
