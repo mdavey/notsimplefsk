@@ -110,6 +110,14 @@ PHY="--pulse rcos"; run "rcos"   1500
 PHY="-d 4";         run "delay4" 1500
 PHY=""
 
+echo "== modulation index sweep (tone bank) =="
+PHY="-H 0.5 -c 5000";  run "h0.5"    1500
+PHY="-H 0.5 -c 5000";  run "h0.5ppm" 1500 -r 100 -s 3
+PHY="-H 1.0 -c 7000";  run "h1.0"    1500
+PHY="-H 1.0 -c 7000";  run "h1.0imp" 1500 -f 250 -n 0.005 -g -20 -s 5
+PHY="-H 1.0 -k 40";    run "h1.0k40" 1500
+PHY=""
+
 echo "== mid-stream join =="
 pay 1500 join1 > "$TMP/p"
 $TX < "$TMP/p" > "$TMP/a" 2>/dev/null

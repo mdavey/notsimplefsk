@@ -53,6 +53,61 @@ static float boundary_phi(const float complex *y, size_t N, size_t s0,
     return cargf(y[hi] * conjf(y[lo]));
 }
 
+/* Non-coherent tone-bank detector, used when h*(M-1) >= 0.95 where the
+ * phase-advance detector structurally cannot work (the outer +-3 tones
+ * rotate past +-pi per symbol and wrap onto the inner cluster).
+ * Decide the symbol whose head sits at fractional sample position pos:
+ * correlate the k-sample window starting at pos (linear-interpolated
+ * reads for fractional pos) against the M tone frequencies a*PI*h/k per
+ * sample, a in {-3,-1,+1,+3}; pick the peak bin and report its best
+ * normalized coherent gain |z|^2 / (k * window energy) ~ 1 when the
+ * window is aligned with a tone (all k samples add coherently), falling
+ * as boundaries mix symbols.  NOT the energy share: that stays high for
+ * any window containing ANY strong tone, so it cannot rank ppm trials.
+ * *q carries that gain (ppm-trial quality metric in place of
+ * ph/fsc*a_hat).  BANK_OOB when the window is out of bounds.
+ * Timing is NOT recovered here.  ±k/4 micro-window schemes (peak-bin,
+ * sum-energy NDA, with or without feedback on the picked offset) were
+ * all tried and removed: inside a tone run every candidate window scores
+ * identically, so any per-symbol window selection flips at noise and the
+ * flipped window straddles a symbol boundary = coin-toss decisions on
+ * later symbols at earlier indices (sporadic outer<->inner tone errors,
+ * high qmean, CRC death).  The static lattice (bpos += k, resampled per
+ * ppm trial) plus per-frame union across trials (fsk_rx.c merge) is the
+ * timing architecture; measured dmis=0/400 on clean frames at h=0.5,
+ * 0.667 and 1.0 with this single-window detector.
+ * Textbook non-coherent M-FSK decide, fully orthogonal at h=1; CFO needs
+ * no correction (magnitude decision; Dirichlet null sits h*Rs away). */
+#define BANK_OOB 0xFFFFFFFFu
+static unsigned bank_decide(const float complex *y, size_t N, double pos,
+                            unsigned k, const float complex *be, float *q)
+{
+    long base = (long)floor(pos);
+    float  fr = (float)(pos - (double)base);
+    if (base < 0L || base + (long)k + 1L > (long)N) return BANK_OOB;
+    float complex z[NSFSK_M], u[NSFSK_M];
+    float e = 0.0f;
+    for (unsigned s = 0u; s < NSFSK_M; s++) { z[s] = 0.0f; u[s] = 1.0f; }
+    for (long n = 0; n < (long)k; n++) {
+        const float complex v = (1.0f - fr) * y[base + n]
+                              + fr * y[base + n + 1L];
+        e += crealf(v * conjf(v));
+        for (unsigned s = 0u; s < NSFSK_M; s++) z[s] += v * u[s];
+        for (unsigned s = 0u; s < NSFSK_M; s++) u[s] *= be[s];
+    }
+    if (!(e > 0.0f)) return BANK_OOB;
+    float eb = -1.0f, gbest = -1.0f;
+    unsigned best = 0u;
+    for (unsigned s = 0u; s < NSFSK_M; s++) {
+        float v = crealf(z[s] * conjf(z[s]));
+        if (v > eb) { eb = v; best = s; }
+        float g = v / ((float)k * e);
+        if (g > gbest) gbest = g;
+    }
+    if (q) *q = gbest > 0.0f ? gbest : 0.0f;
+    return best;
+}
+
 /* complex linear-interpolation resampler: out[i] = in[i * ratio] */
 float complex *resample_lin(const float complex *x, size_t n,
                             double ratio, size_t *m)
@@ -172,6 +227,16 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     uint8_t  *msg  = malloc(max_msg);
     const float scale = (float)M_PI * p.h * (float)(p.k - 1u) / (float)p.k;
     const unsigned lag_max = 2u * p.delay + 3u;
+    /* h*(M-1) >= 0.95: outer tone phase advances within 0.05*pi of the
+     * cargf wrap (unwrap_ph shaves legitimate readings; h=0.33 was already
+     * losing the +-3 tones there) -> switch to the tone bank */
+    const unsigned bank = (p.h * (float)(NSFSK_M - 1u) >= 0.95f);
+    float complex bank_e[NSFSK_M];
+    {
+        const float aa[NSFSK_M] = { -3.0f, -1.0f, 1.0f, 3.0f };
+        for (unsigned s = 0u; s < NSFSK_M; s++)
+            bank_e[s] = cexpf(-I * (float)M_PI * p.h * aa[s] / (float)p.k);
+    }
     const unsigned silence_arm = p.rate / 50u;  /* 20 ms; TX gap is 40 ms */
     const float ethresh = 0.15f * pmax;
 
@@ -267,6 +332,28 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                                           * frame start can be < k when the
                                           * burst begins at sample 0 */
             for (unsigned lg = 0; lg <= lag_max; lg++) {
+                if (bank) {
+                    /* magnitude decisions need no scale/CFO calibration:
+                     * just count prefix mismatches.  Prune once mis can
+                     * no longer beat best (wrong alignments give away
+                     * themselves within a few symbols). */
+                    unsigned mis = 0, tot = 0;
+                    for (unsigned w = NSFSK_TMPL_SYM0(p); w < D0; w++) {
+                        unsigned s = bank_decide(y, N,
+                            (double)s0c + (double)(w + lg) * (double)p.k,
+                            p.k, bank_e, NULL);
+                        if (s == BANK_OOB) break;
+                        tot++;
+                        if (s != nsfsk_prefix_sym(&p, w)) mis++;
+                        if ((long)mis > best_mis && tot >= 8u) break;
+                    }
+                    if (tot <= (D0 - NSFSK_TMPL_SYM0(p)) / 2u) continue;
+                    if ((long)mis < best_mis) {
+                        best_mis = mis; best_dnb = dn; best_lag = lg;
+                        best_dsc = scale; best_cfo = 0.0f;
+                    }
+                    continue;
+                }
                 /* collect the known-prefix phase increments, then calibrate
                  * a per-candidate scale lambda against the expected symbol
                  * values a in {-3,-1,+1,+3} (LPF/ISI/bt all shift the
@@ -341,6 +428,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
          * and +-3 phase clusters.  The first frame's early symbols sit in
          * the loop's convergence window, so a failed CRC re-decodes the
          * frame with fsc seeded from the previous pass' converged scale. */
+        R->dbg_n = 0;
         float dphi = 2.0f * (float)M_PI * cfo * (float)p.k / (float)p.rate;
         float fsc  = best_dsc;
         float retry_fsc = best_dsc;
@@ -350,17 +438,30 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         unsigned got = 0, need_total = 0, iter, crcok = 0;
         unsigned len = 0;
         uint8_t crc[4];
-        for (iter = 0; iter < 3u; iter++) {
+        for (iter = 0; iter < (bank ? 1u : 3u); iter++) {
             if (iter) { dphi = 2.0f * (float)M_PI * cfo * (float)p.k
                                    / (float)p.rate;
                         fsc = retry_fsc; }
             double q = 0.0; size_t nq = 0;
+            /* static symbol lattice (timing comes from the ppm trials,
+             * see bank_decide) */
+            double bpos = (double)s0
+                        + (double)(D0 + best_lag) * (double)p.k;
             got = 0; need_total = 0;
             for (; got < max_syn; got++) {
+                unsigned s;
+                if (bank) {
+                    float qf = 0.25f;
+                    s = bank_decide(y, N, bpos, p.k, bank_e, &qf);
+                    if (s == BANK_OOB) break;
+                    bpos += (double)p.k;
+                    q += (double)qf;      /* ppm-trial quality metric */                    if (verbose && R->dbg_n < 4200u)
+                        R->dbg_q[R->dbg_n++] = qf;
+                } else {
                 float phi = boundary_phi(y, N, s0, p.k, D0 + got + best_lag);
                 if (isnan(phi)) break;
                 float ph = unwrap_ph(phi - dphi);
-                unsigned s = detect_phi(ph, fsc);
+                s = detect_phi(ph, fsc);
                 /* decision-directed phase + scale tracking */
                 float a_hat = 2.0f * (float)s + 1.0f - (float)NSFSK_M;
                 float err   = wrap_pi(ph - a_hat * fsc);
@@ -370,6 +471,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                 if (fsc > fsc_hi) fsc = fsc_hi;
                 /* per-decision quality metric for the ppm trials */
                 q += (double)(ph / fsc) * (double)a_hat;
+                }
                 nq++;
                 wire[D0 + got] = (unsigned char)s;
 
@@ -399,8 +501,33 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         i = s0 + (size_t)(D0 + got) * p.k + p.k;   /* resume after frame */
         armed = 0; below = 0;
 
-        if (!crcok) { R->bad++; continue; }
+        if (!crcok) {
+            if (verbose) {
+                fprintf(stderr, "rx: frame @%.1f ms len=%u CRC BAD",
+                        1000.0 * (double)s0 / (double)p.rate, len);
+                if (verbose > 1 && R->dbg_n > 0) {
+                    float mn = 9; size_t mi = 0; double s = 0;
+                    for (unsigned t = 0; t < R->dbg_n; t++) {
+                        s += R->dbg_q[t];
+                        if (R->dbg_q[t] < mn) { mn = R->dbg_q[t]; mi = t; }
+                    }
+                    fprintf(stderr, " qmean=%.3f qmin=%.3f@%zu/%u (%.0f%%) "
+                                    "firstq=[%.2f %.2f %.2f %.2f]",
+                            s / R->dbg_n, mn, mi, R->dbg_n,
+                            100.0 * mi / R->dbg_n,
+                            R->dbg_q[0], R->dbg_q[1], R->dbg_q[2], R->dbg_q[3]);
+                }
+                R->dbg_n = 0;
+            }
+            R->bad++; continue;
+        }
 
+        if (R->nfr < RX_MAXFRAMES) {
+            R->fr[R->nfr].s0  = s0;
+            R->fr[R->nfr].off = R->nbytes;
+            R->fr[R->nfr].len = len;
+            R->nfr++;
+        }
         rx_result_append(R, msg + NSFSK_HDR_LEN, len);
         R->ok++;
         if (verbose)

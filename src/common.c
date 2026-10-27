@@ -43,8 +43,6 @@ const char *nsfsk_params_validate(const nsfsk_params *p)
     if (p->k < 4u || (p->k % 2u) || p->k > 160u)
         return "k must be even and within 4..160";
     if (!(p->h > 0.0f))                    return "h must be > 0";
-    if (p->h * (float)(NSFSK_M - 1u) >= 1.0f)
-        return "h*(M-1) must be < 1 for the non-coherent demod (h < 0.333 for 4FSK)";
     if (!(p->bt > 0.0f) || p->bt > 1.0f)   return "bt must be in (0,1]";
     if (p->delay == 0u || p->delay > 8u)   return "delay must be within 1..8";
     if (p->preamble < NSFSK_TMPL_SYM0(*p) + NSFSK_TMPL_SYMS)
@@ -52,9 +50,22 @@ const char *nsfsk_params_validate(const nsfsk_params *p)
     if (!(p->fc > 0.0f) || p->fc >= 0.49f * (float)p->rate)
         return "fc must be in (0, 0.5*rate)";
 
+    /* h*(M-1) < 1 decodes with the per-symbol phase-advance detector;
+     * >= 1 switches to the non-coherent tone bank (h >= 1 fully
+     * orthogonal).  So h is bounded only by what the RX DDC+LPF can fit:
+     * cutoff = dev + 0.85*Rs must stay clear of DC (mixer image at
+     * -2*fc) on the low side and of Nyquist (image at rate-2*fc) on the
+     * high side — mirrors nsfsk_rx_filter_slice()'s image check. */
     float rs  = (float)p->rate / (float)p->k;
     float fd  = p->h * rs * (float)(NSFSK_M - 1u) / 2.0f;  /* peak deviation */
     float occ = 2.0f * (fd + rs);           /* Carson occupied bandwidth */
+    float cut = fd + 0.85f * rs;            /* RX LPF cutoff */
+    if (p->fc <= cut)
+        return "fc too low for h/k: RX LPF cannot pass the FM band and "
+               "reject the mixer image (raise fc or lower h)";
+    if (0.5f * (float)p->rate - p->fc <= cut)
+        return "fc too high for h/k: RX LPF cannot pass the FM band and "
+               "reject the upper mixer image (lower fc or h)";
     if (p->fc - 0.5f * occ < 100.0f || p->fc + 0.5f * occ > 0.5f * (float)p->rate - 100.0f)
         fprintf(stderr,
                 "warning: occupied band %.0f..%.0f Hz is close to the band edges\n",

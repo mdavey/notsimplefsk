@@ -115,11 +115,26 @@ PHY="-r 44100 -c 3800"; run "r44+cfo300" 300 -f 300
 PHY=""; run "multi5k+cfo" 5000 -f 120
 run "evilcombo" 5000 -f 295 -D 0.5 -r 600 -n 0.01
 
+echo "== modulation index sweep (tone-bank detector for h*(M-1)>=0.95) =="
+PHY="-H 0.4";            run "h0.4"        300
+PHY="-H 0.5 -c 5000";    run "h0.5"        300
+PHY="-H 0.5 -c 5000";    run "h0.5multi"   2048
+PHY="-H 0.5 -c 5000";    run "h0.5+ppm100" 2048 -r 100
+PHY="-H 0.5 -c 5000";    run "h0.5+cfo"    300 -f 250
+PHY="-H 0.667 -c 5000";  run "h0.667"      300
+PHY="-H 1.0 -c 7000";    run "h1.0"        300
+PHY="-H 1.0 -c 7000";    run "h1.0multi"   2048
+PHY="-H 1.0 -c 7000";    run "h1.0+imp"    300 -f 250 -n 0.005 -g -20
+PHY="-H 1.0 -k 40";      run "h1.0k40"     300
+PHY="-H 0.33";           run "h0.33edge"   300
+PHY="";
+
 echo "== expected rejects (impossible fc/image combos) =="
 rej "k8@fc4000"     -k 8
 rej "k6@fc4000"     -k 6
 rej "k4@fc4000"     -k 4
-rej "h0.4"          -H 0.4
+rej "h0.5fc2000"    -H 0.5 -c 2000
+rej "h1fc20000"     -H 1.0 -r 40000 -c 19500
 rej "fc1000@22050"  -r 22050 -c 1000
 
 echo

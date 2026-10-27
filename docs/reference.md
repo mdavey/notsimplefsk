@@ -50,7 +50,8 @@ multiple frames separated by 40 ms silence (the RX energy gate re-arms on it).
     -r rate   sample rate Hz      (default 48000, min 8000)
     -c fc     carrier Hz          (default 4000, < 0.49*rate)
     -k N      samples per symbol  (default 20, even, 4..160)   Rs = rate/k
-    -H h      modulation index    (default 0.25, must have h*(M-1) < 1)
+    -H h      modulation index    (default 0.25; 0..1 feasible range, see
+                                  detector notes below)
     -b bt     Gaussian BT         (default 0.8; < 0.5 has an ISI floor)
     -d N      CPM filter delay, symbols (default 1, 1..8)
     -P N      preamble symbols    (default 72)
@@ -60,22 +61,43 @@ Tone frequencies: fc + (2s+1-M)*h*Rs/2, i.e. fc + {-3,-1,+1,+3} * h*Rs/2.
 Defaults: 2400 baud, 4800 bps, Carson occupied bandwidth 6.6 kHz, ~97 %
 payload efficiency at 1024-byte frames.
 
+The receiver picks its symbol detector from h: below h*(M-1) = 0.95 it
+decodes the phase advance across each symbol (works for any h*(M-1) < 2,
+but the +-3 tones must not wrap past +-pi: h = 1/3 for M = 4); at or above
+that threshold it switches to a non-coherent tone bank (one k-sample
+complex correlation per tone, peak bin wins - fully orthogonal at h = 1,
+immune to CFO since the decision is a magnitude). h = 1 (e.g. fc=7000) and
+h = 1 with k=40 both round-trip byte-exact, clean and through
+CFO/noise/gain/ppm impairment sweeps.
+
+Bandwidth: Carson occupied width = (3h + 2) * Rs (peak deviation
+1.5*h*Rs). The RX validates both band edges against the mixer filter
+(cut = 1.5*h*Rs + 0.85*Rs must fit below fc and below rate/2 - fc). At
+Rs=2400: h=0.25 (6.6 kHz) fits fc=4000 (default); h=0.5 (8.4 kHz) wants
+fc >= ~4300; h=1.0 (12 kHz) wants fc >= ~6100 or a lower symbol rate
+(k=40, Rs=1200 fits fc=4000-5000).
+
 ## Achieved tolerances (tests/roundtrip.sh, all default PHY unless noted)
 
     payload sizes        0, 1..1023, 1024, multi-frame 1025..5000
     CFO                  +-295 Hz full tolerance (estimator range rate/(8k))
-    sample-rate error    +-1000 ppm (offline resample trials +-1200 + fine)
+    sample-rate error    +-1000 ppm (offline: fixed 23-point trial grid
+                         0..+-1200 ppm, CRC-good frames merged across
+                         trials - no single ppm need decode all frames)
     delay                +-integer samples and fractional (linear interp)
     gain                 -30 dB .. +6 dB (clipping) — scale loop absorbs
     AWGN                 sigma = 0.03 FS passes (single + combos)
     combos               CFO+delay+ppm+noise+gain together, CFO+ppm+noise,
                          CFO+frac-delay+noise across 5-frame streams
     PHY sweep            k 16..64, bt 0.5/1.0, delay 1..8, rcos/square,
-                         rate 8k/16k/22050/44100, h 0.3, fc 8k, preamble 120
+                         rate 8k/16k/22050/44100, h 0.3..1.0 (incl. tone
+                         bank + ppm/impairment cases), fc 8k, preamble 120
 
 Physically rejected by design (hard error or guaranteed CRC gate, never a
-false decode): fc <= dev + 0.85*Rs at the given k (mixer image cannot be
-filtered: k <= 10 @ fc=4000), h >= 1/3, non-integer-friendly band edges.
+false decode): fc <= dev + 0.85*Rs at the given k on EITHER band side
+(mixer image cannot be filtered: k <= 10 @ fc=4000), non-integer-friendly
+band edges. The former h < 1/3 cap is gone: it was a limit of the
+phase-advance detector only, now bypassed by the tone bank.
 
 Envelope note (probe-verified with 1024-byte frames): every PAIR of
 {ppm +-300, CFO 100, noise 0.01, gain} passes; stacking ppm+CFO+noise on

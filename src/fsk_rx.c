@@ -21,8 +21,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void usage(const char *prog)
+/* merged view of CRC-good frames collected across all ppm trials */
+typedef struct { size_t s0; unsigned len; const unsigned char *p; } gfrm;
+static int cmp_gfrm(const void *a, const void *b)
 {
+    const gfrm *x = (const gfrm *)a, *y = (const gfrm *)b;
+    return (x->s0 > y->s0) - (x->s0 < y->s0);
+}
+
+static void usage(const char *prog){
     fprintf(stderr,
         "usage: %s [options] < in.s16 > out.bin\n"
         "\n"
@@ -125,45 +132,84 @@ int main(int argc, char **argv)
      * Constant ppm clock error walks the decision instants across the
      * symbol (~k/2 samples = death); resample the whole capture on a ppm
      * grid and keep the run with most frames, then the best mean
-     * |phase|-per-decision quality. */
-    rx_result best = {0};
+     * |phase|-per-decision quality.
+     *
+     * Every trial's result is KEPT and the CRC-good frames are MERGED
+     * positionally at the end: per-frame sensitivity to residual rate
+     * error differs by several samples between frames (within-frame slip
+     * plus per-burst MF refit luck), so no single global ppm is
+     * guaranteed to decode all frames of a multi-frame capture.  A
+     * CRC-verified frame from any trial is safe to deliver; copies of one
+     * frame from different trials land within pos*2400e-6 samples of each
+     * other and are deduped. */
+    static rx_result tr[23];
     double best_qn = -1.0, ppm_best = 0.0;
-    const int coarse[9] = {0, 300, -300, 600, -600, 900, -900, 1200, -1200};
-    const int fine[4]   = {-100, -50, 50, 100};
-    for (unsigned t = 0; t < 13u; t++) {
+    unsigned ok_best = 0;
+    /* Fixed dense grid (no adaptive fine stage: with every trial at
+     * ok=0 the qn ranking is unreliable and recenters the fine grid on
+     * garbage, e.g. missing a +-100ppm channel entirely between the
+     * 300-step coarse points).  Per-frame union across trials makes
+     * coverage of the grid the thing that matters. */
+    const int grid[23] = { 0, 50, -50, 100, -100, 150, -150, 200, -200,
+                           250, -250, 300, -300, 450, -450, 600, -600,
+                           900, -900, 1000, -1000, 1200, -1200 };
+    const char *pfix = getenv("NSFSK_PPM");      /* dev knob: single trial */
+    unsigned ntrial = pfix ? 1u : 23u;
+    if (pfix) ppm_best = atof(pfix);
+    for (unsigned t = 0; t < ntrial; t++) {
         double ppm;
-        if (t < 9u) ppm = (double)coarse[t];
-        else        ppm = ppm_best + (double)fine[t - 9u];
-        rx_result cur = {0};
+        if (pfix)            ppm = atof(pfix);
+        else                 ppm = (double)grid[t];
+        rx_result *cur = &tr[t];
         if (ppm == 0.0) {
             rx_run(y, N, nf, tmpl, et, p, verbose > 1 ? verbose - 1 : verbose,
-                   0, &cur);
+                   0, cur);
         } else {
             size_t N2;
             float complex *y2 = resample_lin(y, N, 1.0 + ppm * 1e-6, &N2);
             rx_run(y2, N2, nf, tmpl, et, p,
-                   verbose > 1 ? verbose - 1 : verbose, 0, &cur);
+                   verbose > 1 ? verbose - 1 : verbose, 0, cur);
             free(y2);
         }
-        double qn = cur.qual / (double)(cur.ndec + 1u);
-        if (cur.ok > best.ok || (cur.ok == best.ok && qn > best_qn)) {
-            rx_result old = best;
-            best = cur; best_qn = qn; ppm_best = ppm;
-            free(old.buf);
-        } else {
-            free(cur.buf);
+        double qn = cur->qual / (double)(cur->ndec + 1u);
+        if (verbose)
+            fprintf(stderr, "rx: ppm trial %+6.0f -> ok=%u bad=%u qn=%.4f\n",
+                    ppm, cur->ok, cur->bad, qn);
+        if (cur->ok > ok_best || (cur->ok == ok_best && qn > best_qn)) {
+            ok_best = cur->ok; best_qn = qn; ppm_best = ppm;
         }
     }
 
-    if (best.nbytes) { fwrite(best.buf, 1, best.nbytes, stdout); fflush(stdout); }
-    fprintf(stderr, "rx: %u frame(s) ok, %u bad, %zu byte(s) decoded "
+    static gfrm all[23 * RX_MAXFRAMES];
+    unsigned na = 0;
+    for (unsigned t = 0; t < ntrial; t++)
+        for (unsigned i = 0; i < tr[t].nfr && na < 23u * RX_MAXFRAMES; i++) {
+            all[na].s0  = tr[t].fr[i].s0;
+            all[na].len = tr[t].fr[i].len;
+            all[na].p   = tr[t].buf + tr[t].fr[i].off;
+            na++;
+        }
+    qsort(all, na, sizeof all[0], cmp_gfrm);
+    unsigned nout = 0; size_t nbytes = 0, acc_s0 = 0;
+    for (unsigned i = 0; i < na; i++) {
+        /* same frame seen by several trials: positions agree to within
+         * the trial rescale (0.24%) plus refit jitter; a different real
+         * frame never starts closer than one short burst (~2.5k syms) */
+        if (nout && all[i].s0 < acc_s0 + 1200u + (size_t)(acc_s0 * 0.0025))
+            continue;
+        fwrite(all[i].p, 1, all[i].len, stdout);
+        nbytes += all[i].len; acc_s0 = all[i].s0; nout++;
+    }
+    if (nout) fflush(stdout);
+    fprintf(stderr, "rx: %u frame(s) merged from %u ok / %zu byte(s) decoded "
                     "(ppm=%+.0f); rate=%u fc=%.0f k=%u h=%.3f bt=%.2f "
                     "delay=%u pulse=%s\n",
-            best.ok, best.bad, best.nbytes, ppm_best,
+            nout, ok_best, nbytes, ppm_best,
             p.rate, p.fc, p.k, p.h, p.bt, p.delay,
             p.pulse == LIQUID_CPFSK_GMSK ? "gmsk" :
             p.pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square");
 
-    free(best.buf); free(in); free(y); free(tmpl);
-    return best.ok > 0 ? 0 : 1;
+    for (unsigned t = 0; t < ntrial; t++) free(tr[t].buf);
+    free(in); free(y); free(tmpl);
+    return nout > 0 ? 0 : 1;
 }

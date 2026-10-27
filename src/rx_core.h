@@ -24,9 +24,21 @@
 
 /* Decoded frames appended to buf; ok/bad count CRC passes/failures;
  * qual/ndec accumulate per-decision quality for ppm trial selection. */
+/* Per-frame record so the offline RX can MERGE frames across ppm trials:
+ * each frame's sensitivity to residual sample-rate error is several
+ * samples shifted from its neighbours (per-burst MF refit luck + slip),
+ * so no single global ppm is guaranteed to decode every frame; a
+ * CRC-verified frame from any trial can be delivered, and duplicates
+ * across trials are identified by position + payload. */
+#define RX_MAXFRAMES 512
+typedef struct { size_t s0, off; unsigned len; } rx_frame;
+
 typedef struct {
     unsigned char *buf; size_t cap, nbytes;
     unsigned ok, bad; double qual; size_t ndec;
+    rx_frame fr[RX_MAXFRAMES]; unsigned nfr;
+    /* -vv diagnostics: per-symbol bank quality of the last decoded frame */
+    float dbg_q[4200]; unsigned dbg_n;
 } rx_result;
 
 void rx_result_append(rx_result *R, const unsigned char *b, size_t n);
