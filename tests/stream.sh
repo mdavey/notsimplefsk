@@ -5,11 +5,15 @@
 # Same byte-exact contract as roundtrip.sh, but through the live path:
 # bursts close on the energy gate, ppm trials run per burst with early
 # exit.  "rt" cases pace the feed with dd+sleep so decode and production
-# interleave through a real pipe.
+# interleave through a real pipe; "live" cases pace strictly 1x (arecord
+# real time) and additionally require delivery while the producer is still
+# mid-stream.  "idle-lead" pins the ring-capacity math against the gate
+# open phase after an idle stretch (real audio always leads with silence).
 set -u
 cd "$(dirname "$0")/.." || exit 1
 TX=./bin/fsk_tx
 RX=./bin/fsk_rx_stream
+RXOFF=./bin/fsk_rx
 CH=./bin/channel
 TMP=${TMPDIR:-/tmp}/nsfsk-st.$$
 mkdir -p "$TMP"
@@ -71,6 +75,48 @@ runrt() {
     fi
 }
 
+# feed_rt1 <file> : strict 1x real-time producer (0.5 s audio per 0.5 s)
+feed_rt1() {
+    total=$(stat -c%s "$1"); n=0
+    while [ $((n * 48000)) -lt "$total" ]; do
+        dd if="$1" bs=48000 skip=$n count=1 2>/dev/null
+        n=$((n+1))
+        sleep 0.5
+    done
+}
+
+# runlive <name> <nbytes> <leadbytes> : 1x paced feed with an idle lead.
+# Proves the decoder keeps up with a real capture device: byte-exact at
+# EOF, >=2 full frames already on stdout at t=8 s of a ~13 s stream (no
+# backlog), and it finishes close to the feed duration (a lagging decoder
+# backpressures the producer and stretches wall time).
+runlive() {
+    name=$1 n=$2 lead=$3
+    pay "$n" "$name" > "$TMP/p"
+    if ! $TX $PHY < "$TMP/p" > "$TMP/a" 2>/dev/null; then
+        echo "FAIL $name (tx)"; FAIL=$((FAIL+1)); return
+    fi
+    head -c "$lead" /dev/zero > "$TMP/in"
+    cat "$TMP/a" >> "$TMP/in"
+    feedsec=$(( $(stat -c%s "$TMP/in") / 96000 ))
+    t0=$(date +%s)
+    ( feed_rt1 "$TMP/in" | timeout 120 $RX $PHY > "$TMP/o" 2>"$TMP/rxe" ) &
+    job=$!
+    sleep 8
+    mid=$(stat -c%s "$TMP/o" 2>/dev/null || echo 0)
+    wait $job; rc=$?
+    el=$(( $(date +%s) - t0 ))
+    if [ $rc -eq 0 ] && cmp -s "$TMP/p" "$TMP/o" \
+       && [ "$mid" -ge 2048 ] && [ "$el" -le $(( feedsec + 6 )) ]; then
+        echo "PASS $name (live: mid=${mid}B @8s, ${el}s/${feedsec}s)"
+        PASS=$((PASS+1))
+    else
+        echo "FAIL $name (live rc=$rc mid=${mid}B @8s ${el}s/${feedsec}s)"
+        sed 's/^/    /' "$TMP/rxe" | tail -3
+        FAIL=$((FAIL+1))
+    fi
+}
+
 # expect <name> <rx> args: compare $TMP/o to $TMP/x, check exit code
 expect() {
     name=$1 rc=$2 want=$3
@@ -88,6 +134,10 @@ for n in 0 1 64 1024 1025 3000 10000; do run "size$n" $n; done
 echo "== paced real-time feeds =="
 runrt rt3000 3000
 runrt rt10000 10000
+
+echo "== strict 1x real time (keeps up with the producer) =="
+runlive live7 7168 28672
+runlive live7nolead 7168 0
 
 echo "== impairments =="
 run "ppm+1000" 1500 -r 1000 -s 3
@@ -131,6 +181,67 @@ rc=$?; tail -c 476 "$TMP/p" > "$TMP/x"; expect join-preamble $rc 0
 # start inside frame 1's payload: frame 1 lost, nothing complete -> exit 1
 head -c 110000 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
 rc=$?; : > "$TMP/x"; expect join-midframe $rc 1
+
+echo "== mid-stream join into 7 max-size frames =="
+# one 1024 B frame period = (4220 syms + 11 syms tx pad)*20 + 40 ms gap
+#                           = 86540 samples = 173080 bytes
+# cut offsets MUST be even bytes (s16le): an odd head-drop shifts every
+# sample by half and byte-mangles the whole capture into undecodable noise
+pay 7168 join7 > "$TMP/p"
+$TX < "$TMP/p" > "$TMP/a" 2>/dev/null
+for off in 20000 90000 165000; do     # all inside frame 1
+    tail -c +$((off + 1)) "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
+    rc=$?; tail -c 6144 "$TMP/p" > "$TMP/x"
+    expect "join7-1@$off" $rc 0
+done
+# inside frame 2 (starts at byte 173080): frames 3..7 must arrive
+tail -c +200001 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
+rc=$?; tail -c 5120 "$TMP/p" > "$TMP/x"; expect join7-inframe2 $rc 0
+# and the stream RX must agree byte-for-byte with offline fsk_rx on the
+# same joined capture
+tail -c +200001 "$TMP/a" > "$TMP/j"
+timeout 120 $RX < "$TMP/j" > "$TMP/o" 2>/dev/null
+rc=$?
+timeout 120 $RXOFF < "$TMP/j" > "$TMP/off" 2>/dev/null
+if [ $rc -eq 0 ] && cmp -s "$TMP/off" "$TMP/o" && cmp -s "$TMP/x" "$TMP/o"; then
+    echo "PASS join7-vs-offline"; PASS=$((PASS+1))
+else
+    echo "FAIL join7-vs-offline (rc=$rc stream=$(stat -c%s "$TMP/o")B offline=$(stat -c%s "$TMP/off")B)"
+    FAIL=$((FAIL+1))
+fi
+
+echo "== idle lead before max-size frames (ring-capacity phase pin) =="
+# Regression 2026-10-28: with the old cap = retain+maxframe+arm+tail+16384
+# the ring overflowed MID-BURST for the first frame after any idle stretch
+# (idle slide leaves retain + up to 2 read chunks when the gate opens);
+# the force decode then destroyed that frame's head.  The silence lengths
+# below are the failing phases of the old build (2-read slide period).
+pay 7168 idlelead > "$TMP/p"
+$TX < "$TMP/p" > "$TMP/a" 2>/dev/null
+for sl in 28672 61440 94208 122880; do
+    head -c $sl /dev/zero > "$TMP/z"
+    cat "$TMP/z" "$TMP/a" > "$TMP/in"
+    timeout 120 $RX < "$TMP/in" > "$TMP/o" 2>"$TMP/rxe"
+    rc=$?; cat "$TMP/p" > "$TMP/x"; expect "idle-lead$sl" $rc 0
+done
+# offline fsk_rx on the same capture must agree
+head -c 28672 /dev/zero > "$TMP/z"; cat "$TMP/z" "$TMP/a" > "$TMP/in"
+timeout 120 $RX < "$TMP/in" > "$TMP/o" 2>/dev/null
+rc=$?
+timeout 120 $RXOFF < "$TMP/in" > "$TMP/off" 2>/dev/null
+if [ $rc -eq 0 ] && cmp -s "$TMP/off" "$TMP/o" && cmp -s "$TMP/p" "$TMP/o"; then
+    echo "PASS idle-lead-vs-offline"; PASS=$((PASS+1))
+else
+    echo "FAIL idle-lead-vs-offline (rc=$rc stream=$(stat -c%s "$TMP/o")B offline=$(stat -c%s "$TMP/off")B)"
+    FAIL=$((FAIL+1))
+fi
+# long idle between two max-size frames (gate re-arm after silence)
+pay 1024 ig1 > "$TMP/p1"; pay 1024 ig2 > "$TMP/p2"
+$TX < "$TMP/p1" > "$TMP/a1" 2>/dev/null
+$TX < "$TMP/p2" > "$TMP/a2" 2>/dev/null
+head -c 192000 /dev/zero > "$TMP/z"      # 2 s silence
+cat "$TMP/a1" "$TMP/z" "$TMP/a2" | timeout 120 $RX > "$TMP/o" 2>/dev/null
+rc=$?; cat "$TMP/p1" "$TMP/p2" > "$TMP/x"; expect idle-gap-1024 $rc 0
 
 echo "== idle gap between streams =="
 pay 700 g1 > "$TMP/p1"; pay 900 g2 > "$TMP/p2"

@@ -88,6 +88,9 @@ static void usage(const char *prog)
         "      --pulse P      gmsk | rcos | square        (gmsk)\n"
         "      --max-frames N exit after N good frames\n"
         "      --idle-exit S  exit after S seconds with no carrier\n"
+        "      --trial-budget S  wall-clock ppm-sweep budget per burst\n"
+        "                         (0=default: burst audio time, min 2 s;\n"
+        "                         -1=unlimited)\n"
         "  -v, --verbose      per-frame detail on stderr (-vv tracing)\n"
         "  -h, --help         this text\n",
         prog, prog);
@@ -172,6 +175,8 @@ typedef struct {
     int16_t *ring;
     size_t abs_lo;                       /* absolute index of ring[0]  */
     double last_ppm;
+    double trial_budget;           /* s; 0 = auto (burst audio time, min 2),
+                                    * <0 = unlimited */
     unsigned ok_tot, bad_tot, rej_tot;
     size_t bytes_tot;
 } rx_ctx;
@@ -195,13 +200,26 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
     rx_result best = {0};
     double best_qn = -1.0, ppm_best = X->last_ppm;
     int accepted = 0;
+    /* wall-clock budget for the trial sweep: a garbage burst must never
+     * stall the reader far enough behind a live capture that audio is
+     * overrun; trials already spent are kept (best-so-far still wins) */
+    double budget = X->trial_budget > 0.0 ? X->trial_budget
+                  : (X->trial_budget < 0.0 ? 0.0
+                     : (double)n / (double)X->p.rate);
+    if (budget > 0.0 && budget < 2.0) budget = 2.0;
+    int    over_budget = 0;
+    unsigned ntrial = 0;
 
     /* one ppm trial + bookkeeping: accept on first fully clean pass */
 #define TRIAL(PPM)                                                        \
     do {                                                                  \
         double ppm_ = (PPM);                                              \
+        double t_trial = nowd();                                          \
         if (g_stop) { free(best.buf); memset(&best, 0, sizeof best);      \
                       goto trials_done; }                                 \
+        if (budget > 0.0 && nowd() - t_burst > budget) {                  \
+            over_budget = 1; goto trials_done; }                          \
+        ntrial++;                                                         \
         rx_result cur = {0};                                              \
         if (ppm_ == 0.0) {                                                \
             rx_run(X->y, n, X->nf, X->tmpl, X->et, X->p, vb,              \
@@ -215,8 +233,8 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
             free(y2);                                                     \
         }                                                                 \
         if (X->verbose > 1)                                               \
-            fprintf(stderr, "rx: trial ppm=%+.0f -> ok=%u bad=%u\n",      \
-                    ppm_, cur.ok, cur.bad);                               \
+            fprintf(stderr, "rx: trial ppm=%+.0f -> ok=%u bad=%u (%.0f ms)\n", \
+                    ppm_, cur.ok, cur.bad, 1000.0 * (nowd() - t_trial));  \
         if (cur.ok > 0 && cur.bad == 0) {          /* early exit */       \
             free(best.buf);                                               \
             best = cur; ppm_best = ppm_; accepted = 1;                    \
@@ -231,12 +249,13 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
         }                                                                 \
     } while (0)                                                           
 
+    double t_burst = nowd();
     for (unsigned t = 0; t < nc; t++) TRIAL(cand[t]);
     /* the offline RX cascades its fine grid and bootstraps it with frames
      * decoded elsewhere in the file; a lone long burst needs guaranteed
      * coverage: the true correction sits <= 150 ppm from one of the two
      * coarse neighbours, so probe both sides from the coarse winner */
-    if (!accepted) {
+    if (!accepted && !over_budget) {
         for (unsigned f = 0; f < 6u && !accepted; f++) {
             static const double fine[6] = {-150.0, -100.0, -50.0,
                                            50.0, 100.0, 150.0};
@@ -259,6 +278,9 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
     }
 #undef TRIAL
 trials_done:
+    if (over_budget && X->verbose)
+        fprintf(stderr, "rx: trial budget %.1fs hit after %u trial(s)\n",
+                budget, ntrial);
     X->last_ppm = ppm_best;
     (void)R;
     return best;
@@ -295,6 +317,7 @@ int main(int argc, char **argv)
         {"pulse",      required_argument, 0,  1 },
         {"max-frames", required_argument, 0,  2 },
         {"idle-exit",  required_argument, 0,  3 },
+        {"trial-budget", required_argument, 0, 4 },
         {"verbose",    no_argument,       0, 'v'},
         {"help",       no_argument,       0, 'h'},
         {0, 0, 0, 0}
@@ -320,6 +343,7 @@ int main(int argc, char **argv)
                   break;
         case  2 : max_frames = (unsigned)strtoul(optarg, NULL, 0); break;
         case  3 : idle_exit = strtod(optarg, NULL); break;
+        case  4 : X.trial_budget = strtod(optarg, NULL); break;
         case 'v': X.verbose++; break;
         case 'h': usage(argv[0]); return 0;
         default:  usage(argv[0]); return 1;
@@ -350,7 +374,17 @@ int main(int argc, char **argv)
     size_t maxframe = (size_t)(p->preamble + NSFSK_SYNC_LEN
                                + 4u * (NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD
                                        + NSFSK_CRC_LEN)) * p->k;
-    X.cap = X.retain + maxframe + arm + X.tail + 16384u;
+    /* worst-case occupancy: the ring holds up to retain + 2 read chunks
+     * when a gate opens (the idle slide runs once per main-loop pass), and
+     * open -> close+tail spans one max frame PLUS the TX trailing pad PLUS
+     * the gate-close overshoot (causal LPF fill ~ win + 20 ms arm); then
+     * one more chunk of headroom for the loop's read-space check.  A cap
+     * that only covered maxframe overflowed mid-burst after any idle lead
+     * (real audio path: silence before TX) and force-decoded frame 1 away;
+     * pinned by stream.sh idle-lead*. */
+    X.cap = X.retain + 2u * READ_CHUNK
+          + maxframe + (size_t)nsfsk_tx_pad(p) * p->k + 2u * win + 2u * arm
+          + X.tail + READ_CHUNK;
 
     X.ring = malloc(X.cap * sizeof(int16_t));
     X.y    = malloc(X.cap * sizeof(float complex));
@@ -399,8 +433,26 @@ int main(int argc, char **argv)
             rx_result R = decode_range(&X, X.ring, len);
             deliver(&X, &R, X.abs_lo);
             safe_after = consumed;
-            g.qn = 0;
             size_t nl = consumed > X.retain ? consumed - X.retain : 0u;
+            /* an open burst is the one thing we must not trim away: keep
+             * from its head so it still decodes when it closes, provided
+             * keeping it leaves real room to grow */
+            if (!g.armed) {
+                size_t keep = g.open_abs > X.back ? g.open_abs - X.back : 0u;
+                if (keep >= X.abs_lo && keep < nl &&
+                    consumed - keep + 2u * READ_CHUNK <= X.cap)
+                    nl = keep;
+            }
+            /* drop only the queued bursts whose slice data got trimmed */
+            unsigned q0 = 0;
+            while (q0 < g.qn &&
+                   (g.q_open[q0] > X.back ? g.q_open[q0] - X.back : 0u) < nl)
+                q0++;
+            for (unsigned i = q0; i < g.qn; i++) {
+                g.q_open[i - q0]  = g.q_open[i];
+                g.q_close[i - q0] = g.q_close[i];
+            }
+            g.qn -= q0;
             memmove(X.ring, X.ring + (nl - X.abs_lo),
                     (consumed - nl) * sizeof(int16_t));
             X.abs_lo = nl;
@@ -456,7 +508,7 @@ int main(int argc, char **argv)
          * before `consumed`, so slide the window down to `retain` samples;
          * without this, a long silence fills the ring and the force-decode
          * path would fire mid-burst and destroy the next frame's head */
-        if (g.armed && g.qn == 0 && consumed - X.abs_lo > X.retain + READ_CHUNK) {
+        if (g.armed && g.qn == 0 && consumed - X.abs_lo > X.retain) {
             size_t nl = consumed - X.retain;
             if (nl > X.abs_lo) {
                 memmove(X.ring, X.ring + (nl - X.abs_lo),

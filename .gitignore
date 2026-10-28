@@ -1,4 +1,5 @@
 bin/
 *.o
 *.s16
+*.s16le
 __pycache__/

@@ -34,7 +34,15 @@ test: all
 	sh tests/roundtrip.sh
 	sh tests/stream.sh
 
+# manual aplay/arecord loopback (needs a working audio path, not in test)
+loopback: all
+	sh tests/stream_loopback.sh
+
+# manual loudspeaker -> room -> microphone test (see script header for PHY)
+acoustic: all
+	sh tests/stream_acoustic.sh
+
 clean:
 	rm -rf $(BINDIR)
 
-.PHONY: all test clean
+.PHONY: all test loopback acoustic clean
