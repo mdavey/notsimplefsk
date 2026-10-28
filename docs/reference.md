@@ -29,11 +29,17 @@ The channel simulator adds impairments for testing:
 
 ## Wire format (per frame)
 
-    [ preamble 0,3,0,3,... x P ][ sync 24-sym table ][ Gray(NRZI( data )) ][ pad ]
+    [ preamble 0,3,0,3,... x P ][ sync 24-sym table ][ Gray(NRZI(PN( data ))) ][ pad ]
 
     data   = type(1) | len16_be(2) | payload(0..1024) | crc32_be(4)
     crc32  = liquid LIQUID_CRC_32 over type|len|payload
-    NRZI   = enc[n] = enc[n-1] XOR d[n], state 0 at first bit (kills 180-deg
+    PN     = additive whitening, m-sequence LFSR x^23+x^18+1, all-ones seed,
+             re-armed per frame; keeps payload statistics off the air -- un-
+             whitened, 640 zero bytes modulate as 2560 identical symbols
+             (one pure tone) and JPEG entropy data still runs 50+; descramble
+             is the same local PN (no error multiplication, prefix-safe for
+             the header-first decode)
+    NRZI   = enc[n] = enc[n-1] XOR d[n] (d = whitened bit), state 0 at first bit (kills 180-deg
              ambiguity of non-coherent detection)
     Gray   = dibit -> symbol index  v ^ (v>>1)  = {0,1,3,2}
     pad    = nsfsk_tx_pad() dummy symbols: covers the detector lag and the
@@ -52,7 +58,12 @@ multiple frames separated by 40 ms silence (the RX energy gate re-arms on it).
     -k N      samples per symbol  (default 20, even, 4..160)   Rs = rate/k
     -H h      modulation index    (default 0.25; 0..1 feasible range, see
                                   detector notes below)
-    -b bt     Gaussian BT         (default 0.8; < 0.5 has an ISI floor)
+    -b bt     Gaussian BT         (default 0.8; 0.65+ robust.  At 0.5 the
+                                  ISI pattern floor makes ~1-2% of frames
+                                  unrecoverable even noiseless - some
+                                  waveforms admit no error-free decision
+                                  alignment at all (probe5), MLSE would be
+                                  needed; < 0.5 always needs MLSE)
     -d N      CPM filter delay, symbols (default 1, 1..8)
     -P N      preamble symbols    (default 72)
        --pulse gmsk|rcos|square   (default gmsk)
@@ -89,7 +100,10 @@ fc >= ~4300; h=1.0 (12 kHz) wants fc >= ~6100 or a lower symbol rate
     AWGN                 sigma = 0.03 FS passes (single + combos)
     combos               CFO+delay+ppm+noise+gain together, CFO+ppm+noise,
                          CFO+frac-delay+noise across 5-frame streams
-    PHY sweep            k 16..64, bt 0.5/1.0, delay 1..8, rcos/square,
+    pattern payloads     zeros / repeated byte / JPEG chunks round-trip,
+                         incl. multi-frame at bt=0.65 (whitening must
+                         absorb every single-tone run pathology)
+    PHY sweep            k 16..64, bt 0.65/1.0, delay 1..8, rcos/square,
                          rate 8k/16k/22050/44100, h 0.3..1.0 (incl. tone
                          bank + ppm/impairment cases), fc 8k, preamble 120
 

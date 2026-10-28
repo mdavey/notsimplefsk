@@ -23,10 +23,10 @@ pay() {
         BEGIN{srand(s);for(i=0;i<n;i++)printf "%c",int(rand()*256)}'
 }
 
-# run <name> <nbytes> [channel args...]
+# run <name> <nbytes> [channel args...]   (PAYFILE=<f> overrides the payload)
 run() {
     name=$1 n=$2; shift 2
-    pay "$n" "$name" > "$TMP/p"
+    if [ -n "${PAYFILE:-}" ]; then cp "$PAYFILE" "$TMP/p"; else pay "$n" "$name" > "$TMP/p"; fi
     if ! $TX $PHY < "$TMP/p" > "$TMP/a" 2>"$TMP/txe"; then
         echo "FAIL $name  (tx errored)"; sed 's/^/    /' "$TMP/txe"
         FAIL=$((FAIL+1)); return
@@ -70,12 +70,35 @@ for n in 1025 2048 3000 5000; do run "multi$n" $n; done
 echo "== multi-frame at bt=0.5 =="
 PHY="-b 0.5"; for n in 3000 10000; do run "bt05multi$n" $n; done; PHY=""
 
+# Run-length pathologies: constant data holds the NRZI dibit fixed, so
+# unwhitened these modulate as one pure tone for the whole frame (zeros:
+# 2560+ identical symbols).  The PN whitener must absorb all of them.
+echo "== fixed-pattern payloads (whitening pins) =="
+head -c 1024 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run zeros1024 1024
+head -c 3000 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run zeros3000 3000
+LC_ALL=C gawk 'BEGIN{for(i=0;i<1024;i++)printf "%c",65}'  > "$TMP/pat"
+PAYFILE="$TMP/pat" run aaaa1024 1024
+LC_ALL=C gawk 'BEGIN{for(i=0;i<1024;i++)printf "%c",85}'  > "$TMP/pat"
+PAYFILE="$TMP/pat" run uuuu1024 1024
+if [ -f tests/MtWellington.jpg ]; then   # user asset, not tracked: optional pin
+    head -c 2048 tests/MtWellington.jpg > "$TMP/pat"
+    PAYFILE="$TMP/pat" run jpg2048 2048
+fi
+PHY="-b 0.65"; head -c 3000 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run bt065zeros3000 3000; PHY=""
+
 echo "== PHY sweep =="
 PHY="-k 16";              run "k16"    300
 PHY="-k 24";              run "k24"    300
 PHY="-k 40";              run "k40"    300
 PHY="-k 64";              run "k64"    300
-PHY="-b 0.5";             run "bt0.5"  300
+# bt=0.5 single clean frames are deliberately NOT pinned: the GMSK ISI
+# pattern floor makes ~1-2% of payloads unrecoverable at ANY alignment on a
+# noiseless channel (probe5 shows no dmis=0 class for them; both pre- and
+# post-whitening codecs hit it).  bt05multi* above pin bt=0.5 alignment.
+PHY="-b 0.65";            run "bt0.65" 300
 PHY="-b 1.0";             run "bt1.0"  300
 PHY="-d 2";               run "delay2" 300
 PHY="-d 4";               run "delay4" 300

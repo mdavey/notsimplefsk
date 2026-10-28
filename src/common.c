@@ -88,17 +88,42 @@ unsigned char nsfsk_prefix_sym(const nsfsk_params *p, unsigned i)
     return 0u;
 }
 
+/* Payload whitening: additive m-sequence scrambler on the data bits before
+ * NRZI.  Without it the payload statistics reach the wire verbatim: NRZI
+ * only inserts transitions on 1 bits, so constant data (0x00, 0xFF, a
+ * repeated byte, JPEG run tables) holds the dibit fixed and the TX emits
+ * one tone for hundreds of symbols -- measured: 640 zero bytes = 2560
+ * identical symbols, MtWellington.jpg max run 51.  Additive (local PN, not
+ * feedback of the transmitted bits) means zero error multiplication and
+ * bit-position determinism, which rx_core's header-first prefix decode
+ * requires: every nsfsk_symbols_to_data() call re-arms the PN exactly as
+ * the TX did at the start of the data section, both sides implicitly
+ * resyncing on the sync table.  PN = Fibonacci LFSR with primitive
+ * x^23 + x^18 + 1 (ADSL G.992 lineage, period verified 2^23-1), all-ones
+ * seed; the period exceeds the longest frame (1031 B), so one run of the
+ * sequence covers any payload and single-symbol runs are bounded by the
+ * m-sequence's own max run (~23 bits -> ~12 symbols). */
+#define PN_MASK 0x7fffffu
+#define PN_SEED 0x7fffffu
+
+static unsigned pn_bit(unsigned *reg)
+{
+    unsigned out = (*reg >> 22) & 1u;
+    *reg = ((*reg << 1) | (out ^ ((*reg >> 17) & 1u))) & PN_MASK;
+    return out;
+}
+
 void nsfsk_data_to_symbols(const uint8_t *data, unsigned nbytes,
                            unsigned char *sym)
 {
     unsigned nsym = 0, i;
-    unsigned e_prev = 0, acc = 0, nb = 0;
+    unsigned e_prev = 0, acc = 0, nb = 0, pn = PN_SEED;
 
     for (i = 0; i < nbytes; i++) {
         int b;
         for (b = 7; b >= 0; b--) {
             unsigned d = (data[i] >> b) & 1u;
-            unsigned e = e_prev ^ d;
+            unsigned e = e_prev ^ d ^ pn_bit(&pn);
             e_prev = e;
             acc = (acc << 1) | e;
             if (++nb == 2u) {
@@ -114,14 +139,14 @@ void nsfsk_symbols_to_data(const unsigned char *sym, unsigned nsym,
                            uint8_t *data)
 {
     unsigned nbyte = 0, i;
-    unsigned e_prev = 0, acc = 0, nbits = 0;
+    unsigned e_prev = 0, acc = 0, nbits = 0, pn = PN_SEED;
 
     for (i = 0; i < nsym; i++) {
         unsigned v = nsfsk_gray_inv[sym[i] & (NSFSK_M - 1u)];
         int b;
         for (b = 1; b >= 0; b--) {
             unsigned e = (v >> b) & 1u;
-            unsigned d = e ^ e_prev;
+            unsigned d = e ^ e_prev ^ pn_bit(&pn);
             e_prev = e;
             acc = (acc << 1) | d;
             if (++nbits == 8u) {

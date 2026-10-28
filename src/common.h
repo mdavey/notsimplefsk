@@ -22,13 +22,19 @@
  *
  * Frame (on the wire):
  *      [ preamble: 0,3,0,3,... x P ][ sync: 24-sym shift-distinguishing table ]
- *      [ Gray( NRZI( type | len_hi | len_lo | payload | crc32_be ) ) ]
+ *      [ Gray( NRZI( PN( type | len_hi | len_lo | payload | crc32_be ) ) ) ]
  *      [ pad: 0,3,... x nsfsk_tx_pad()  -- detector lag + RX LPF edge reach ]
  *
  *  - type  : 1 byte, arbitrary
  *  - len   : payload length, 16-bit big-endian, 0..NSFSK_MAX_PAYLOAD
  *  - crc32 : LIQUID_CRC_32 over type|len|payload, big-endian trailer
- *  - NRZI  : NRZ-M over the bit stream, MSB-first, state = 0 at first bit:
+ *  - PN    : additive whitening with a 2^23-1 m-sequence (x^23+x^18+1,
+ *            all-ones seed, re-armed per frame at the data section) so
+ *            payload runs (zeros, repeated bytes) never become single-tone
+ *            symbol runs on the wire; descramble = same local PN, no error
+ *            multiplication, prefix-deterministic for the header-first decode
+ *  - NRZI  : NRZ-M over the (whitened) bit stream, MSB-first, state = 0 at
+ *            first bit:
  *              enc[n] = enc[n-1] XOR data[n]   (transition on 1)
  *            cancels 180-degree phase flips of the CPM waveform
  *  - Gray  : dibit -> symbol index via gray(v) = v ^ (v>>1) = {0,1,3,2}
