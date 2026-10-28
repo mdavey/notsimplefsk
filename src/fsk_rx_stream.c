@@ -13,7 +13,9 @@
  *
  * Sample-rate ppm is handled per burst instead of globally: the same
  * coarse grid as offline ({0, +-300 .. +-1200}) plus a fine +-100/+-50
- * refinement, tried newest-winner-first with EARLY EXIT at the first
+ * cascade refinement (escalating to the remaining offline-grid points
+ * whenever a burst decoded nothing: garbage qn ranking, see
+ * decode_range), tried newest-winner-first with EARLY EXIT at the first
  * trial that decodes cleanly (ok>0, bad==0).  Clock drift between bursts
  * is absorbed by the per-burst MF/prefix re-alignment, so no whole-file
  * rescan (and no EOF) is ever needed.
@@ -234,12 +236,27 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
      * decoded elsewhere in the file; a lone long burst needs guaranteed
      * coverage: the true correction sits <= 150 ppm from one of the two
      * coarse neighbours, so probe both sides from the coarse winner */
-    if (!accepted)
+    if (!accepted) {
         for (unsigned f = 0; f < 6u && !accepted; f++) {
             static const double fine[6] = {-150.0, -100.0, -50.0,
                                            50.0, 100.0, 150.0};
             TRIAL(ppm_best + fine[f]);
         }
+        /* Nothing decoded anywhere: the qn ranking that recentred that
+         * fine sweep was garbage, so it may have probed around the wrong
+         * coarse winner (observed: a -100 ppm channel lost between the
+         * 0 and -300 coarse points while a garbage +800 winner ranked
+         * first).  The offline RX dropped adaptivity for exactly this
+         * reason (fsk_rx.c dense-grid comment); do the same here as an
+         * escalation -- the remaining offline-grid points give fixed
+         * coverage of the +-300 coarse gaps.  Cost is bounded and only
+         * paid by bursts that decoded nothing anyway. */
+        static const double esc[14] = { -250, -200, -150, -100, -50,
+                                        50, 100, 150, 200, 250,
+                                        450, -450, 1000, -1000 };
+        for (unsigned g = 0; g < 14u && !accepted; g++)
+            TRIAL(esc[g]);
+    }
 #undef TRIAL
 trials_done:
     X->last_ppm = ppm_best;

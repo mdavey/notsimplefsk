@@ -92,6 +92,10 @@ runrt rt10000 10000
 echo "== impairments =="
 run "ppm+1000" 1500 -r 1000 -s 3
 run "ppm-1000" 1500 -r -1000 -s 3
+# +-100 ppm sits between the 300-step coarse points: only full coverage
+# (winner-adjacent fine or the nothing-decoded escalation) finds it
+run "ppm+100"  1500 -r 100 -s 3
+run "ppm-100"  1500 -r -100 -s 3
 run "cfo+295"  1500 -f 295 -s 5
 run "cfo-295"  1500 -f -295 -s 5
 run "noise.01" 1500 -n 0.01 -s 7
