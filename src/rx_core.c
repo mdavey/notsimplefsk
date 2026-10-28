@@ -198,6 +198,27 @@ int nsfsk_rx_filter_slice(const nsfsk_params *p,
 }
 
 /* ==================== one detector pass over (possibly resampled) y === */
+/* Incoherent sub-window matched-filter alignment score of the template at
+ * y[n..n+tn), same metric as the burst search (et division omitted: only
+ * used for relative thresholds). */
+static float mf_score(const float complex *y, const float complex *tmpl,
+                      size_t n, unsigned sub, unsigned nwsub, float et,
+                      float complex *rr)
+{
+    float accm = 0.0f, e = 0.0f;
+    for (unsigned w = 0; w < nwsub; w++) {
+        float complex r = 0.0f;
+        for (unsigned t = w * sub; t < (w + 1u) * sub; t++) {
+            float yr = crealf(y[n + t]), yi = cimagf(y[n + t]);
+            r += tmpl[t] * (yr - I * yi);
+            e += yr * yr + yi * yi;
+        }
+        if (rr) rr[w] = r;
+        accm += cabsf(r);
+    }
+    return e > 0.0f ? (accm * accm) / (e * et) : 0.0f;
+}
+
 void rx_run(const float complex *y, size_t N, unsigned nf,
             const float complex *tmpl, float et,
             const nsfsk_params p, int verbose, unsigned reject_limit,
@@ -243,6 +264,14 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     float *cand_phi = malloc((size_t)D0 * sizeof(float));
     float *cand_a   = malloc((size_t)D0 * sizeof(float));
 
+    /* dn-sweep span (frame-start hypotheses around the MF peak) and the
+     * prefilter score array over it; see SWEEP_DN below */
+    const long  dn_lo  = -(long)(p.preamble * p.k + win + 2u * nf);
+    const long  dn_hi  = 4L * (long)p.k;
+    const size_t dn_span = (size_t)(dn_hi - dn_lo) + 1u;
+    float *dn_sc = malloc(dn_span * sizeof(float));
+    long   cnd[1024];
+
     int armed = 1;
     unsigned below = silence_arm;                /* start as if silent */
     unsigned rejects = 0;
@@ -272,23 +301,34 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         if (n_hi > N - tn) n_hi = N - tn;
         const unsigned nwsub = 8u;                 /* 4-symbol sub-windows: */
         const unsigned sub = tn / nwsub;           /* Dirichlet null at fs/sub */
+        /* MF scan stride: must stay under the SCORE-LOBE half width, which
+         * the periodic 0,3 preamble shrinks to ~k/5 samples at large h
+         * (h=1.0 k=20 measured: peak +-4, ripple plateau out to +-20 - a
+         * stride-8 grid aliased the real peak away and gate-skipped frame 1,
+         * 2026-10-28).  Widest safe power of two with MS/2 inside the lobe:
+         * MS = floor_pow2(k/4), capped at 8 for the large-k CFO case. */
+        unsigned MS = 1u;
+        while (MS < 8u && (MS << 1u) * 4u <= p.k) MS <<= 1u;
         size_t best_n = 0;
         float  best_sc = 0.0f;
         float complex best_rr[8], rr[8];
-        for (size_t n = n_lo; n + tn <= n_hi; n++) {
-            float accm = 0.0f, e = 0.0f;
-            for (unsigned w = 0; w < nwsub; w++) {
-                float complex r = 0.0f;
-                for (unsigned t = w * sub; t < (w + 1u) * sub; t++) {
-                    r += tmpl[t] * conjf(y[n + t]);
-                    e += cabsf(y[n + t]) * cabsf(y[n + t]);
-                }
-                rr[w] = r;
-                accm += cabsf(r);
+        {
+            /* strided scan + full-resolution refine bracketing the stride
+             * max: MS/2 stays inside the score lobe (rule above), so the
+             * stride max lands in the winning lobe and refine resolves
+             * the exact peak */
+            size_t nb = n_lo; float nbv = 0.0f;
+            for (size_t n = n_lo; n + tn <= n_hi; n += MS) {
+                float sc = mf_score(y, tmpl, n, sub, nwsub, et, NULL);
+                if (sc > nbv) { nbv = sc; nb = n; }
             }
-            float sc = (e > 0.0f) ? (accm * accm) / (e * et) : 0.0f;
-            if (sc > best_sc) { best_sc = sc; best_n = n;
-                                memcpy(best_rr, rr, sizeof rr); }
+            size_t r0 = (nb > n_lo + MS / 2u) ? nb - MS / 2u : n_lo;
+            size_t r1 = nb + MS / 2u;
+            for (size_t n = r0; n + tn <= n_hi && n <= r1; n++) {
+                float sc = mf_score(y, tmpl, n, sub, nwsub, et, rr);
+                if (sc > best_sc) { best_sc = sc; best_n = n;
+                                    memcpy(best_rr, rr, sizeof rr); }
+            }
         }
         if (verbose > 1)
             fprintf(stderr, "rx: mf best_n=%zu score=%.3f cfo_stage0\n",
@@ -323,8 +363,85 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         }
         const float cgmax = (float)p.rate / (8.0f * (float)p.k);
         long s0_ref = (long)best_n - (long)(NSFSK_TMPL_SYM0(p) * p.k);
-        for (long dn = -(long)(p.preamble * p.k + win + 2u * nf);
-             dn <= (long)(4 * p.k); dn++) {
+        /* --- MF-prefilter the sample-granular dn sweep ---
+         * every dn that can be the frame start has its template window
+         * (s0 + SYM0*k) at best_n + dn, and a REAL start scores near the
+         * span best even under CFO/ISI (the 4-symbol sub-windows stay
+         * coherent for any in-tolerance offset).  Evaluating the prefix on
+         * all span (~15k) offsets cost O(span*k) per ppm trial - seconds at
+         * k=160, starving the live decoder (acoustic session 2026-10-28);
+         * strided NMS peaks >= 40% of the span best, expanded by
+         * +-MS/2+4 samples each, reproduce the full sweep's winner at
+         * ~50-100x less work. */
+        float scb = 0.0f;
+        size_t ns = 0;
+        for (long d = 0; dn_lo + d <= dn_hi; d += (long)MS, ns++) {
+            long npos = (long)best_n + dn_lo + d;
+            dn_sc[ns] = (npos >= 0 && (size_t)npos + tn <= N)
+                      ? mf_score(y, tmpl, (size_t)npos, sub, nwsub, et, NULL)
+                      : 0.0f;
+            if (dn_sc[ns] > scb) scb = dn_sc[ns];
+        }
+        unsigned ncnd = 0;
+        size_t npk_dbg = 0;
+        if (scb > 0.0f) {
+            const float thr = 0.4f * scb;
+            long wq = (long)p.k / (2L * (long)MS); if (wq < 1) wq = 1;
+            long pk[64]; size_t npk = 0;   /* npk mirrored to npk_dbg below */
+            for (size_t js = 0; js < ns; js++) {
+                if (dn_sc[js] < thr) continue;
+                long q0 = (long)js > wq ? (long)js - wq : 0;
+                long q1 = (long)js + wq + 1 < (long)ns
+                        ? (long)js + wq + 1 : (long)ns;
+                int ismax = 1;
+                for (long q = q0; q < q1; q++)
+                    if (dn_sc[q] > dn_sc[js]) { ismax = 0; break; }
+                if (!ismax) continue;
+                if (npk < 64u) pk[npk++] = (long)js;
+                else {                       /* evict current worst */
+                    unsigned mi = 0;
+                    for (unsigned q = 1; q < 64u; q++)
+                        if (dn_sc[pk[q]] < dn_sc[pk[mi]]) mi = q;
+                    if (dn_sc[js] > dn_sc[pk[mi]]) pk[mi] = (long)js;
+                }
+            }
+            for (size_t a = 1; a < npk; a++) {      /* best score first:
+                tightens the mis-prune inside the sweep */
+                long kj = pk[a]; float kv = dn_sc[kj]; size_t t = a;
+                while (t > 0 && dn_sc[pk[t - 1u]] < kv) { pk[t] = pk[t-1u]; t--; }
+                pk[t] = kj;
+            }
+            const long W = (long)MS / 2 + 4;       /* stride max is within
+                MS/2 of the true peak; a few extra for prefix-vs-MF skew */
+            for (size_t a = 0; a < npk; a++)
+                for (long d = pk[a] * (long)MS - W; d <= pk[a] * (long)MS + W; d++) {
+                    if (d < 0 || (unsigned long)d >= dn_span || ncnd >= 1024u)
+                        continue;
+                    int dup = 0;
+                    for (unsigned q = 0; q < ncnd; q++)
+                        if (cnd[q] == d) { dup = 1; break; }
+                    if (!dup) cnd[ncnd++] = d;
+                }
+            /* scan in ASCENDING dn: the original full sweep resolved
+             * equal-mis ties toward the SMALLEST dn (bank updates only on
+             * strict <, non-bank on a higher calibrated scale).  Score-first
+             * ordering flips those ties onto periodic-ridge impostors:
+             * mis=0 against the periodic preamble, data-section garbage
+             * (h1.0 battery pin, 2026-10-28). */
+            for (unsigned a = 1; a < ncnd; a++) {
+                long kj = cnd[a]; unsigned t = a;
+                while (t > 0 && cnd[t - 1u] > cnd[t]) { cnd[t] = cnd[t-1u]; t--; }
+                cnd[t] = kj;
+            }
+            npk_dbg = npk;
+        }
+        unsigned nswp = ncnd ? ncnd : dn_span;
+        if (verbose > 1)
+            fprintf(stderr, "rx: dn prefilter span=%zu stride=%u scb=%.3f "
+                    "npk=%zu ncnd=%u best_n=%zu\n",
+                    dn_span, MS, scb, npk_dbg, ncnd, best_n);
+        for (unsigned si = 0; si < nswp; si++) {
+            long dn = ncnd ? dn_lo + cnd[si] : dn_lo + (long)si;
             long s0c = s0_ref + dn;      /* sample-granular sweep: the MF
                                           * peak need not sit on a symbol
                                           * boundary under noise */
@@ -336,9 +453,16 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                     /* magnitude decisions need no scale/CFO calibration:
                      * just count prefix mismatches.  Prune once mis can
                      * no longer beat best (wrong alignments give away
-                     * themselves within a few symbols). */
+                     * themselves within a few symbols).  Scan from the
+                     * sync-table END backwards: the preamble half of the
+                     * prefix is 0,3-periodic and matches wrong dn/lag
+                     * shifts for dozens of symbols, so a forward scan
+                     * pays the full prefix per candidate (k=160 acoustic
+                     * profile, 2026-10-28); the shift-distinguishing
+                     * sync rejects losers within ~8 decisions. */
                     unsigned mis = 0, tot = 0;
-                    for (unsigned w = NSFSK_TMPL_SYM0(p); w < D0; w++) {
+                    for (unsigned wi = D0 - NSFSK_TMPL_SYM0(p); wi-- > 0u; ) {
+                        unsigned w = NSFSK_TMPL_SYM0(p) + wi;
                         unsigned s = bank_decide(y, N,
                             (double)s0c + (double)(w + lg) * (double)p.k,
                             p.k, bank_e, NULL);
@@ -550,5 +674,5 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     }
 
     free(prof); free(wire); free(msg);
-    free(cand_phi); free(cand_a);
+    free(cand_phi); free(cand_a); free(dn_sc);
 }
