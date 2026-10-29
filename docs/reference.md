@@ -12,10 +12,11 @@ programs compose in pipelines. RX PHY options must match the TX exactly.
 ## Build
 
     make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel}
-    make test       # full regression battery (tests/roundtrip.sh + tests/stream.sh,
-                    # ~130 cases)
+    make test       # fast gate: roundtrip.sh + stream.sh + channel_selftest.py
+    make stress     # realistic impairment/PHY matrix (quick, opt-in)
+    make stress-full # full matrix, 4 seeds (long; use --update-baseline)
 
-Requires libliquid >= 1.6 (`-lliquid`).
+Requires libliquid >= 1.6 (`-lliquid`) and python3 for the stress harness.
 
 ## Quick start
 
@@ -118,7 +119,80 @@ phase-advance detector only, now bypassed by the tone bank.
 Envelope note (probe-verified with 1024-byte frames): every PAIR of
 {ppm +-300, CFO 100, noise 0.01, gain} passes; stacking ppm+CFO+noise on
 top of a signal pulled to -24 dBFS fails (offline RX fails it too — it is
-a decoder envelope limit, not a streaming regression).
+a decoder envelope limit, not a streaming regression).  The stress matrix
+below covers multipath, fading, reverb, AGC, dropouts, colored/burst noise,
+band-limiting, quantisation and longer clock drift; `tests/stress_baseline.json`
+is the authoritative record of what the current RX actually achieves.
+
+## Stress / impairment testing
+
+`tests/stress.py` is a reproducibility-first matrix over PHY profiles and
+channel impairments.  It is deliberately opt-in: `make test` stays the fast
+commit gate, while `make stress` runs the curated quick matrix and
+`make stress-full` runs every profile x scenario x 4 fixed seeds.
+
+    make stress                 # quick, ~1-2 min
+    make stress-full            # full, ~6 min on a 20-core machine
+    python3 tests/stress.py --list
+    python3 tests/stress.py --quick --offline --filter 'p0-default/rayleigh'
+    python3 tests/stress.py --full --strict          # XFAIL/NEW are failures
+    python3 tests/stress.py --full --paced           # extra 5x-real-time pipe feeds
+    python3 tests/stress.py --full --update-baseline # after reviewing results
+
+Every case is `TX -> channel -> RX` and both receivers are exercised by
+default.  Payloads are deterministic, frames are matched in order, and the
+result rejects corrupt, phantom, duplicate, reordered, truncated, timed-out
+and crashed output.  Mild deterministic scenarios are gated: every frame must
+arrive.  Stochastic cases are compared against `tests/stress_baseline.json`
+(per-seed frame counts); known-bad cases are reported as XFAIL, and a case
+that gets worse than its baseline is FAIL.  Missing baseline entries are NEW;
+`--update-baseline` requires `--full` and refuses to write if any gated case
+fails.  Hard and gated failures save the payload/audio/decoded streams and
+exact commands in a printed temp directory; use `--keep-failures DIR` to keep
+XFAIL/regression artifacts too and to choose the directory.
+
+Most XFAILs in the current baseline are stochastic cases (Rayleigh,
+frequency-selective fading, diffuse reverb, strong interference) where the
+current envelope simply loses frames; the baseline records the expected count.
+Two specific hard failures are also tracked as XFAIL because the RX is
+deliberately not changed in this step: the offline receiver can merge one
+frame from two ppm trials and emit it twice at `k=40` with a sub-symbol echo,
+and at `k=160` with noise.  Reproduce with:
+
+    python3 tests/stress.py --filter 'p2-robust/echo-0.1ms' --keep-failures /tmp/p2
+    python3 tests/stress.py --filter 'p4-acoustic/p4-dup-awgn25' --keep-failures /tmp/p4
+
+`tests/channel.c` now models a fuller audio path (short options remain
+backward-compatible):
+
+    --multipath MS:DB[,MS:DB...]      static echoes (optional :PHASE_DEG)
+    --reverb RT60:WET_DB              direct + diffuse room tail
+    --fade-doppler HZ                 flat/frequency-selective fading
+    --fade-rician K_DB                Rician K on the direct tap
+    --fade-spread MS --fade-taps N    exponential power-delay profile
+    --snr-db DB                       wideband SNR from active-signal RMS
+    --noise-color white|pink|brown
+    --bandpass LO:HI                  fourth-order Butterworth
+    --hum HZ:DBFS  --tone HZ:DBFS     electrical hum / in-band interferer
+    --clicks RATE:AMP_DBFS:DECAY_MS
+    --bursts RATE:LEN_MS:AMP_DBFS
+    --dropouts RATE:LEN_MS:MODE       Poisson zero/drop
+    --drop-at MS:LEN_MS[:MODE]        deterministic dropout
+    --gain-steps MS:DB[,MS:DB...]     level steps
+    --ppm-ramp START:END              linear clock drift
+    --agc TARGET_DBFS:ATTACK_MS:RELEASE_MS[:MAX_GAIN_DB]
+    --soft-clip DRIVE --quantize BITS --dc OFFSET
+    --report                          measured RMS/SNR/fade/clip stats
+
+`--snr-db` is wideband (full-Nyquist) SNR referenced to the active signal RMS
+at the noise-injection point; the in-band detector SNR is higher because the
+RX low-pass removes out-of-band noise.  All stochastic parts are seeded by
+`-s`; the same command gives byte-identical output.
+
+Real captures can be added under `tests/fixtures/<name>/`: `case.json`
+(`phy`, `rate`, `rx`, `expect=all|subsequence|none`, `min_frames`,
+`timeout_s`), `audio.raw` (s16le mono; `.raw` is used because `.gitignore`
+excludes `*.s16`), and `payload.bin`.  No fixtures are checked in.
 
 ## Streaming reception (fsk_rx_stream)
 
@@ -187,10 +261,14 @@ Full rationale lives in the source comments; the load-bearing facts:
     src/fsk_rx_stream.c live receiver (arecord | ...) + energy gate
     tests/roundtrip.sh regression battery (make test)
     tests/stream.sh    streaming regression battery (make test)
+    tests/channel_selftest.py fast channel property tests (make test)
+    tests/stress.py    impairment/PHY matrix + baseline (make stress)
+    tests/stress_baseline.json checked-in per-seed frame counts (XFAIL tracking)
+    tests/fixtures/    optional real-capture fixtures (none checked in)
     tests/stream_loopback.sh manual audio-device e2e (NOT in make test)
-    tests/channel.c    impairment simulator: -d int delay, -D fractional,
-                       -r ppm, -g dB gain, -f Hz CFO (Hilbert SSB), -n sigma
-                       AWGN, -s seed, -R rate
+    tests/channel.c    impairment simulator: old short flags plus multipath,
+                       reverb, fading, colored/burst noise, bandpass, AGC,
+                       dropouts, clock ramp, quantisation, report
     tests/modem_smoke.c baseband loopback BER sanity check
     tests/probe_lpf.c  LPF config sweep diagnostic
     tests/probe12.c    per-symbol differential phase dump (RX debugging)

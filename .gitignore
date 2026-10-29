@@ -3,3 +3,4 @@ bin/
 *.s16
 *.s16le
 __pycache__/
+tests/.stress-failures/

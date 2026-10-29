@@ -33,6 +33,14 @@ $(BINDIR)/channel: tests/channel.c | $(BINDIR)
 test: all
 	sh tests/roundtrip.sh
 	sh tests/stream.sh
+	python3 tests/channel_selftest.py
+
+# realistic impairment/PHY matrix; opt-in because it is much slower than test
+stress: all
+	python3 tests/stress.py --quick
+
+stress-full: all
+	python3 tests/stress.py --full
 
 # manual aplay/arecord loopback (needs a working audio path, not in test)
 loopback: all
@@ -45,4 +53,4 @@ acoustic: all
 clean:
 	rm -rf $(BINDIR)
 
-.PHONY: all test loopback acoustic clean
+.PHONY: all test stress stress-full loopback acoustic clean
