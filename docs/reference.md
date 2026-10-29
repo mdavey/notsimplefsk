@@ -13,7 +13,7 @@ programs compose in pipelines. RX PHY options must match the TX exactly.
 
     make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel}
     make test       # fast gate: roundtrip.sh + stream.sh + channel_selftest.py
-                    #            + rx_speed.sh (1 KB pathological RX cases)
+                    #            + rx_speed.sh (pathological + live-noise RX)
     make stress     # realistic impairment/PHY matrix (quick, opt-in)
     make stress-full # full matrix, 4 seeds (long; use --update-baseline)
     make speed-full # opt-in 8 KB pathological RX timing case
@@ -170,6 +170,11 @@ so sparse-frame stochastic/ppm-ramp cases keep their baseline.  The 1 KB
 pathological cases run in single-digit or low-tens of seconds; the full
 8 KB p2 case is opt-in via `make speed-full`.
 
+`rx_speed.sh` also has a live-readiness case: 5 s of full-scale random noise
+followed by a 40 ms gap and one 1024-byte p1-highrate frame, fed strictly at
+1x.  The stream RX must decode that packet and finish within the feed
+duration plus a small margin, proving it does not fall behind on pure noise.
+
 `tests/channel.c` now models a fuller audio path (short options remain
 backward-compatible):
 
@@ -270,7 +275,7 @@ Full rationale lives in the source comments; the load-bearing facts:
     tests/roundtrip.sh regression battery (make test)
     tests/stream.sh    streaming regression battery (make test)
     tests/channel_selftest.py fast channel property tests (make test)
-    tests/rx_speed.sh  offline no-decode runtime/acquisition checks (make test)
+    tests/rx_speed.sh  offline no-decode + live-noise RX checks (make test)
     tests/stress.py    impairment/PHY matrix + baseline (make stress)
     tests/stress_baseline.json checked-in per-seed frame counts (XFAIL tracking)
     tests/fixtures/    optional real-capture fixtures (none checked in)

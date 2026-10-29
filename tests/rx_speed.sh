@@ -25,6 +25,18 @@ pay() {
         BEGIN{srand(s);for(i=0;i<n;i++)printf "%c",int(rand()*256)}'
 }
 
+# feed_rt1 <file> : strict 1x producer (0.5 s audio per 0.5 s), like a live RF
+# capture.  If the decoder falls behind, the pipe backpressures and the total
+# wall time stretches past the audio duration.
+feed_rt1() {
+    total=$(stat -c%s "$1"); n=0
+    while [ $((n * 48000)) -lt "$total" ]; do
+        dd if="$1" bs=48000 skip=$n count=1 2>/dev/null
+        n=$((n+1))
+        sleep 0.5
+    done
+}
+
 # run_speed <name> <nbytes> <max_acq> <timeout_s> [channel args...]
 # Cases 1-4 do not require a particular decode result (the stress baseline
 # owns that); they require a bounded run and bounded acquisition work.
@@ -94,6 +106,27 @@ if [ "$rc" -eq 0 ] && cmp -s "$TMP/p" "$TMP/o" && [ "$acq" -le 128 ]; then
     echo "PASS garbage-then-valid (acq=$acq, $((t1-t0))s)"
 else
     echo "FAIL garbage-then-valid (rc=$rc acq=$acq, got $(stat -c%s "$TMP/o")B)"
+    tail -3 "$TMP/rxe" | sed 's/^/    /'
+    FAILS=$((FAILS+1))
+fi
+
+echo "== live random noise then one packet (p1, high baud) =="
+PHY1="-r 48000 -c 8000 -k 16 -H 0.25 -b 0.8 -d 1 -P 72"
+pay 1024 "live-noise-packet" > "$TMP/p"
+$TX $PHY1 -g -12 < "$TMP/p" > "$TMP/frame" 2>/dev/null
+head -c $((48000 * 2 * 5)) /dev/urandom > "$TMP/noise"
+head -c 3840 /dev/zero > "$TMP/gap"
+cat "$TMP/noise" "$TMP/gap" "$TMP/frame" > "$TMP/in"
+feedsec=$(( $(stat -c%s "$TMP/in") / 96000 ))
+t0=$(date +%s)
+( feed_rt1 "$TMP/in" | timeout 60 $RX $PHY1 > "$TMP/o" 2>"$TMP/rxe" )
+rc=$?
+t1=$(date +%s)
+el=$((t1-t0))
+if [ "$rc" -eq 0 ] && cmp -s "$TMP/p" "$TMP/o" && [ "$el" -le $((feedsec + 4)) ]; then
+    echo "PASS live-noise-packet (${el}s/${feedsec}s audio, $(stat -c%s "$TMP/o")B)"
+else
+    echo "FAIL live-noise-packet (rc=$rc ${el}s/${feedsec}s, got $(stat -c%s "$TMP/o")B)"
     tail -3 "$TMP/rxe" | sed 's/^/    /'
     FAILS=$((FAILS+1))
 fi
