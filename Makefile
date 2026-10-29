@@ -41,6 +41,7 @@ test: all
 	sh tests/stream.sh
 	python3 tests/channel_selftest.py
 	sh tests/rx_speed.sh
+	sh tests/rx_noise_lead.sh
 
 # realistic impairment/PHY matrix; opt-in because it is much slower than test
 stress: all
@@ -53,6 +54,10 @@ stress-full: all
 speed-full: all
 	RX_SPEED_FULL=1 sh tests/rx_speed.sh
 
+# noise lead-in acquisition battery (fsk_rx + fsk_rx_stream, 100 ms..10 s)
+noise-lead: all
+	sh tests/rx_noise_lead.sh
+
 # manual aplay/arecord loopback (needs a working audio path, not in test)
 loopback: all
 	sh tests/stream_loopback.sh
@@ -64,4 +69,4 @@ acoustic: all
 clean:
 	rm -rf $(BINDIR)
 
-.PHONY: all test stress stress-full speed-full loopback acoustic clean
+.PHONY: all test stress stress-full speed-full noise-lead loopback acoustic clean
