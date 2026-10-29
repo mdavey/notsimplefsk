@@ -17,13 +17,13 @@ BIN_DIR = Path(__file__).resolve().parent.parent / "bin"
 RATES = ["8000", "16000", "48000", "96000"]
 
 DEFAULTS = {
-    "gain": "-12",
+    "gain": "-3",
     "rate": "48000",
     "fc": "4000",
     "k": "20",
-    "h": "0.25",
+    "h": "0.5",
     "bt": "0.8",
-    "delay": "1",
+    "delay": "4",
     "preamble": "72",
     "fec": "32",
 }
