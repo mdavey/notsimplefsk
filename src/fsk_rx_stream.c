@@ -225,14 +225,14 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
         rx_result cur = {0};                                              \
         if (ppm_ == 0.0) {                                                \
             rx_run(X->y, n, X->nf, X->tmpl, X->et, X->p, vb,              \
-                   STREAM_REJECT_LIMIT, &cur);                            \
+                   STREAM_REJECT_LIMIT, 0u, 0u, &cur);                    \
         } else {                                                          \
             size_t N2;                                                    \
             float complex *y2 =                                           \
                 resample_lin(X->y, n, 1.0 + ppm_ * 1e-6, &N2);            \
             if (y2 != NULL) {                                             \
                 rx_run(y2, N2, X->nf, X->tmpl, X->et, X->p, vb,           \
-                       STREAM_REJECT_LIMIT, &cur);                        \
+                       STREAM_REJECT_LIMIT, 0u, 0u, &cur);                \
                 free(y2);                                                 \
             }                                                             \
         }                                                                 \

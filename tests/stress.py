@@ -105,8 +105,7 @@ SCENARIOS = {
     "ppm-ramp": dict(channel=["--ppm-ramp", "-300:300"], payload=3000,
                      tx_gain=-12, gated=False, quick=True, tolerance=0),
     "echo-0.1ms": dict(channel=["--multipath", "0:0,0.1:-6"], payload=3000,
-                       tx_gain=-20, gated=True, quick=True,
-                       known_hard_phys=["p2-robust"]),
+                       tx_gain=-20, gated=True, quick=True),
     "echo-1ms-20": dict(channel=["--multipath", "0:0,1:-20"], payload=3000,
                         tx_gain=-20, gated=True, quick=True),
     "bp-dc-hum": dict(channel=["--bandpass", "200:8000", "--dc", "0.02",
@@ -126,6 +125,9 @@ SCENARIOS = {
                      quick=False, split=4096, gap_s=2.0,
                      phys=["p0-default", "p3-tonebank", "p5-rcos"],
                      timeout=300),
+    "many-one-byte": dict(channel=["-r", "300", "--snr-db", "25"],
+                          payload=520, frame_size=1, tx_gain=-12, gated=True,
+                          quick=False, phys=["p0-default"], timeout=180),
 
     # ---- deterministic but outside the current RX envelope (XFAIL) ----
     "echo-1ms-6": dict(channel=["--multipath", "0:0,1:-6"], payload=3000,
@@ -171,12 +173,11 @@ SCENARIOS = {
                      tolerance=1),
     "low-snr12": dict(channel=["--snr-db", "12"], payload=8192, tx_gain=-12,
                       gated=False, quick=True, tolerance=1),
-    # Known offline RX issue (not fixed in this step): at k=160 with noise,
-    # fsk_rx can merge the same frame from two ppm trials and emit it twice.
+    # Cross-trial merge regression: two identical-looking frames at k=160
+    # under noise.  Gated now that the derived merge window is in place.
     "p4-dup-awgn25": dict(channel=["--snr-db", "25"], payload=1536,
-                          tx_gain=-12, gated=False, quick=True,
-                          phys=["p4-acoustic"], tolerance=0,
-                          known_hard=True, no_cap=True),
+                          tx_gain=-12, gated=True, quick=True,
+                          phys=["p4-acoustic"], tolerance=0, no_cap=True),
     "realistic-acoustic": dict(
         channel=["--bandpass", "200:4000", "--multipath", "1:-6,5:-12",
                  "--fade-doppler", "2", "--fade-rician", "12",
@@ -223,6 +224,19 @@ def make_payload(n, key):
 
 def split_frames(payload):
     return [payload[i:i + 1024] for i in range(0, len(payload), 1024)]
+
+
+def expected_frames_for(phy, scenario, payload):
+    """TX frame layout for a scenario (normal 1024-B chunks, split gap, or
+    frame_size one-frame-per-part)."""
+    fs = scenario.get("frame_size")
+    if fs:
+        return [payload[i:i + int(fs)]
+                for i in range(0, len(payload), int(fs))]
+    if scenario.get("split"):
+        cut = int(scenario["split"])
+        return split_frames(payload[:cut]) + split_frames(payload[cut:])
+    return split_frames(payload)
 
 
 def payload_size_for(phy, scenario):
@@ -348,10 +362,14 @@ def run_task(task, ctx):
     artifacts = {}
     commands = {}
 
-    parts = [payload]
-    if sc.get("split"):
-        cut = int(sc["split"])
-        parts = [payload[:cut], payload[cut:]]
+    fs = int(sc.get("frame_size", 0))
+    if fs:
+        parts = [payload[i:i + fs] for i in range(0, len(payload), fs)]
+    else:
+        parts = [payload]
+        if sc.get("split"):
+            cut = int(sc["split"])
+            parts = [payload[:cut], payload[cut:]]
     expected_frames = []
     audio_parts = []
     for pi, part in enumerate(parts):
@@ -368,6 +386,9 @@ def run_task(task, ctx):
 
     if len(audio_parts) == 1:
         tx_audio = audio_parts[0]
+    elif fs:
+        gap = phy_rate(phy_id) // 25          # 40 ms between one-byte frames
+        tx_audio = (b"\x00" * (2 * gap)).join(audio_parts)
     else:
         gap = int(sc.get("gap_s", 0.0) * phy_rate(phy_id))
         tx_audio = audio_parts[0] + b"\x00" * (2 * gap) + audio_parts[1]
@@ -556,8 +577,10 @@ def classify_results(raw, ctx):
                 results.append(dict(
                     key=key, phy=phy, scenario=scenario, mode=mode, seed=seed,
                     status="FAIL", reason=item["error"], hard=True,
-                    delivered=0, total=len(split_frames(make_payload(nbytes,
-                        "%s/%s/%d/%d" % (phy, scenario, seed, nbytes)))),
+                    delivered=0,
+                    total=len(expected_frames_for(phy, sc, make_payload(
+                        nbytes, "%s/%s/%d/%d" %
+                        (phy, scenario, seed, nbytes)))),
                     commands=item.get("commands", {}),
                     artifacts=item.get("artifacts", {})))
             continue

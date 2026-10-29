@@ -37,6 +37,7 @@ typedef struct { size_t s0, off; unsigned len; } rx_frame;
 typedef struct {
     unsigned char *buf; size_t cap, nbytes;
     unsigned ok, bad; double qual; size_t ndec;
+    unsigned acq;              /* expensive candidate acquisitions */
     rx_frame *fr; unsigned nfr, fr_cap;
     /* -vv diagnostics: per-symbol bank quality of the last decoded frame */
     float dbg_q[4200]; unsigned dbg_n;
@@ -70,10 +71,16 @@ int nsfsk_rx_filter_slice(const nsfsk_params *p,
  * reject_limit caps consecutive-ish prefix-misrejects (a mid-join garbage
  * burst otherwise costs a full MF+prefix sweep every 4k samples); at the
  * cap the pass disarms and idles to the next gap, so a later real frame
- * in the same window still decodes.  0 = unlimited (offline RX). */
+ * in the same window still decodes.
+ * max_acq_total caps expensive acquisitions per pass (0 = unlimited); the
+ * allowance grows by 8 per CRC-good frame so a productive pass can finish.
+ * max_acq_burst caps acquisitions in one energy burst; at the cap the pass
+ * idles to the next silence and re-arms, preserving a real frame after a
+ * garbage burst while stopping repeated dips in a continuous tone/reverb. */
 void rx_run(const float complex *y, size_t N, unsigned nf,
             const float complex *tmpl, float et,
             const nsfsk_params p, int verbose, unsigned reject_limit,
+            unsigned max_acq_total, unsigned max_acq_burst,
             rx_result *R);
 
 #endif /* NSFSK_RX_CORE_H */

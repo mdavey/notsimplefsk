@@ -34,6 +34,7 @@ test: all
 	sh tests/roundtrip.sh
 	sh tests/stream.sh
 	python3 tests/channel_selftest.py
+	sh tests/rx_speed.sh
 
 # realistic impairment/PHY matrix; opt-in because it is much slower than test
 stress: all
@@ -41,6 +42,10 @@ stress: all
 
 stress-full: all
 	python3 tests/stress.py --full
+
+# full offline RX timing checks, including the 8 KB pathological case
+speed-full: all
+	RX_SPEED_FULL=1 sh tests/rx_speed.sh
 
 # manual aplay/arecord loopback (needs a working audio path, not in test)
 loopback: all
@@ -53,4 +58,4 @@ acoustic: all
 clean:
 	rm -rf $(BINDIR)
 
-.PHONY: all test stress stress-full loopback acoustic clean
+.PHONY: all test stress stress-full speed-full loopback acoustic clean

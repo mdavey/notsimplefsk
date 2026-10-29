@@ -13,8 +13,10 @@ programs compose in pipelines. RX PHY options must match the TX exactly.
 
     make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel}
     make test       # fast gate: roundtrip.sh + stream.sh + channel_selftest.py
+                    #            + rx_speed.sh (1 KB pathological RX cases)
     make stress     # realistic impairment/PHY matrix (quick, opt-in)
     make stress-full # full matrix, 4 seeds (long; use --update-baseline)
+    make speed-full # opt-in 8 KB pathological RX timing case
 
 Requires libliquid >= 1.6 (`-lliquid`) and python3 for the stress harness.
 
@@ -154,13 +156,19 @@ XFAIL/regression artifacts too and to choose the directory.
 Most XFAILs in the current baseline are stochastic cases (Rayleigh,
 frequency-selective fading, diffuse reverb, strong interference) where the
 current envelope simply loses frames; the baseline records the expected count.
-Two specific hard failures are also tracked as XFAIL because the RX is
-deliberately not changed in this step: the offline receiver can merge one
-frame from two ppm trials and emit it twice at `k=40` with a sub-symbol echo,
-and at `k=160` with noise.  Reproduce with:
+The old p2/p4 cross-trial duplicate cases are now gated regressions: the merge
+window is derived from the lag sweep and capped at 25% of the minimum legal
+frame spacing, so copies of one frame collapse while adjacent identical frames
+remain distinct (`-v` reports the merge tolerance and suppressed copies).
 
-    python3 tests/stress.py --filter 'p2-robust/echo-0.1ms' --keep-failures /tmp/p2
-    python3 tests/stress.py --filter 'p4-acoustic/p4-dup-awgn25' --keep-failures /tmp/p4
+Offline no-decode work is bounded by a per-burst and per-trial acquisition
+budget (`src/fsk_rx.c`; `-v` prints `acq=` per trial).  A continuous tone,
+fade or reverb tail cannot trigger dozens of MF/prefix sweeps; a real frame
+after the normal 40 ms gap re-arms the gate.  The budget is applied to
+expensive `k >= 32` sweeps; lower-k sweeps are cheap and are left uncapped
+so sparse-frame stochastic/ppm-ramp cases keep their baseline.  The 1 KB
+pathological cases run in single-digit or low-tens of seconds; the full
+8 KB p2 case is opt-in via `make speed-full`.
 
 `tests/channel.c` now models a fuller audio path (short options remain
 backward-compatible):
@@ -262,6 +270,7 @@ Full rationale lives in the source comments; the load-bearing facts:
     tests/roundtrip.sh regression battery (make test)
     tests/stream.sh    streaming regression battery (make test)
     tests/channel_selftest.py fast channel property tests (make test)
+    tests/rx_speed.sh  offline no-decode runtime/acquisition checks (make test)
     tests/stress.py    impairment/PHY matrix + baseline (make stress)
     tests/stress_baseline.json checked-in per-seed frame counts (XFAIL tracking)
     tests/fixtures/    optional real-capture fixtures (none checked in)

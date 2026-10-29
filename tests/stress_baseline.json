@@ -1008,6 +1008,62 @@
    "tolerance": 1,
    "total": 8
   },
+  "p0-default/many-one-byte/off/s1/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/off/s2/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/off/s3/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/off/s4/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/stream/s1/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/stream/s2/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/stream/s3/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
+  "p0-default/many-one-byte/stream/s4/b520": {
+   "frames": 520,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 520
+  },
   "p0-default/ppm+1000/off/s1/b3000": {
    "frames": 3,
    "known_hard": false,
@@ -4033,58 +4089,58 @@
    "total": 1
   },
   "p2-robust/echo-0.1ms/off/s1/b3000": {
-   "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "frames": 3,
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/off/s2/b3000": {
-   "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "frames": 3,
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/off/s3/b3000": {
-   "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "frames": 3,
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/off/s4/b3000": {
-   "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "frames": 3,
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/stream/s1/b3000": {
    "frames": 3,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/stream/s2/b3000": {
    "frames": 3,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/stream/s3/b3000": {
    "frames": 3,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
   "p2-robust/echo-0.1ms/stream/s4/b3000": {
    "frames": 3,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 3
   },
@@ -7450,57 +7506,57 @@
   },
   "p4-acoustic/p4-dup-awgn25/off/s1/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/off/s2/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/off/s3/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/off/s4/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/stream/s1/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/stream/s2/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/stream/s3/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
   "p4-acoustic/p4-dup-awgn25/stream/s4/b1536": {
    "frames": 2,
-   "known_hard": true,
-   "mode": "xfail",
+   "known_hard": false,
+   "mode": "gate",
    "tolerance": 0,
    "total": 2
   },
@@ -16521,9 +16577,9 @@
    "total": 3
   }
  },
- "generated": "2026-10-29T19:20:43+1100",
- "git_commit": "8188827",
- "matrix_hash": "af9a80ff52ed8bc9cccf36d596f4d18a99eaf783341b4d8d0de47b36f7debcc9",
+ "generated": "2026-10-29T21:14:03+1100",
+ "git_commit": "649fa4b",
+ "matrix_hash": "9dba81f215dc93a246e94b8c512399bae16a4e305922c060ea6fcbde20182d28",
  "schema": 1,
  "suite": "stress-v1"
 }

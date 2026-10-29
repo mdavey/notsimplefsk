@@ -22,6 +22,57 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Offline acquisition budget: a continuous undecodable burst (tone, fading,
+ * reverb) otherwise triggers a full MF/prefix sweep after every energy dip.
+ * Calibrated against roundtrip/stream and the p2 pathological cases:
+ *  - valid single frames need up to 3 acquisitions (periodic preamble lobes);
+ *    some noisy/multipath valid frames need 4 within a burst,
+ *  - a garbage burst can use 4 before the 40 ms gap, then the real frame 1,
+ *  - no-decode p2 tone/fading trials used 38-64 acquisitions without a cap.
+ * Keep the old reject_limit (64): lowering it breaks valid alignments before
+ * the acquisition cap can do its job. */
+#define OFFLINE_REJECT_LIMIT   64u
+#define OFFLINE_MAX_ACQ_TOTAL  5u
+#define OFFLINE_MAX_ACQ_BURST  4u
+/* The budget is only needed for expensive (large-k) sweeps.  At k<=24 a
+ * full no-decode trial costs a fraction of a second even with many
+ * acquisitions, and capping it regresses stochastic/ppm-ramp baselines
+ * (e.g. p0 rayleigh-fd1 needs >8 acquisitions before its first good frame). */
+#define OFFLINE_CAP_MIN_K      32u
+
+static unsigned env_cap(const char *name, unsigned def)
+{
+    const char *s = getenv(name);
+    char *end = NULL;
+    unsigned long v;
+    if (s == NULL || *s == '\0') return def;
+    v = strtoul(s, &end, 0);
+    if (end == s || *end != '\0' || v > 1000000UL) {
+        fprintf(stderr, "rx: bad %s '%s' (using %u)\n", name, s, def);
+        return def;
+    }
+    return (unsigned)v;
+}
+
+/* Cross-trial merge window.  Copies of one frame can be recovered at
+ * different lag offsets per ppm trial; the observed starts differ by ~8k
+ * (p2 echo) and ~5.8k (p4 noise).  Cover the lag sweep with a 2x margin,
+ * but never exceed 25% of the minimum legal frame spacing: two genuinely
+ * distinct frames (even with identical payloads) are at least that far
+ * apart, so adjacent frames cannot be merged. */
+static double merge_tolerance(const nsfsk_params *p)
+{
+    double min_frame_syms = (double)p->preamble + NSFSK_SYNC_LEN
+                          + 4.0 * (NSFSK_HDR_LEN + NSFSK_CRC_LEN);
+    double min_spacing = min_frame_syms * (double)p->k;
+    double lag_max = 2.0 * (double)p->delay + 3.0;
+    double lag_bound = 2.0 * lag_max * (double)p->k
+                     + 4.0 * (double)p->k + 128.0;
+    double floor = 4.0 * (double)p->k + 128.0;
+    double cap = 0.25 * min_spacing;
+    return fmin(fmax(floor, lag_bound), cap);
+}
+
 /* merged view of CRC-good frames collected across all ppm trials.
  * t0 is the frame start mapped back to the un-resampled capture
  * (resample_lin places input position P at output P/ratio, so the original
@@ -100,6 +151,17 @@ int main(int argc, char **argv)
     }
     const char *err = nsfsk_params_validate(&p);
     if (err) { fprintf(stderr, "error: %s\n", err); return 1; }
+
+    unsigned offline_reject = env_cap("NSFSK_RX_REJECT_LIMIT",
+                                      OFFLINE_REJECT_LIMIT);
+    unsigned acq_total_default = p.k >= OFFLINE_CAP_MIN_K
+                               ? OFFLINE_MAX_ACQ_TOTAL : 0u;
+    unsigned acq_burst_default = p.k >= OFFLINE_CAP_MIN_K
+                               ? OFFLINE_MAX_ACQ_BURST : 0u;
+    unsigned offline_acq_total = env_cap("NSFSK_RX_ACQ_TOTAL",
+                                         acq_total_default);
+    unsigned offline_acq_burst = env_cap("NSFSK_RX_ACQ_BURST",
+                                         acq_burst_default);
 
     /* ---- read all of stdin ---- */
     size_t cap = 1u << 16, n16 = 0;
@@ -194,20 +256,22 @@ int main(int argc, char **argv)
          * After the cap, idle to the next silence and re-arm. */
         if (ppm == 0.0) {
             rx_run(y, N, nf, tmpl, et, p, verbose > 1 ? verbose - 1 : verbose,
-                   64u, cur);
+                   offline_reject, offline_acq_total, offline_acq_burst, cur);
         } else {
             size_t N2;
             float complex *y2 = resample_lin(y, N, 1.0 + ppm * 1e-6, &N2);
             if (y2 != NULL) {
                 rx_run(y2, N2, nf, tmpl, et, p,
-                       verbose > 1 ? verbose - 1 : verbose, 64u, cur);
+                       verbose > 1 ? verbose - 1 : verbose,
+                       offline_reject, offline_acq_total, offline_acq_burst,
+                       cur);
                 free(y2);
             }
         }
         double qn = cur->qual / (double)(cur->ndec + 1u);
         if (verbose)
-            fprintf(stderr, "rx: ppm trial %+6.0f -> ok=%u bad=%u qn=%.4f\n",
-                    ppm, cur->ok, cur->bad, qn);
+            fprintf(stderr, "rx: ppm trial %+6.0f -> ok=%u bad=%u acq=%u qn=%.4f\n",
+                    ppm, cur->ok, cur->bad, cur->acq, qn);
         if (cur->ok > ok_best || (cur->ok == ok_best && qn > best_qn)) {
             ok_best = cur->ok; best_qn = qn; ppm_best = ppm;
         }
@@ -243,8 +307,11 @@ int main(int argc, char **argv)
         }
     }
     if (na_fill) qsort(all, na_fill, sizeof all[0], cmp_gfrm);
-    const double tol = 4.0 * (double)p.k + 128.0;  /* same-frame refit jitter */
-    unsigned nout = 0; size_t nbytes = 0;
+    /* The lag sweep can recover the same frame at different offsets in
+     * different ppm trials; see merge_tolerance().  The 25% spacing cap
+     * keeps adjacent identical-payload frames distinct. */
+    const double tol = merge_tolerance(&p);
+    unsigned nout = 0, ndup = 0; size_t nbytes = 0;
     double acc_t0 = 0.0; unsigned acc_len = 0; const unsigned char *acc_p = NULL;
     for (size_t i = 0; i < na_fill; i++) {
         /* copies of one frame from different trials have the same payload
@@ -253,14 +320,19 @@ int main(int argc, char **argv)
          * (even for identical payloads) cannot satisfy both tests. */
         if (nout && fabs(all[i].t0 - acc_t0) < tol &&
             all[i].len == acc_len &&
-            (acc_len == 0 || memcmp(all[i].p, acc_p, acc_len) == 0))
+            (acc_len == 0 || memcmp(all[i].p, acc_p, acc_len) == 0)) {
+            ndup++;
             continue;
+        }
         if (all[i].len) fwrite(all[i].p, 1, all[i].len, stdout);
         nbytes += all[i].len;
         acc_t0 = all[i].t0; acc_len = all[i].len; acc_p = all[i].p;
         nout++;
     }
     if (nout) fflush(stdout);
+    if (verbose)
+        fprintf(stderr, "rx: merge tol=%.1f sample(s), suppressed %u "
+                        "duplicate copy/copies\n", tol, ndup);
     fprintf(stderr, "rx: %u frame(s) merged from %u ok / %zu byte(s) decoded "
                     "(ppm=%+.0f); rate=%u fc=%.0f k=%u h=%.3f bt=%.2f "
                     "delay=%u pulse=%s\n",

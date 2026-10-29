@@ -89,6 +89,18 @@ fi
 PHY="-b 0.65"; head -c 3000 /dev/zero > "$TMP/pat"
 PAYFILE="$TMP/pat" run bt065zeros3000 3000; PHY=""
 
+# Cross-trial merge: repeated identical payloads must not be collapsed by the
+# new (larger) duplicate window.  Two identical frames are one full frame
+# period apart, far outside the 25%-of-min-spacing cap.
+echo "== cross-trial merge: identical adjacent frames =="
+PHY="-r 48000 -c 5000 -k 40 -H 0.5 -b 1.0 -d 4 -P 72"
+head -c 2048 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run "p2zeros2048" 2048
+PHY="-r 48000 -c 1000 -k 160 -H 1.0 -b 1.0 -d 4 -P 72"
+head -c 1536 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run "p4zeros1536" 1536
+PHY=""
+
 echo "== PHY sweep =="
 PHY="-k 16";              run "k16"    300
 PHY="-k 24";              run "k24"    300

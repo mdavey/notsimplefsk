@@ -246,6 +246,7 @@ static float mf_score(const float complex *y, const float complex *tmpl,
 void rx_run(const float complex *y, size_t N, unsigned nf,
             const float complex *tmpl, float et,
             const nsfsk_params p, int verbose, unsigned reject_limit,
+            unsigned max_acq_total, unsigned max_acq_burst,
             rx_result *R)
 {
     /* ---- energy profile (moving average over win samples) ---- */
@@ -320,17 +321,28 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     int armed = 1;
     unsigned below = silence_arm;                /* start as if silent */
     unsigned rejects = 0;
+    unsigned burst_acq = 0;
     size_t i = win < N / 2u ? win : N / 2u;
 
     while (i + (size_t)(p.preamble * p.k) < N) {
         if (!armed) {
             if (prof[i] < ethresh) {
-                if (++below >= silence_arm) { armed = 1; below = 0; }
+                if (++below >= silence_arm) {
+                    armed = 1; below = 0; burst_acq = 0;
+                }
             } else below = 0;
             i++;
             continue;
         }
         if (prof[i] < ethresh) { below = 0; i++; continue; }
+        /* work budgets: the total cap stops this ppm trial; the burst cap
+         * idles to the next silence so a real later frame can re-arm. */
+        if (max_acq_total && R->acq >= max_acq_total + 8u * R->ok)
+            break;
+        if (max_acq_burst && burst_acq >= max_acq_burst) {
+            armed = 0; below = 0; i++;
+            continue;
+        }
         if (verbose > 1)
             fprintf(stderr, "rx: burst candidate @%zu (prof=%.3g pmax=%.3g)\n",
                     i, prof[i], pmax);
@@ -383,6 +395,8 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             armed = 0; below = 0;
             continue;
         }
+        R->acq++;
+        burst_acq++;
 
         /* --- (frame-start hypothesis, detector lag) chosen by mismatch
          * count against the known prefix.  The periodic 0,3 preamble gives
