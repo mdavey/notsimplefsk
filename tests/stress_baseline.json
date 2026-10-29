@@ -3416,117 +3416,117 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/agc-level/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/agc-level/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/agc-level/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/agc-level/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/agc-level/stream/s1/b1024": {
+  "p2-robust/agc-level/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-level/stream/s2/b1024": {
+  "p2-robust/agc-level/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-level/stream/s3/b1024": {
+  "p2-robust/agc-level/off/s3/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-level/stream/s4/b1024": {
+  "p2-robust/agc-level/off/s4/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/agc-level/stream/s1/b868": {
+   "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/agc-level/stream/s2/b868": {
+   "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/agc-level/stream/s3/b868": {
+   "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/agc-level/stream/s4/b868": {
+   "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/agc-noise/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/agc-noise/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/agc-noise/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/agc-noise/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/agc-noise/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
+  },
+  "p2-robust/agc-noise/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/agc-noise/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/agc-noise/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/agc-noise/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
   },
   "p2-robust/awgn20/off/s1/b3000": {
    "frames": 14,
@@ -3696,61 +3696,61 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/bursts/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/bursts/stream/s4/b1024": {
+  "p2-robust/bursts/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
+  },
+  "p2-robust/bursts/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/stream/s1/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/bursts/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
   },
   "p2-robust/cfo+30/off/s1/b3000": {
    "frames": 14,
@@ -3920,173 +3920,173 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/clicks/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clicks/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/clip+12/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/clip+12/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p2-robust/drop-mid/off/s1/b1024": {
+  "p2-robust/clicks/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/off/s2/b1024": {
+  "p2-robust/clicks/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/clicks/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/off/s4/b1024": {
+  "p2-robust/clicks/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/clicks/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/clicks/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/clicks/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/clicks/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/clip+12/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/clip+12/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p2-robust/drop-mid/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/drop-mid/off/s2/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/stream/s1/b1024": {
+  "p2-robust/drop-mid/off/s3/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/stream/s2/b1024": {
+  "p2-robust/drop-mid/off/s4/b868": {
+   "frames": 2,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/drop-mid/stream/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/drop-mid/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/drop-mid/stream/s4/b1024": {
+  "p2-robust/drop-mid/stream/s2/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
+  },
+  "p2-robust/drop-mid/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/drop-mid/stream/s4/b868": {
+   "frames": 2,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
   },
   "p2-robust/echo-0.1ms/off/s1/b3000": {
    "frames": 14,
@@ -4200,173 +4200,173 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/echo-1ms-6/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/echo-1ms-6/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/echo-1ms-6/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/low-snr12/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/low-snr12/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm+1000/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm+1000/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
   "p2-robust/ppm+300/off/s1/b3000": {
    "frames": 14,
@@ -4424,61 +4424,61 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/ppm-1000/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-1000/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-1000/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
   "p2-robust/ppm-300/off/s1/b3000": {
    "frames": 14,
@@ -4536,61 +4536,61 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/ppm-ramp/off/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/off/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/off/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/off/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/stream/s1/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/stream/s2/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/stream/s3/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/ppm-ramp/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/ppm-ramp/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
   "p2-robust/quant8-soft/off/s1/b3000": {
    "frames": 14,
@@ -4648,229 +4648,229 @@
    "tolerance": 0,
    "total": 14
   },
-  "p2-robust/rayleigh-fd1/off/s1/b1024": {
+  "p2-robust/rayleigh-fd1/off/s1/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/off/s2/b1024": {
+  "p2-robust/rayleigh-fd1/off/s2/b868": {
+   "frames": 1,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd1/off/s3/b868": {
    "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/off/s3/b1024": {
-   "frames": 2,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd1/off/s4/b1024": {
+  "p2-robust/rayleigh-fd1/off/s4/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/stream/s1/b1024": {
+  "p2-robust/rayleigh-fd1/stream/s1/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/stream/s2/b1024": {
+  "p2-robust/rayleigh-fd1/stream/s2/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/stream/s3/b1024": {
+  "p2-robust/rayleigh-fd1/stream/s3/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd1/stream/s4/b1024": {
-   "frames": 2,
+  "p2-robust/rayleigh-fd1/stream/s4/b868": {
+   "frames": 1,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd5/off/s1/b1024": {
+  "p2-robust/rayleigh-fd5/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rayleigh-fd5/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/off/s3/b1024": {
-   "frames": 3,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/stream/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/stream/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/stream/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rayleigh-fd5/stream/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/reverb-mild/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/off/s3/b1024": {
-   "frames": 3,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p2-robust/rician10-fd1/stream/s2/b1024": {
+  "p2-robust/rayleigh-fd5/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rician10-fd1/stream/s3/b1024": {
+  "p2-robust/rayleigh-fd5/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd5/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd5/stream/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd5/stream/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd5/stream/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rayleigh-fd5/stream/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/reverb-mild/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/off/s3/b868": {
    "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p2-robust/rician10-fd1/stream/s4/b1024": {
-   "frames": 5,
+  "p2-robust/rician10-fd1/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/stream/s3/b868": {
+   "frames": 2,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p2-robust/rician10-fd1/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
   },
   "p3-tonebank/agc-level/off/s1/b3000": {
    "frames": 12,
@@ -6608,901 +6608,901 @@
    "tolerance": 0,
    "total": 14
   },
-  "p4-acoustic/agc-level/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-level/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-level/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-level/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-level/stream/s1/b1024": {
+  "p4-acoustic/agc-level/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/agc-level/stream/s2/b1024": {
+  "p4-acoustic/agc-level/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/agc-level/stream/s3/b1024": {
+  "p4-acoustic/agc-level/off/s3/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/agc-level/stream/s4/b1024": {
+  "p4-acoustic/agc-level/off/s4/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/agc-noise/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/agc-noise/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn20/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/awgn25/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bp-dc-hum/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/bursts/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/bursts/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo+30/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/cfo-30/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clean/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clicks/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clicks/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/clip+12/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/drop-mid/off/s1/b1024": {
-   "frames": 4,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/drop-mid/off/s2/b1024": {
+  "p4-acoustic/agc-level/stream/s1/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/drop-mid/off/s3/b1024": {
+  "p4-acoustic/agc-level/stream/s2/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/drop-mid/off/s4/b1024": {
+  "p4-acoustic/agc-level/stream/s3/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-level/stream/s4/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/agc-noise/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn20/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/awgn25/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bp-dc-hum/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/bursts/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/bursts/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo+30/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/cfo-30/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clean/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clicks/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clicks/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/clip+12/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/drop-mid/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/drop-mid/off/s2/b868": {
    "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/drop-mid/stream/s1/b1024": {
-   "frames": 4,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/drop-mid/stream/s2/b1024": {
-   "frames": 3,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/drop-mid/stream/s3/b1024": {
-   "frames": 3,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/drop-mid/stream/s4/b1024": {
+  "p4-acoustic/drop-mid/off/s3/b868": {
    "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/echo-0.1ms/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-0.1ms/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-20/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/echo-1ms-6/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/low-snr12/off/s1/b1024": {
-   "frames": 5,
+  "p4-acoustic/drop-mid/off/s4/b868": {
+   "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/off/s2/b1024": {
-   "frames": 5,
+  "p4-acoustic/drop-mid/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/off/s3/b1024": {
-   "frames": 5,
+  "p4-acoustic/drop-mid/stream/s2/b868": {
+   "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/off/s4/b1024": {
-   "frames": 5,
+  "p4-acoustic/drop-mid/stream/s3/b868": {
+   "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/stream/s1/b1024": {
-   "frames": 5,
+  "p4-acoustic/drop-mid/stream/s4/b868": {
+   "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/stream/s2/b1024": {
-   "frames": 5,
+  "p4-acoustic/echo-0.1ms/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-0.1ms/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-20/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/echo-1ms-6/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/stream/s3/b1024": {
-   "frames": 5,
+  "p4-acoustic/low-snr12/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/low-snr12/stream/s4/b1024": {
-   "frames": 5,
+  "p4-acoustic/low-snr12/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/low-snr12/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
   },
   "p4-acoustic/p4-dup-awgn25/off/s1/b434": {
    "frames": 2,
@@ -7560,789 +7560,789 @@
    "tolerance": 0,
    "total": 2
   },
-  "p4-acoustic/ppm+1000/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+1000/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm+300/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-1000/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-300/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/ppm-ramp/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/quant8-soft/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/off/s1/b1024": {
+  "p4-acoustic/ppm+1000/off/s1/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/rayleigh-fd1/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/off/s4/b1024": {
+  "p4-acoustic/ppm+1000/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/rayleigh-fd1/stream/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/stream/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/stream/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd1/stream/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd5/off/s1/b1024": {
+  "p4-acoustic/ppm+1000/off/s3/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/rayleigh-fd5/off/s2/b1024": {
-   "frames": 5,
+  "p4-acoustic/ppm+1000/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
+   "tolerance": 0,
+   "total": 4
   },
-  "p4-acoustic/rayleigh-fd5/off/s3/b1024": {
+  "p4-acoustic/ppm+1000/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+1000/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+1000/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+1000/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm+300/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-1000/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-300/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/ppm-ramp/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/quant8-soft/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd1/off/s1/b868": {
    "frames": 3,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/rayleigh-fd5/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd5/stream/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd5/stream/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd5/stream/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rayleigh-fd5/stream/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/off/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/off/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/off/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/off/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/stream/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/stream/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/stream/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/realistic-acoustic/stream/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/off/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/off/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/off/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/off/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/stream/s1/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/stream/s2/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/stream/s3/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-heavy/stream/s4/b1024": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/stream/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/stream/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/stream/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/reverb-mild/stream/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rician10-fd1/off/s1/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rician10-fd1/off/s2/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rician10-fd1/off/s3/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rician10-fd1/off/s4/b1024": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 5
-  },
-  "p4-acoustic/rician10-fd1/stream/s1/b1024": {
+  "p4-acoustic/rayleigh-fd1/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/rician10-fd1/stream/s2/b1024": {
+  "p4-acoustic/rayleigh-fd1/off/s3/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/rician10-fd1/stream/s3/b1024": {
+  "p4-acoustic/rayleigh-fd1/off/s4/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd1/stream/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd1/stream/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd1/stream/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd1/stream/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd5/off/s1/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd5/off/s2/b868": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/rician10-fd1/stream/s4/b1024": {
-   "frames": 5,
+  "p4-acoustic/rayleigh-fd5/off/s3/b868": {
+   "frames": 2,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/off/s1/b1024": {
+  "p4-acoustic/rayleigh-fd5/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rayleigh-fd5/stream/s1/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/off/s2/b1024": {
+  "p4-acoustic/rayleigh-fd5/stream/s2/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/off/s3/b1024": {
+  "p4-acoustic/rayleigh-fd5/stream/s3/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/off/s4/b1024": {
+  "p4-acoustic/rayleigh-fd5/stream/s4/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/stream/s1/b1024": {
+  "p4-acoustic/realistic-acoustic/off/s1/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/stream/s2/b1024": {
+  "p4-acoustic/realistic-acoustic/off/s2/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/stream/s3/b1024": {
+  "p4-acoustic/realistic-acoustic/off/s3/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/sel-fade/stream/s4/b1024": {
+  "p4-acoustic/realistic-acoustic/off/s4/b868": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/off/s1/b1024": {
-   "frames": 5,
+  "p4-acoustic/realistic-acoustic/stream/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/realistic-acoustic/stream/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/realistic-acoustic/stream/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/realistic-acoustic/stream/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/off/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/off/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/off/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/off/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/stream/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/stream/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/stream/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-heavy/stream/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/stream/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/stream/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/stream/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/reverb-mild/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/off/s1/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/off/s2/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/off/s3/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/off/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/stream/s1/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/stream/s2/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/stream/s3/b868": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/rician10-fd1/stream/s4/b868": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/off/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/off/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/off/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/off/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/stream/s1/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/stream/s2/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/stream/s3/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/sel-fade/stream/s4/b868": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 4
+  },
+  "p4-acoustic/strong-tone/off/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/off/s2/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/off/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/off/s3/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/off/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/off/s4/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/off/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/stream/s1/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/stream/s1/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/stream/s2/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/stream/s2/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/stream/s3/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/stream/s3/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
-  "p4-acoustic/strong-tone/stream/s4/b1024": {
-   "frames": 5,
+  "p4-acoustic/strong-tone/stream/s4/b868": {
+   "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 5
+   "total": 4
   },
   "p5-rcos/agc-level/off/s1/b3000": {
    "frames": 12,
@@ -11704,1629 +11704,1629 @@
    "tolerance": 0,
    "total": 14
   },
-  "p7-lowrate/agc-level/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/stream/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/stream/s2/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/stream/s3/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-level/stream/s4/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/agc-noise/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn20/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/awgn25/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bp-dc-hum/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/bursts/off/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/off/s4/b2048": {
+  "p7-lowrate/agc-level/off/s1/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/bursts/stream/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/bursts/stream/s4/b2048": {
+  "p7-lowrate/agc-level/off/s2/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/cfo+30/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo+30/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/cfo-30/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clean/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clicks/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clicks/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/clip+12/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/drop-mid/off/s1/b2048": {
+  "p7-lowrate/agc-level/off/s3/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/off/s2/b2048": {
+  "p7-lowrate/agc-level/off/s4/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/off/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/agc-level/stream/s1/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/off/s4/b2048": {
-   "frames": 6,
+  "p7-lowrate/agc-level/stream/s2/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/stream/s1/b2048": {
-   "frames": 9,
+  "p7-lowrate/agc-level/stream/s3/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/stream/s2/b2048": {
-   "frames": 9,
+  "p7-lowrate/agc-level/stream/s4/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/stream/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/agc-noise/off/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
+   "tolerance": 0,
+   "total": 8
   },
-  "p7-lowrate/drop-mid/stream/s4/b2048": {
+  "p7-lowrate/agc-noise/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/agc-noise/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn20/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/awgn25/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bp-dc-hum/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/bursts/off/s1/b1736": {
    "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/echo-0.1ms/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-0.1ms/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-20/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/off/s1/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/off/s2/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/off/s3/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/off/s4/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/stream/s1/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/stream/s2/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/stream/s3/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/echo-1ms-6/stream/s4/b2048": {
-   "frames": 0,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/low-snr12/off/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/off/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/off/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/off/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/off/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/off/s4/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/off/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/stream/s1/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/stream/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/stream/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/stream/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/stream/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/stream/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/bursts/stream/s4/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/low-snr12/stream/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/cfo+30/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo+30/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/cfo-30/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clean/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/clicks/off/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/off/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/clicks/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clicks/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/clip+12/off/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/off/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/off/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/off/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/off/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/off/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/off/s4/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/stream/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/stream/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/stream/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/stream/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/stream/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/stream/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+1000/stream/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/clip+12/stream/s4/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/ppm+300/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm+300/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/off/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/drop-mid/off/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
+   "tolerance": 1,
+   "total": 8
   },
-  "p7-lowrate/ppm-1000/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-1000/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-300/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/ppm-ramp/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/off/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/quant8-soft/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "gate",
-   "tolerance": 0,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd1/off/s1/b2048": {
+  "p7-lowrate/drop-mid/off/s2/b1736": {
    "frames": 6,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd1/off/s2/b2048": {
+  "p7-lowrate/drop-mid/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/drop-mid/off/s4/b1736": {
    "frames": 4,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd1/off/s3/b2048": {
+  "p7-lowrate/drop-mid/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/drop-mid/stream/s2/b1736": {
    "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd1/off/s4/b2048": {
-   "frames": 6,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd1/stream/s1/b2048": {
-   "frames": 2,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd1/stream/s2/b2048": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd1/stream/s3/b2048": {
-   "frames": 5,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd1/stream/s4/b2048": {
+  "p7-lowrate/drop-mid/stream/s3/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/off/s1/b2048": {
+  "p7-lowrate/drop-mid/stream/s4/b1736": {
+   "frames": 5,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-0.1ms/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-20/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/off/s1/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/off/s2/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/off/s3/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/off/s4/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/stream/s1/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/stream/s2/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/stream/s3/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/echo-1ms-6/stream/s4/b1736": {
+   "frames": 0,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/low-snr12/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+1000/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm+300/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-1000/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-300/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/ppm-ramp/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/off/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/quant8-soft/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "gate",
+   "tolerance": 0,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/off/s1/b1736": {
+   "frames": 6,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/off/s2/b1736": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/off/s3/b1736": {
+   "frames": 5,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/off/s4/b1736": {
    "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/off/s2/b2048": {
-   "frames": 8,
+  "p7-lowrate/rayleigh-fd1/stream/s1/b1736": {
+   "frames": 1,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/off/s3/b2048": {
+  "p7-lowrate/rayleigh-fd1/stream/s2/b1736": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/stream/s3/b1736": {
+   "frames": 3,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd1/stream/s4/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd5/off/s1/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd5/off/s2/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd5/off/s3/b1736": {
+   "frames": 4,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rayleigh-fd5/off/s4/b1736": {
    "frames": 5,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/off/s4/b2048": {
-   "frames": 6,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rayleigh-fd5/stream/s1/b2048": {
+  "p7-lowrate/rayleigh-fd5/stream/s1/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/stream/s2/b2048": {
+  "p7-lowrate/rayleigh-fd5/stream/s2/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/stream/s3/b2048": {
+  "p7-lowrate/rayleigh-fd5/stream/s3/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rayleigh-fd5/stream/s4/b2048": {
+  "p7-lowrate/rayleigh-fd5/stream/s4/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/off/s1/b2048": {
+  "p7-lowrate/reverb-heavy/off/s1/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/off/s2/b2048": {
+  "p7-lowrate/reverb-heavy/off/s2/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/off/s3/b2048": {
+  "p7-lowrate/reverb-heavy/off/s3/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/off/s4/b2048": {
+  "p7-lowrate/reverb-heavy/off/s4/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/stream/s1/b2048": {
+  "p7-lowrate/reverb-heavy/stream/s1/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/stream/s2/b2048": {
+  "p7-lowrate/reverb-heavy/stream/s2/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/stream/s3/b2048": {
+  "p7-lowrate/reverb-heavy/stream/s3/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-heavy/stream/s4/b2048": {
+  "p7-lowrate/reverb-heavy/stream/s4/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/reverb-mild/off/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/off/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/stream/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/stream/s3/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/reverb-mild/stream/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/off/s1/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/off/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/off/s3/b2048": {
-   "frames": 9,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/off/s4/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/stream/s1/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/stream/s2/b2048": {
-   "frames": 10,
-   "known_hard": false,
-   "mode": "xfail",
-   "tolerance": 1,
-   "total": 10
-  },
-  "p7-lowrate/rician10-fd1/stream/s3/b2048": {
+  "p7-lowrate/reverb-mild/off/s1/b1736": {
    "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/rician10-fd1/stream/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/reverb-mild/off/s2/b1736": {
+   "frames": 7,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/off/s1/b2048": {
+  "p7-lowrate/reverb-mild/off/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/reverb-mild/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/reverb-mild/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/reverb-mild/stream/s2/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/reverb-mild/stream/s3/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/reverb-mild/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/off/s1/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/off/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/off/s3/b1736": {
+   "frames": 7,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/off/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/stream/s1/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/stream/s2/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/stream/s3/b1736": {
+   "frames": 6,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/rician10-fd1/stream/s4/b1736": {
+   "frames": 8,
+   "known_hard": false,
+   "mode": "xfail",
+   "tolerance": 1,
+   "total": 8
+  },
+  "p7-lowrate/sel-fade/off/s1/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/off/s2/b2048": {
+  "p7-lowrate/sel-fade/off/s2/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/off/s3/b2048": {
+  "p7-lowrate/sel-fade/off/s3/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/off/s4/b2048": {
+  "p7-lowrate/sel-fade/off/s4/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/stream/s1/b2048": {
+  "p7-lowrate/sel-fade/stream/s1/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/stream/s2/b2048": {
+  "p7-lowrate/sel-fade/stream/s2/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/stream/s3/b2048": {
+  "p7-lowrate/sel-fade/stream/s3/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/sel-fade/stream/s4/b2048": {
+  "p7-lowrate/sel-fade/stream/s4/b1736": {
    "frames": 0,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 1,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/off/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/off/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/off/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/off/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/off/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/off/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/off/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/off/s4/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/stream/s1/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/stream/s1/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/stream/s2/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/stream/s2/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/stream/s3/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/stream/s3/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
-  "p7-lowrate/strong-tone/stream/s4/b2048": {
-   "frames": 10,
+  "p7-lowrate/strong-tone/stream/s4/b1736": {
+   "frames": 8,
    "known_hard": false,
    "mode": "xfail",
    "tolerance": 0,
-   "total": 10
+   "total": 8
   },
   "p8-pre120/agc-level/off/s1/b3000": {
    "frames": 13,
@@ -16577,8 +16577,8 @@
    "total": 14
   }
  },
- "generated": "2026-10-29T23:25:52+1100",
- "git_commit": "93b6391",
+ "generated": "2026-10-30T00:14:25+1100",
+ "git_commit": "62d84d1",
  "matrix_hash": "5f03820352e01d601585afff65341a70f79e99e8ce0ab0c3c91481785f48e87f",
  "schema": 1,
  "suite": "stress-v1"

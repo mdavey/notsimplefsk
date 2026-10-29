@@ -49,7 +49,7 @@ stress: all
 stress-full: all
 	python3 tests/stress.py --full
 
-# full offline RX timing checks, including the 8 KB pathological case
+# full offline RX timing checks, including the 2 KB (10-frame) pathological case
 speed-full: all
 	RX_SPEED_FULL=1 sh tests/rx_speed.sh
 

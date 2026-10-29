@@ -15,9 +15,11 @@
  *      f(s) = (2s + 1 - M) * h * Rs / 2  [Hz]  M = 4,  Rs = rate/k
  *      h=0.25 -> tones at {-0.375,-0.125,+0.125,+0.375} * Rs
  *
- *      Non-coherent (differential) demod requires principal-value
- *      resolution of the per-symbol phase step: pi*h*(M-1) < pi,
- *      i.e. h < 1/(M-1) = 1/3 for 4FSK.  Default h = 0.25.
+ *      Detector choice (see rx_core.c): below h*(M-1) = 0.95 the RX
+ *      decodes the per-symbol phase advance, which needs principal-value
+ *      resolution (pi*h*(M-1) < pi, i.e. h < 1/3 for 4FSK); at or above
+ *      it switches to a non-coherent tone bank, extending h to 1.0
+ *      (bounded only by the RX band validation).  Default h = 0.25.
  *      Adjacent tone spacing = h * Rs.
  *
  * Frame (on the wire):

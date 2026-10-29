@@ -252,12 +252,16 @@ def payload_size_for(phy, scenario):
     n = int(scenario["payload"])
     if scenario.get("no_cap"):
         return n
+    # Clamps in units of fixed-frame payloads (255 B FEC block): pre-FEC
+    # 1024 B was ONE fat frame of ~4192 wire syms ~= 4 fixed frames
+    # (4 x 1116), and 2048 B ~= 8, so these caps keep the old airtime
+    # intent rather than the old byte counts.
     if phy == "p4-acoustic":
-        n = min(n, 1024)
+        n = min(n, 4 * MAX_PAYLOAD)
     elif phy in SLOW_PHYS:
-        n = min(n, 2048)
+        n = min(n, 8 * MAX_PAYLOAD)
     if phy == "p2-robust" and not scenario["gated"]:
-        n = min(n, 1024)
+        n = min(n, 4 * MAX_PAYLOAD)
     return n
 
 

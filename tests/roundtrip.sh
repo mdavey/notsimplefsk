@@ -211,6 +211,26 @@ fecrej  "fec32-drop40"  40 217
 PHY="--fec 16"; fecwin "fec16-drop6" 6 233; PHY=""
 PHY="--fec 84"; fecwin "fec84-drop40" 40 165; fecrej "fec84-drop100" 100 165; PHY=""
 
+# Tier asymmetry (consequence of nested generator roots a..a^P): every
+# higher-tier codeword IS a valid codeword of every lower tier, so an RX
+# tier BELOW TX decodes transparently (only correction budget is lost).
+# An RX tier ABOVE TX sees a non-codeword: the RS+CRC gate must reject.
+pay 165 "fecmis" > "$TMP/p"
+PHY="--fec 84"; $TX $PHY < "$TMP/p" > "$TMP/a" 2>/dev/null; PHY=""
+$RX < "$TMP/a" > "$TMP/o" 2>/dev/null
+if cmp -s "$TMP/p" "$TMP/o"; then
+    echo "PASS fecmis-lo (TX fec84 decodes at RX fec32: nested tiers)"; PASS=$((PASS+1))
+else
+    echo "FAIL fecmis-lo (lower RX tier must decode higher-tier TX)"; FAIL=$((FAIL+1))
+fi
+$TX --fec 32 < "$TMP/p" > "$TMP/a" 2>/dev/null
+$RX --fec 84 < "$TMP/a" > "$TMP/o" 2>/dev/null
+if [ -s "$TMP/o" ]; then
+    echo "FAIL fecmis-hi (RX fec84 must reject TX fec32, got $(stat -c%s "$TMP/o") B)"; FAIL=$((FAIL+1))
+else
+    echo "REJECT fecmis-hi (expected: RX tier above TX, nothing delivered)"; PASS=$((PASS+1))
+fi
+
 echo "== expected rejects (impossible fc/image combos) =="
 rej "k8@fc4000"     -k 8
 rej "k6@fc4000"     -k 6

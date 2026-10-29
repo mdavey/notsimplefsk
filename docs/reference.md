@@ -82,6 +82,12 @@ gates the frame anyway.  Liquid-dsp's RS API is NOT used: the `.so` shipped
 on the dev box contains only "libfec not installed" stubs (verified via
 nm/strings).
 
+Tier nesting (pinned fecmis-lo/-hi): every tier's generator roots are the
+consecutive set a..a^P, so a higher-tier codeword is a VALID codeword of
+every lower tier: an RX with --fec BELOW the TX tier decodes byte-exact and
+loses only correction budget.  An RX tier ABOVE the TX tier sees a
+non-codeword and rejects (RS+CRC gate).  RX --fec must therefore be ≤ TX.
+
 Why one fixed block per frame: GF(256) caps any codeword at 255 B, so a
 single-block frame gives a data section whose length is known BEFORE
 decoding (no length discovery, no per-length decode paths); frame airtime
@@ -172,7 +178,9 @@ rejects k <= 14; k=16 is the first usable value), non-integer-friendly
 band edges. The former h < 1/3 cap is gone: it was a limit of the
 phase-advance detector only, now bypassed by the tone bank.
 
-Envelope note (probe-verified with 1024-byte frames): every PAIR of
+Envelope note (probe-verified PRE-FEC with variable 1024-byte frames; RS
+correction plausibly moved these margins — re-probe before quoting):
+every PAIR of
 {ppm +-300, CFO 100, noise 0.01, gain} passes; stacking ppm+CFO+noise on
 top of a signal pulled to -24 dBFS fails (offline RX fails it too — it is
 a decoder envelope limit, not a streaming regression).  The stress matrix
@@ -271,8 +279,9 @@ drops (the TX inter-frame gap is 40 ms); the burst's RAW samples are then
 re-run through the exact offline chain (zero-phase double pass) and the
 shared rx_run() detector on a self-contained slice. Payload bytes go to
 stdout per frame, whole, only after the CRC passes: latency per frame =
-payload time + 40 ms gap + decode (typ. 20-100 ms; full-grid worst case a
-few hundred ms, still under the arrival time of the next max-size frame).
+fixed frame airtime (1116 syms, payload-independent: 0.47 s at the default
+PHY) + 40 ms gap + decode (typ. 20-100 ms; full-grid worst case a
+few hundred ms, still under the arrival time of the next frame).
 
 Differences from the offline receiver:
 

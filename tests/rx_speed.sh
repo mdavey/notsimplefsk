@@ -3,7 +3,8 @@
 #
 # These are the p2 cases that used to spend minutes in repeated MF/prefix
 # sweeps (strong tone, frequency-selective fade, diffuse reverb) plus the
-# 8 KB Rayleigh case.  A garbage burst followed by a real frame after the
+# 2 KB Rayleigh case (10 max-payload frames).  A garbage burst followed by
+# a real frame after the
 # normal 40 ms gap must still decode, proving the per-burst cap re-arms.
 set -u
 cd "$(dirname "$0")/.." || exit 1
