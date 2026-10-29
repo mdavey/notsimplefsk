@@ -54,14 +54,21 @@
 #define NSFSK_SYNC_REPS     6u
 #define NSFSK_SYNC_LEN      (4u * NSFSK_SYNC_REPS)   /* 24 symbols */
 
+/* Upper bound on the preamble, enforced by nsfsk_params_validate().  Keeps
+ * every frame-size computation well inside unsigned/size_t range and stops
+ * "-P -1"/huge values from turning into multi-GB allocations or OOB
+ * pointer arithmetic. */
+#define NSFSK_MAX_PREAMBLE  65536u
+
 /* matched-filter template: 32 symbols taken from the steady preamble,
  * starting at prefix symbol (delay + 4) so the Gaussian filter is settled */
 #define NSFSK_TMPL_SYMS     32u
 #define NSFSK_TMPL_SYM0(p)  ((p).delay + 4u)
 
-/* worst-case wire symbols per frame */
+/* worst-case wire symbols per frame (size_t so the arithmetic cannot wrap) */
 #define NSFSK_MAX_FRAME_SYMS(p) \
-    ((p).preamble + NSFSK_SYNC_LEN + 4u * (NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN))
+    ((size_t)(p).preamble + NSFSK_SYNC_LEN \
+     + 4u * (size_t)(NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN))
 
 typedef struct {
     unsigned rate;        /* sample rate, Hz                              */

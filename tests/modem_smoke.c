@@ -64,8 +64,9 @@ int main(int argc, char **argv)
         memcpy(stream + (size_t)i * k, y, k * sizeof(float complex));
     }
 
-    /* phase increment spans k-1 samples between window edges */
-    float scale = (float)M_PI * h * (float)(k - 1u) / (float)k;
+    /* phase increment over one symbol (k samples) is pi*h per unit a;
+     * boundary samples are k apart, so the scale is pi*h (not (k-1)/k) */
+    float scale = (float)M_PI * h;
 
     /* ---- clean BER, sweep lag (total loop delay) ---- */
     double best = 1.0; int bl = -1;

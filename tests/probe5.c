@@ -42,11 +42,14 @@ int main(int argc, char **argv)
     long fidx = atol(argv[8]);
 
     size_t pcap = 1u << 20; unsigned char *pay = malloc(pcap);
+    if (pay == NULL) { fprintf(stderr, "probe5: out of memory\n"); return 1; }
     FILE *f = fopen(argv[7], "rb");
+    if (f == NULL) { fprintf(stderr, "probe5: cannot open %s\n", argv[7]); return 1; }
     size_t npay = fread(pay, 1, pcap, f); fclose(f);
     unsigned gap = p.rate / 25u;
-    unsigned cap_syms = NSFSK_MAX_FRAME_SYMS(p);
+    unsigned cap_syms = (unsigned)NSFSK_MAX_FRAME_SYMS(p);
     unsigned char *syms = malloc(cap_syms);
+    if (syms == NULL) { fprintf(stderr, "probe5: out of memory\n"); return 1; }
     long soff = 0; size_t off = 0; long fi = 0; unsigned nsym = 0;
     while (off < npay || fi == 0) {
         unsigned plen = (unsigned)(npay - off);
@@ -59,17 +62,22 @@ int main(int argc, char **argv)
 
     size_t cap = 1u << 22, n16 = 0;
     int16_t *in = malloc(cap * sizeof(int16_t));
+    if (in == NULL) { fprintf(stderr, "probe5: out of memory\n"); return 1; }
     for (;;) {
-        if (n16 == cap) { cap *= 2; in = realloc(in, cap * sizeof(int16_t)); }
+        if (n16 == cap) {
+            int16_t *ni = realloc(in, cap * 2u * sizeof(int16_t));
+            if (ni == NULL) { fprintf(stderr, "probe5: out of memory\n"); free(in); return 1; }
+            in = ni; cap *= 2;
+        }
         size_t got = fread(in + n16, sizeof(int16_t), cap - n16, stdin);
         n16 += got; if (!got) break;
     }
-    size_t N = n16 - (n16 & 1u);
+    size_t N = n16;
     float complex *y = malloc(N * sizeof(float complex));
+    if (y == NULL) { fprintf(stderr, "probe5: out of memory\n"); return 1; }
     nsfsk_rx_filter_slice(&p, in, N, y);
 
     const unsigned D0 = p.preamble + NSFSK_SYNC_LEN;
-    const float scale = (float)M_PI * p.h * (float)(p.k - 1u) / (float)p.k;
     fprintf(stderr, "frame %ld true s0=%ld nsym=%u\n", fidx, soff, nsym);
 
     /* RX-selected best_n was 86680 for frame 2 => s0_ref = best_n - (delay+4)*k.
@@ -80,14 +88,14 @@ int main(int argc, char **argv)
             long s0 = s0_ref + dn;
             if (s0 < 1) continue;
             float num = 0, den = 0; unsigned mis = 0, tot = 0;
-            static float phi_v[512]; static float a_v[512];
+            static float phi_v[512];
             for (unsigned w = p.delay + 4u; w < D0; w++) {
                 size_t hi = (size_t)s0 + (size_t)(w + lag + 1u) * p.k - 1u;
                 size_t lo = (size_t)s0 + (size_t)(w + lag) * p.k - 1u;
                 if (hi >= N) break;
                 float ph = unwrap_ph(cargf(y[hi] * conjf(y[lo])));
                 float a = 2.0f * (float)nsfsk_prefix_sym(&p, w) + 1.0f - (float)NSFSK_M;
-                phi_v[tot] = ph; a_v[tot] = a; tot++;
+                phi_v[tot] = ph; tot++;
                 num += ph * a; den += a * a;
             }
             float sc = den > 0 ? num / den : 0;

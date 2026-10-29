@@ -50,7 +50,7 @@ run() {
     fi
 }
 
-# feed_rt <file> : ~real-time paced producer (0.2 s sleep per 0.5 s chunk)
+# feed_rt <file> : ~5x-real-time paced producer (0.2 s sleep per 1.0 s chunk)
 feed_rt() {
     total=$(stat -c%s "$1"); n=0
     while [ $((n * 96000)) -lt "$total" ]; do

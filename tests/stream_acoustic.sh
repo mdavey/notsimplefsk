@@ -24,6 +24,7 @@ command -v arecord >/dev/null 2>&1 || { echo "SKIP: no arecord"; exit 0; }
 command -v aplay   >/dev/null 2>&1 || { echo "SKIP: no aplay";   exit 0; }
 
 PHY=${PHY:--c 1000 -k 160 -H 1.0 -b 1.0 -d 4}
+RATE=${RATE:-48000}      # must match the PHY -r (default 48000)
 N=${1:-1100}
 DEV_REC=${DEV_REC:-pipewire}
 DEV_PLAY=${DEV_PLAY:-pipewire}
@@ -39,22 +40,22 @@ if [ ! -f "$PAY" ] || [ "$(stat -c%s "$PAY")" -ne "$N" ]; then
 fi
 ./bin/fsk_tx $PHY < "$PAY" > "$AUD" 2>/dev/null || { echo "FAIL: tx"; exit 1; }
 ABYTES=$(stat -c%s "$AUD")
-SECS=$(( ABYTES / 96000 + 6 ))
+SECS=$(( ABYTES / (2 * RATE) + 6 ))
 
-echo "acoustic: $DEV_PLAY -> $DEV_REC, $N bytes, $((ABYTES/96000))s audio, ${SECS}s window [$PHY]"
+echo "acoustic: $DEV_PLAY -> $DEV_REC, $N bytes, $((ABYTES/(2*RATE)))s audio, ${SECS}s window [$PHY]"
 
 # capture first, TX second (the proven lead; mid-stream joins on PipeWire
 # graphs drop frames - see stream_loopback.sh header)
 if [ -n "$CAP" ]; then
-    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r 48000 -c 1 \
+    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r "$RATE" -c 1 \
         2>/dev/null | tee "$CAP" | ./bin/fsk_rx_stream $RXV $PHY > "$OUT" 2>"$LOG" &
 else
-    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r 48000 -c 1 \
+    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r "$RATE" -c 1 \
         2>/dev/null | ./bin/fsk_rx_stream $RXV $PHY > "$OUT" 2>"$LOG" &
 fi
 RXJOB=$!
 sleep 1
-aplay -q -D "$DEV_PLAY" -f S16_LE -r 48000 -c 1 - < "$AUD" || \
+aplay -q -D "$DEV_PLAY" -f S16_LE -r "$RATE" -c 1 - < "$AUD" || \
     { kill $RXJOB 2>/dev/null; echo "FAIL: aplay"; exit 1; }
 wait $RXJOB 2>/dev/null
 rc=$?

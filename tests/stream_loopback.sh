@@ -27,6 +27,8 @@
 # Two hosts (true acoustic/cable path): run the two halves from the
 # header of the git history, or compare against a capture file directly.
 # PHY flags must match on both sides if you override the defaults.
+# RATE (sample rate used by arecord/aplay, default 48000) must match the
+# PHY -r; e.g. RATE=44100 PHY="-r 44100 -c 3800 ...".
 set -u
 cd "$(dirname "$0")/.." || exit 1
 
@@ -41,25 +43,27 @@ OUT=/tmp/nsfsk-loop-out.bin
 LOG=/tmp/nsfsk-loop.log
 REPS=${REPS:-2}
 RXV=${RXV:--v}           # -v per-frame lines; -vv adds gate + ppm trace
+RATE=${RATE:-48000}      # must match the PHY -r (default 48000)
+PHY=${PHY:-}             # extra PHY flags for both fsk_tx and fsk_rx_stream
 
 # LC_ALL=C: gawk "%c" emits 2 bytes for codes 128..255 in a UTF-8 locale
 [ -f "$PAY" ] || LC_ALL=C gawk -v n=6144 \
     'BEGIN{srand(7);for(i=0;i<n;i++)printf "%c",int(rand()*256)}' > "$PAY"
 : > "$LOG"
-./bin/fsk_tx < "$PAY" > "$AUD" 2>/dev/null || { echo "FAIL: tx"; exit 1; }
+./bin/fsk_tx $PHY < "$PAY" > "$AUD" 2>/dev/null || { echo "FAIL: tx"; exit 1; }
 PAYLEN=$(stat -c%s "$PAY")
 ABYTES=$(stat -c%s "$AUD")
 # capture window: audio seconds (2 B/sample) + RX spin-up + buffer drain
-SECS=$(( ABYTES / 96000 + 4 ))
+SECS=$(( ABYTES / (2 * RATE) + 4 ))
 
-echo "loopback: $DEV_PLAY -> $DEV_REC, $PAYLEN payload bytes, $((ABYTES/96000))s audio, ${SECS}s window"
+echo "loopback: $DEV_PLAY -> $DEV_REC, $PAYLEN payload bytes, $((ABYTES/(2*RATE)))s audio, ${SECS}s window"
 
 pass_full() {
-    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r 48000 -c 1 -B 2000000 \
-        2>/dev/null | ./bin/fsk_rx_stream $RXV > "$OUT" 2>>"$LOG" &
+    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r "$RATE" -c 1 -B 2000000 \
+        2>/dev/null | ./bin/fsk_rx_stream $RXV $PHY > "$OUT" 2>>"$LOG" &
     RXJOB=$!
     sleep 1                                   # let arecord spin up
-    if ! aplay -q -D "$DEV_PLAY" -f S16_LE -r 48000 -c 1 - < "$AUD"; then
+    if ! aplay -q -D "$DEV_PLAY" -f S16_LE -r "$RATE" -c 1 - < "$AUD"; then
         kill $RXJOB 2>/dev/null
         echo "    aplay into $DEV_PLAY failed (aplay -l to list devices)"
         return 2
@@ -72,11 +76,11 @@ pass_full() {
 }
 
 pass_join() {
-    aplay -q -D "$DEV_PLAY" -f S16_LE -r 48000 -c 1 - < "$AUD" 2>/dev/null &
+    aplay -q -D "$DEV_PLAY" -f S16_LE -r "$RATE" -c 1 - < "$AUD" 2>/dev/null &
     APJOB=$!
     sleep 1                                   # join mid frame 1
-    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r 48000 -c 1 -B 2000000 \
-        2>/dev/null | ./bin/fsk_rx_stream $RXV > "$OUT" 2>>"$LOG"
+    timeout $SECS arecord -q -D "$DEV_REC" -f S16_LE -r "$RATE" -c 1 -B 2000000 \
+        2>/dev/null | ./bin/fsk_rx_stream $RXV $PHY > "$OUT" 2>>"$LOG"
     rc=$?
     wait $APJOB 2>/dev/null
     got=$(stat -c%s "$OUT")

@@ -17,16 +17,22 @@
 #include <complex.h>
 #include <getopt.h>
 #include <liquid/liquid.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* merged view of CRC-good frames collected across all ppm trials */
-typedef struct { size_t s0; unsigned len; const unsigned char *p; } gfrm;
+/* merged view of CRC-good frames collected across all ppm trials.
+ * t0 is the frame start mapped back to the un-resampled capture
+ * (resample_lin places input position P at output P/ratio, so the original
+ * position is s0*ratio), so copies of one frame from different trials
+ * collapse to the same t0 while distinct frames stay one frame period
+ * apart. */
+typedef struct { double t0; unsigned len; const unsigned char *p; } gfrm;
 static int cmp_gfrm(const void *a, const void *b)
 {
     const gfrm *x = (const gfrm *)a, *y = (const gfrm *)b;
-    return (x->s0 > y->s0) - (x->s0 < y->s0);
+    return (x->t0 > y->t0) - (x->t0 < y->t0);
 }
 
 static void usage(const char *prog){
@@ -44,7 +50,7 @@ static void usage(const char *prog){
         "  -H, --h-index F    modulation index h          (0.25)\n"
         "  -b, --bt F         Gaussian BT product          (0.8)\n"
         "  -d, --delay N      cpfsk filter delay symbols  (1)\n"
-        "  -P, --preamble N   preamble symbols             (72)\n"
+        "  -P, --preamble N   preamble symbols             (72, max 65536)\n"
         "      --pulse P      gmsk | rcos | square        (gmsk)\n"
         "  -v, --verbose      per-frame detail on stderr (-vv tracing)\n"
         "  -h, --help         this text\n",
@@ -98,17 +104,24 @@ int main(int argc, char **argv)
     /* ---- read all of stdin ---- */
     size_t cap = 1u << 16, n16 = 0;
     int16_t *in = malloc(cap * sizeof(int16_t));
+    if (in == NULL) { fprintf(stderr, "rx: out of memory\n"); return 1; }
     for (;;) {
         if (n16 == cap) {
             if (cap > 1u << 26) { fprintf(stderr, "error: input too large\n"); return 1; }
+            int16_t *ni = realloc(in, cap * 2u * sizeof(int16_t));
+            if (ni == NULL) {
+                fprintf(stderr, "rx: out of memory\n");
+                free(in);
+                return 1;
+            }
+            in = ni;
             cap *= 2;
-            in = realloc(in, cap * sizeof(int16_t));
         }
         size_t got = fread(in + n16, sizeof(int16_t), cap - n16, stdin);
         n16 += got;
         if (got == 0) break;
     }
-    size_t N = n16 - (n16 & 1u);            /* whole samples only */
+    size_t N = n16;                         /* fread reads whole samples */
     if (N < (size_t)p.k * (p.preamble + 8u)) {
         fprintf(stderr, "rx: input too short for one frame\n");
         return 1;
@@ -116,11 +129,13 @@ int main(int argc, char **argv)
 
     unsigned nf = nsfsk_lpf_taps(&p);
     float complex *y = malloc(N * sizeof(float complex));
+    if (y == NULL) { fprintf(stderr, "rx: out of memory\n"); return 1; }
     if (nsfsk_rx_filter_slice(&p, in, N, y)) return 1;
 
     /* ---- matched-filter template from steady preamble ---- */
     unsigned tn = NSFSK_TMPL_SYMS * p.k;
     float complex *tmpl = malloc(tn * sizeof(float complex));
+    if (tmpl == NULL) { fprintf(stderr, "rx: out of memory\n"); return 1; }
     if (nsfsk_build_template(&p, NSFSK_TMPL_SYM0(p), NSFSK_TMPL_SYMS, tmpl) != tn) {
         fprintf(stderr, "error: template build failed\n");
         return 1;
@@ -140,9 +155,10 @@ int main(int argc, char **argv)
      * plus per-burst MF refit luck), so no single global ppm is
      * guaranteed to decode all frames of a multi-frame capture.  A
      * CRC-verified frame from any trial is safe to deliver; copies of one
-     * frame from different trials land within pos*2400e-6 samples of each
-     * other and are deduped. */
+     * frame from different trials are rescaled back to the original
+     * timebase and deduped by position + payload (see the merge below). */
     static rx_result tr[23];
+    double ppm_t[23];
     double best_qn = -1.0, ppm_best = 0.0;
     unsigned ok_best = 0;
     /* Fixed dense grid (no adaptive fine stage: with every trial at
@@ -155,11 +171,22 @@ int main(int argc, char **argv)
                            900, -900, 1000, -1000, 1200, -1200 };
     const char *pfix = getenv("NSFSK_PPM");      /* dev knob: single trial */
     unsigned ntrial = pfix ? 1u : 23u;
-    if (pfix) ppm_best = atof(pfix);
+    if (pfix) {
+        char *end = NULL;
+        double v = strtod(pfix, &end);
+        /* keep 1 + ppm*1e-6 strictly positive/finite for resample_lin() */
+        if (end == pfix || *end != '\0' || !isfinite(v) ||
+            v <= -900000.0 || v >= 900000.0) {
+            fprintf(stderr, "rx: bad NSFSK_PPM '%s'\n", pfix);
+            return 1;
+        }
+        ppm_best = v;
+    }
     for (unsigned t = 0; t < ntrial; t++) {
         double ppm;
         if (pfix)            ppm = atof(pfix);
         else                 ppm = (double)grid[t];
+        ppm_t[t] = ppm;
         rx_result *cur = &tr[t];
         /* reject_limit: MF-strong-but-prefix-garbage candidates cost a full
          * acquisition sweep each; unbounded (0) lets a bt<0.5 capture with a
@@ -171,9 +198,11 @@ int main(int argc, char **argv)
         } else {
             size_t N2;
             float complex *y2 = resample_lin(y, N, 1.0 + ppm * 1e-6, &N2);
-            rx_run(y2, N2, nf, tmpl, et, p,
-                   verbose > 1 ? verbose - 1 : verbose, 64u, cur);
-            free(y2);
+            if (y2 != NULL) {
+                rx_run(y2, N2, nf, tmpl, et, p,
+                       verbose > 1 ? verbose - 1 : verbose, 64u, cur);
+                free(y2);
+            }
         }
         double qn = cur->qual / (double)(cur->ndec + 1u);
         if (verbose)
@@ -184,25 +213,52 @@ int main(int argc, char **argv)
         }
     }
 
-    static gfrm all[23 * RX_MAXFRAMES];
-    unsigned na = 0;
-    for (unsigned t = 0; t < ntrial; t++)
-        for (unsigned i = 0; i < tr[t].nfr && na < 23u * RX_MAXFRAMES; i++) {
-            all[na].s0  = tr[t].fr[i].s0;
-            all[na].len = tr[t].fr[i].len;
-            all[na].p   = tr[t].buf + tr[t].fr[i].off;
-            na++;
+    /* ---- merge the trials ----
+     * Every CRC-good frame from every trial is mapped back to the original
+     * (un-resampled) timebase, then duplicates are identified by BOTH the
+     * rescaled position and the payload.  Position alone is not enough:
+     * the cross-trial spread grows with the capture length and eventually
+     * exceeds the spacing of short frames, which silently discarded real
+     * frames (2026-10-29: 400 one-byte frames -> 386 delivered, 520 -> 405). */
+    size_t na = 0;
+    for (unsigned t = 0; t < ntrial; t++) na += tr[t].nfr;
+    gfrm *all = na ? malloc(na * sizeof *all) : NULL;
+    if (na && all == NULL) {
+        fprintf(stderr, "rx: out of memory merging trials\n");
+        for (unsigned t = 0; t < ntrial; t++) rx_result_free(&tr[t]);
+        free(in); free(y); free(tmpl);
+        return 1;
+    }
+    size_t na_fill = 0;
+    for (unsigned t = 0; t < ntrial; t++) {
+        const double ratio = 1.0 + ppm_t[t] * 1e-6;
+        for (unsigned i = 0; i < tr[t].nfr; i++) {
+            const rx_frame *f = &tr[t].fr[i];
+            /* resample_lin places input position P at output P/ratio, so the
+             * un-resampled position is s0 * ratio */
+            all[na_fill].t0  = (double)f->s0 * ratio;
+            all[na_fill].len = f->len;
+            all[na_fill].p   = tr[t].buf + f->off;
+            na_fill++;
         }
-    qsort(all, na, sizeof all[0], cmp_gfrm);
-    unsigned nout = 0; size_t nbytes = 0, acc_s0 = 0;
-    for (unsigned i = 0; i < na; i++) {
-        /* same frame seen by several trials: positions agree to within
-         * the trial rescale (0.24%) plus refit jitter; a different real
-         * frame never starts closer than one short burst (~2.5k syms) */
-        if (nout && all[i].s0 < acc_s0 + 1200u + (size_t)(acc_s0 * 0.0025))
+    }
+    if (na_fill) qsort(all, na_fill, sizeof all[0], cmp_gfrm);
+    const double tol = 4.0 * (double)p.k + 128.0;  /* same-frame refit jitter */
+    unsigned nout = 0; size_t nbytes = 0;
+    double acc_t0 = 0.0; unsigned acc_len = 0; const unsigned char *acc_p = NULL;
+    for (size_t i = 0; i < na_fill; i++) {
+        /* copies of one frame from different trials have the same payload
+         * and land within refit jitter of each other after rescaling; two
+         * genuinely different frames are at least a frame period apart and
+         * (even for identical payloads) cannot satisfy both tests. */
+        if (nout && fabs(all[i].t0 - acc_t0) < tol &&
+            all[i].len == acc_len &&
+            (acc_len == 0 || memcmp(all[i].p, acc_p, acc_len) == 0))
             continue;
-        fwrite(all[i].p, 1, all[i].len, stdout);
-        nbytes += all[i].len; acc_s0 = all[i].s0; nout++;
+        if (all[i].len) fwrite(all[i].p, 1, all[i].len, stdout);
+        nbytes += all[i].len;
+        acc_t0 = all[i].t0; acc_len = all[i].len; acc_p = all[i].p;
+        nout++;
     }
     if (nout) fflush(stdout);
     fprintf(stderr, "rx: %u frame(s) merged from %u ok / %zu byte(s) decoded "
@@ -213,7 +269,8 @@ int main(int argc, char **argv)
             p.pulse == LIQUID_CPFSK_GMSK ? "gmsk" :
             p.pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square");
 
-    for (unsigned t = 0; t < ntrial; t++) free(tr[t].buf);
+    free(all);
+    for (unsigned t = 0; t < ntrial; t++) rx_result_free(&tr[t]);
     free(in); free(y); free(tmpl);
     return nout > 0 ? 0 : 1;
 }

@@ -18,22 +18,29 @@ int main(int argc, char **argv)
     /* payload */
     size_t cap = 1u << 16, n16 = 0;
     int16_t *in = malloc(cap * sizeof(int16_t));
+    if (in == NULL) { fprintf(stderr, "probe_bank: out of memory\n"); return 1; }
     for (;;) {
-        if (n16 == cap) { cap *= 2; in = realloc(in, cap * sizeof(int16_t)); }
+        if (n16 == cap) {
+            int16_t *ni = realloc(in, cap * 2u * sizeof(int16_t));
+            if (ni == NULL) { fprintf(stderr, "probe_bank: out of memory\n"); free(in); return 1; }
+            in = ni; cap *= 2;
+        }
         size_t got = fread(in + n16, sizeof(int16_t), cap - n16, stdin);
         n16 += got; if (!got) break;
     }
-    size_t N = n16 - (n16 & 1u);
-    unsigned nf = nsfsk_lpf_taps(&p);
+    size_t N = n16;
     float complex *y = malloc(N * sizeof(float complex));
+    if (y == NULL) { fprintf(stderr, "probe_bank: out of memory\n"); return 1; }
     if (nsfsk_rx_filter_slice(&p, in, N, y)) return 1;
 
     /* true wire: msg = [type,len16] + payload + crc */
     uint8_t payload[65536];
     FILE *f = fopen("/tmp/big/p1024.bin", "rb");
+    if (f == NULL) { fprintf(stderr, "probe_bank: cannot open /tmp/big/p1024.bin\n"); return 1; }
     size_t len = fread(payload, 1, sizeof payload, f); fclose(f);
-    unsigned msglen = NSFSK_HDR_LEN + len + NSFSK_CRC_LEN;
+    unsigned msglen = NSFSK_HDR_LEN + (unsigned)len + NSFSK_CRC_LEN;
     uint8_t *msg = calloc(msglen, 1);
+    if (msg == NULL) { fprintf(stderr, "probe_bank: out of memory\n"); return 1; }
     msg[0] = 0; msg[1] = (len >> 8) & 0xff; msg[2] = len & 0xff;
     memcpy(msg + NSFSK_HDR_LEN, payload, len);
     uint8_t crc[4];
@@ -41,6 +48,7 @@ int main(int argc, char **argv)
     memcpy(msg + NSFSK_HDR_LEN + len, crc, 4);
     unsigned nsym = 4u * msglen;
     unsigned char *dsym = malloc(nsym);
+    if (dsym == NULL) { fprintf(stderr, "probe_bank: out of memory\n"); return 1; }
     nsfsk_data_to_symbols(msg, msglen, dsym);
 
     const unsigned D0 = p.preamble + NSFSK_SYNC_LEN;

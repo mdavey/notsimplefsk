@@ -108,12 +108,16 @@ static unsigned bank_decide(const float complex *y, size_t N, double pos,
     return best;
 }
 
-/* complex linear-interpolation resampler: out[i] = in[i * ratio] */
+/* complex linear-interpolation resampler: out[i] = in[i * ratio].
+ * Returns NULL with *m = 0 for degenerate input (n == 0, non-finite or
+ * non-positive ratio) instead of producing an invalid size_t cast. */
 float complex *resample_lin(const float complex *x, size_t n,
                             double ratio, size_t *m)
 {
+    if (n == 0 || !(ratio > 0.0) || !isfinite(ratio)) { *m = 0; return NULL; }
     size_t mo = (size_t)(((double)n - 1.0) / ratio) + 1u;
     float complex *o = malloc((mo + 4) * sizeof(float complex));
+    if (o == NULL) { *m = 0; return NULL; }
     for (size_t i = 0; i < mo; i++) {
         double pos = (double)i * ratio;
         if (pos > (double)(n - 1)) { o[i] = 0.0f; continue; }
@@ -126,16 +130,30 @@ float complex *resample_lin(const float complex *x, size_t n,
     return o;
 }
 
-void rx_result_append(rx_result *R, const unsigned char *b, size_t n)
+int rx_result_append(rx_result *R, const unsigned char *b, size_t n)
 {
+    if (n == 0) return 0;
     if (R->nbytes + n > R->cap) {
         size_t cap = R->cap ? R->cap : 65536u;
-        while (cap < R->nbytes + n) cap *= 2u;
-        R->buf = realloc(R->buf, cap);
+        while (cap < R->nbytes + n) {
+            if (cap > (SIZE_MAX / 2u)) return -1;
+            cap *= 2u;
+        }
+        unsigned char *nb = realloc(R->buf, cap);
+        if (nb == NULL) return -1;
+        R->buf = nb;
         R->cap = cap;
     }
     memcpy(R->buf + R->nbytes, b, n);
     R->nbytes += n;
+    return 0;
+}
+
+void rx_result_free(rx_result *R)
+{
+    free(R->buf);
+    free(R->fr);
+    memset(R, 0, sizeof *R);
 }
 
 float nsfsk_rx_cutoff(const nsfsk_params *p)
@@ -171,6 +189,12 @@ int nsfsk_rx_filter_slice(const nsfsk_params *p,
     nco_crcf     nco = nco_crcf_create(LIQUID_NCO);
     firfilt_crcf lpf = firfilt_crcf_create_kaiser(nf, cutoff / (float)p->rate,
                                                   80.0f, 0.0f);
+    if (nco == NULL || lpf == NULL) {
+        fprintf(stderr, "error: RX filter allocation failed\n");
+        if (nco) nco_crcf_destroy(nco);
+        if (lpf) firfilt_crcf_destroy(lpf);
+        return -1;
+    }
     nco_crcf_set_frequency(nco, 2.0f * (float)M_PI * p->fc / (float)p->rate);
 
     for (size_t i = 0; i < n; i++) {
@@ -225,10 +249,12 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             rx_result *R)
 {
     /* ---- energy profile (moving average over win samples) ---- */
+    if (N == 0) return;
     unsigned win = (unsigned)fminf((float)(p.rate / 50),
                                    0.5f * (float)(p.preamble * p.k));
     if (win < p.k) win = p.k;
     float *prof = malloc(N * sizeof(float));
+    if (prof == NULL) { fprintf(stderr, "rx: out of memory\n"); return; }
     double acc = 0.0;
     for (size_t i = 0; i < N; i++) {
         acc += cabsf(y[i]) * cabsf(y[i]);
@@ -244,9 +270,18 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     const unsigned D0      = p.preamble + NSFSK_SYNC_LEN;  /* first data sym */
     const unsigned max_msg = NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN;
     const size_t   max_syn = (size_t)4u * max_msg;
-    unsigned char *wire    = malloc(D0 + max_syn);         /* full frame syms */
+    unsigned char *wire    = malloc((size_t)D0 + max_syn); /* full frame syms */
     uint8_t  *msg  = malloc(max_msg);
-    const float scale = (float)M_PI * p.h * (float)(p.k - 1u) / (float)p.k;
+    if (wire == NULL || msg == NULL) {
+        fprintf(stderr, "rx: out of memory\n");
+        free(prof); free(wire); free(msg);
+        return;
+    }
+    /* The decision window is k samples wide (boundary_phi compares
+     * samples i*k-1 and (i+1)*k-1), so the nominal phase advance per
+     * unit symbol value is pi*h, NOT pi*h*(k-1)/k.  This is only a
+     * prior: the prefix sweep calibrates the real scale per candidate. */
+    const float scale = (float)M_PI * p.h;
     const unsigned lag_max = 2u * p.delay + 3u;
     /* h*(M-1) >= 0.95: outer tone phase advances within 0.05*pi of the
      * cargf wrap (unwrap_ph shaves legitimate readings; h=0.33 was already
@@ -263,6 +298,11 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
 
     float *cand_phi = malloc((size_t)D0 * sizeof(float));
     float *cand_a   = malloc((size_t)D0 * sizeof(float));
+    if (cand_phi == NULL || cand_a == NULL) {
+        fprintf(stderr, "rx: out of memory\n");
+        free(prof); free(wire); free(msg); free(cand_phi); free(cand_a);
+        return;
+    }
 
     /* dn-sweep span (frame-start hypotheses around the MF peak) and the
      * prefilter score array over it; see SWEEP_DN below */
@@ -270,6 +310,11 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     const long  dn_hi  = 4L * (long)p.k;
     const size_t dn_span = (size_t)(dn_hi - dn_lo) + 1u;
     float *dn_sc = malloc(dn_span * sizeof(float));
+    if (dn_sc == NULL) {
+        fprintf(stderr, "rx: out of memory\n");
+        free(prof); free(wire); free(msg); free(cand_phi); free(cand_a);
+        return;
+    }
     long   cnd[1024];
 
     int armed = 1;
@@ -658,13 +703,24 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             R->bad++; continue;
         }
 
-        if (R->nfr < RX_MAXFRAMES) {
+        if (rx_result_append(R, msg + NSFSK_HDR_LEN, len)) {
+            fprintf(stderr, "rx: out of memory appending payload\n");
+            R->bad++;
+            continue;
+        }
+        if (R->nfr == R->fr_cap) {
+            unsigned ncap = R->fr_cap ? R->fr_cap * 2u : 64u;
+            rx_frame *nfr = realloc(R->fr, (size_t)ncap * sizeof *nfr);
+            if (nfr != NULL) { R->fr = nfr; R->fr_cap = ncap; }
+        }
+        if (R->nfr < R->fr_cap) {
             R->fr[R->nfr].s0  = s0;
-            R->fr[R->nfr].off = R->nbytes;
+            R->fr[R->nfr].off = R->nbytes - len;  /* payload start in buf */
             R->fr[R->nfr].len = len;
             R->nfr++;
+        } else {
+            fprintf(stderr, "rx: out of memory recording frame\n");
         }
-        rx_result_append(R, msg + NSFSK_HDR_LEN, len);
         R->ok++;
         if (verbose)
             fprintf(stderr, "rx: frame @%.1f ms type=%u len=%u "

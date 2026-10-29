@@ -97,8 +97,9 @@ class App(ctk.CTk):
             ctk.CTkLabel(settings, text=label, anchor="e").grid(
                 row=row, column=0, sticky="e", padx=(12, 8), pady=4)
             if key == "rate":
+                # CTkOptionMenu calls its command with the new value; swallow it.
                 w = ctk.CTkOptionMenu(settings, values=RATES, width=140,
-                                      command=self._refresh_derived)
+                                      command=lambda _v: self._refresh_derived())
                 w.set(DEFAULTS[key])
                 self.rate_menu = w
             else:
@@ -174,12 +175,14 @@ class App(ctk.CTk):
             return
         args = ["ffplay", "-f", "s16le", "-ar", self._params()["rate"], path]
         try:
-            subprocess.Popen(args, stdin=subprocess.DEVNULL)
+            proc = subprocess.Popen(args, stdin=subprocess.DEVNULL)
         except FileNotFoundError:
-            self._queue.put("$ " + " ".join(args)
-                            + "\nerror: ffplay not found")
+            self._queue.put(("$ " + " ".join(args)
+                             + "\nerror: ffplay not found", False))
             return
-        self._queue.put("$ " + " ".join(args) + "\nstarted ffplay")
+        # reap the child so repeated Play clicks do not leave zombies
+        threading.Thread(target=proc.wait, daemon=True).start()
+        self._queue.put(("$ " + " ".join(args) + "\nstarted ffplay", False))
 
     def _run(self, args, in_path, out_path):
         lines = ["$ " + " ".join(args),
@@ -201,18 +204,22 @@ class App(ctk.CTk):
                          f"(run `make` in {BIN_DIR.parent})")
         except OSError as e:
             lines.append(f"error: {e}")
-        self._queue.put("\n".join(lines))
+        except Exception as e:                      # keep the UI usable
+            lines.append(f"error: unexpected {type(e).__name__}: {e}")
+        finally:
+            self._queue.put(("\n".join(lines), True))
 
     def _poll(self):
         try:
             while True:
-                msg = self._queue.get_nowait()
+                msg, done = self._queue.get_nowait()
                 self.log.configure(state="normal")
                 self.log.insert("end", msg + "\n\n")
                 self.log.see("end")
                 self.log.configure(state="disabled")
-                self.tx_btn.configure(state="normal")
-                self.rx_btn.configure(state="normal")
+                if done:
+                    self.tx_btn.configure(state="normal")
+                    self.rx_btn.configure(state="normal")
         except queue.Empty:
             pass
         self.after(100, self._poll)

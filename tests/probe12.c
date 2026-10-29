@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     }
     float sc = num / den;
     fprintf(stderr, "probe12: nf=%u cutoff=%.0f sc=%.6f (ideal %.6f) s0=%ld lag=%ld\n",
-            nf, cutoff, sc, (float)M_PI * p.h * (float)(p.k - 1u) / (float)p.k, s0, lag);
+            nf, cutoff, sc, (float)M_PI * p.h, s0, lag);
     for (long w = n0; w < n1; w++) {
         size_t a = (size_t)s0 + (size_t)(w + lag) * p.k - 1u;
         size_t b = a + p.k;

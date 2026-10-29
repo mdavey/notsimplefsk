@@ -30,7 +30,7 @@ static void usage(const char *prog)
 "  -H, --h H          CPM modulation index (default 0.25)\n"
 "  -b, --bt BT        Gaussian bandwidth-time product (default 0.8)\n"
 "  -d, --delay N      CPM filter delay, symbols (default 1)\n"
-"  -P, --preamble N   preamble length, symbols (default 72)\n"
+"  -P, --preamble N   preamble length, symbols (default 72, max 65536)\n"
 "      --pulse STR    gmsk | rcos | square (default gmsk)\n"
 "  -h, --help         this text\n"
 "\n"
@@ -66,8 +66,24 @@ int main(int argc, char **argv)
     while ((opt = getopt_long_only(argc, argv, "t:g:r:c:k:H:b:d:P:h",
                                    longopts, NULL)) != -1) {
         switch (opt) {
-        case 't': type = strtol(optarg, NULL, 0); break;
-        case 'g': gain_db = strtof(optarg, NULL); break;
+        case 't': {
+            char *end = NULL;
+            type = strtol(optarg, &end, 0);
+            if (end == optarg || *end != '\0') {
+                fprintf(stderr, "error: bad --type '%s'\n", optarg);
+                return 1;
+            }
+            break;
+        }
+        case 'g': {
+            char *end = NULL;
+            gain_db = strtof(optarg, &end);
+            if (end == optarg || *end != '\0' || !isfinite(gain_db)) {
+                fprintf(stderr, "error: bad --gain '%s'\n", optarg);
+                return 1;
+            }
+            break;
+        }
         case 'r': p.rate = (unsigned)strtoul(optarg, NULL, 0); break;
         case 'c': p.fc = strtof(optarg, NULL); break;
         case 'k': p.k = (unsigned)strtoul(optarg, NULL, 0); break;
@@ -94,14 +110,21 @@ int main(int argc, char **argv)
     /* read all of stdin */
     size_t cap = 65536, n = 0;
     unsigned char *buf = malloc(cap);
+    if (buf == NULL) { fprintf(stderr, "error: out of memory\n"); return 1; }
     for (;;) {
         if (n == cap) {
             if (cap > 64u * 1024u * 1024u) {
                 fprintf(stderr, "error: input too large\n");
                 return 1;
             }
+            unsigned char *nb = realloc(buf, cap * 2u);
+            if (nb == NULL) {
+                fprintf(stderr, "error: out of memory\n");
+                free(buf);
+                return 1;
+            }
+            buf = nb;
             cap *= 2;
-            buf = realloc(buf, cap);
         }
         size_t got = fread(buf + n, 1, cap - n, stdin);
         n += got;
@@ -114,10 +137,15 @@ int main(int argc, char **argv)
     nco_crcf_set_frequency(up, 2.0f * (float)M_PI * p.fc / (float)p.rate);
 
     float amp = powf(10.0f, gain_db / 20.0f);
-    unsigned cap_syms = NSFSK_MAX_FRAME_SYMS(p);
+    /* preamble is bounded by nsfsk_params_validate(), so this fits unsigned */
+    unsigned cap_syms = (unsigned)NSFSK_MAX_FRAME_SYMS(p);
     unsigned char *syms = malloc(cap_syms);
     float complex *yk = malloc(p.k * sizeof(float complex));
     int16_t *out = malloc(8192 * sizeof(int16_t));
+    if (syms == NULL || yk == NULL || out == NULL) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
+    }
     size_t outn = 0;
     unsigned gap = p.rate / 25u;            /* 40 ms silence between frames */
 

@@ -36,6 +36,7 @@
 #include <getopt.h>
 #include <liquid/liquid.h>
 #include <math.h>
+#include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,7 +85,7 @@ static void usage(const char *prog)
         "  -H, --h-index F    modulation index h          (0.25)\n"
         "  -b, --bt F         Gaussian BT product          (0.8)\n"
         "  -d, --delay N      cpfsk filter delay symbols  (1)\n"
-        "  -P, --preamble N   preamble symbols             (72)\n"
+        "  -P, --preamble N   preamble symbols             (72, max 65536)\n"
         "      --pulse P      gmsk | rcos | square        (gmsk)\n"
         "      --max-frames N exit after N good frames\n"
         "      --idle-exit S  exit after S seconds with no carrier\n"
@@ -177,6 +178,8 @@ typedef struct {
     double last_ppm;
     double trial_budget;           /* s; 0 = auto (burst audio time, min 2),
                                     * <0 = unlimited */
+    unsigned max_frames;           /* 0 = unlimited; enforced in deliver() */
+    int pending_byte;              /* odd trailing byte of a split s16 sample */
     unsigned ok_tot, bad_tot, rej_tot;
     size_t bytes_tot;
 } rx_ctx;
@@ -184,9 +187,9 @@ typedef struct {
 /* Trials on one burst slice; returns the winning result (caller frees). */
 static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
 {
-    rx_result R = {0};
-    if (n < (size_t)X->p.k * (X->p.preamble + 8u)) return R;
-    if (nsfsk_rx_filter_slice(&X->p, raw, n, X->y)) return R;
+    rx_result best = {0};
+    if (n < (size_t)X->p.k * (X->p.preamble + 8u)) return best;
+    if (nsfsk_rx_filter_slice(&X->p, raw, n, X->y)) return best;
 
     int vb = X->verbose > 1 ? X->verbose - 1 : X->verbose;
     double cand[14]; unsigned nc = 0;
@@ -197,7 +200,6 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
     /* -1200 only if last_ppm wasn't it either */
     if (-1200.0 != X->last_ppm) cand[nc++] = -1200.0;
 
-    rx_result best = {0};
     double best_qn = -1.0, ppm_best = X->last_ppm;
     int accepted = 0;
     /* wall-clock budget for the trial sweep: a garbage burst must never
@@ -215,8 +217,8 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
     do {                                                                  \
         double ppm_ = (PPM);                                              \
         double t_trial = nowd();                                          \
-        if (g_stop) { free(best.buf); memset(&best, 0, sizeof best);      \
-                      goto trials_done; }                                 \
+        if (g_stop) { rx_result_free(&best);                        \
+                      goto trials_done; }                            \
         if (budget > 0.0 && nowd() - t_burst > budget) {                  \
             over_budget = 1; goto trials_done; }                          \
         ntrial++;                                                         \
@@ -228,24 +230,26 @@ static rx_result decode_range(rx_ctx *X, const int16_t *raw, size_t n)
             size_t N2;                                                    \
             float complex *y2 =                                           \
                 resample_lin(X->y, n, 1.0 + ppm_ * 1e-6, &N2);            \
-            rx_run(y2, N2, X->nf, X->tmpl, X->et, X->p, vb,               \
-                   STREAM_REJECT_LIMIT, &cur);                            \
-            free(y2);                                                     \
+            if (y2 != NULL) {                                             \
+                rx_run(y2, N2, X->nf, X->tmpl, X->et, X->p, vb,           \
+                       STREAM_REJECT_LIMIT, &cur);                        \
+                free(y2);                                                 \
+            }                                                             \
         }                                                                 \
         if (X->verbose > 1)                                               \
             fprintf(stderr, "rx: trial ppm=%+.0f -> ok=%u bad=%u (%.0f ms)\n", \
                     ppm_, cur.ok, cur.bad, 1000.0 * (nowd() - t_trial));  \
         if (cur.ok > 0 && cur.bad == 0) {          /* early exit */       \
-            free(best.buf);                                               \
+            rx_result_free(&best);                                        \
             best = cur; ppm_best = ppm_; accepted = 1;                    \
             goto trials_done;                                             \
         }                                                                 \
         double qn = cur.qual / (double)(cur.ndec + 1u);                   \
         if (cur.ok > best.ok || (cur.ok == best.ok && qn > best_qn)) {    \
-            free(best.buf);                                               \
+            rx_result_free(&best);                                        \
             best = cur; best_qn = qn; ppm_best = ppm_;                    \
         } else {                                                          \
-            free(cur.buf);                                                \
+            rx_result_free(&cur);                                         \
         }                                                                 \
     } while (0)                                                           
 
@@ -282,22 +286,37 @@ trials_done:
         fprintf(stderr, "rx: trial budget %.1fs hit after %u trial(s)\n",
                 budget, ntrial);
     X->last_ppm = ppm_best;
-    (void)R;
     return best;
 }
 
 static void deliver(rx_ctx *X, rx_result *R, size_t stamp_abs)
 {
-    if (R->nbytes) { fwrite(R->buf, 1, R->nbytes, stdout); fflush(stdout); }
-    X->ok_tot   += R->ok;
+    /* --max-frames is exact: a burst (or the final drain) may contain more
+     * frames than the remaining budget, so deliver only the first `want`
+     * of its recorded frames (fr[] stores each payload's offset/length). */
+    size_t nbytes = R->nbytes;
+    unsigned ok = R->ok;
+    if (X->max_frames && X->ok_tot + ok > X->max_frames) {
+        unsigned want = X->max_frames - X->ok_tot;
+        if (want > R->nfr) want = R->nfr;   /* OOM bookkeeping degradation */
+        ok = want;
+        if (want == 0)
+            nbytes = 0;
+        else if (want < R->nfr)
+            nbytes = R->fr[want].off;       /* start of the next frame */
+        else
+            nbytes = R->fr[R->nfr - 1u].off + R->fr[R->nfr - 1u].len;
+    }
+    if (nbytes) { fwrite(R->buf, 1, nbytes, stdout); fflush(stdout); }
+    X->ok_tot   += ok;
     X->bad_tot  += R->bad;
-    X->bytes_tot += R->nbytes;
+    X->bytes_tot += nbytes;
     if (R->ok == 0 && R->bad == 0) X->rej_tot++;
     if (X->verbose)
         fprintf(stderr, "rx: burst @%.1f ms ok=%u bad=%u byte(s)=%zu ppm=%+.0f\n",
                 1000.0 * (double)stamp_abs / (double)X->p.rate,
-                R->ok, R->bad, R->nbytes, X->last_ppm);
-    free(R->buf);
+                ok, R->bad, nbytes, X->last_ppm);
+    rx_result_free(R);
 }
 
 int main(int argc, char **argv)
@@ -353,6 +372,8 @@ int main(int argc, char **argv)
     if (err) { fprintf(stderr, "error: %s\n", err); return 1; }
 
     g_gate_dbg = X.verbose > 1;
+    X.max_frames = max_frames;
+    X.pending_byte = -1;
 
     struct sigaction sa;
     memset(&sa, 0, sizeof sa);
@@ -388,10 +409,15 @@ int main(int argc, char **argv)
 
     X.ring = malloc(X.cap * sizeof(int16_t));
     X.y    = malloc(X.cap * sizeof(float complex));
+    if (X.ring == NULL || X.y == NULL) {
+        fprintf(stderr, "rx: out of memory (window %zu samples)\n", X.cap);
+        return 1;
+    }
 
     /* matched-filter template (identical to offline rx) */
     unsigned tn = NSFSK_TMPL_SYMS * p->k;
     X.tmpl = malloc(tn * sizeof(float complex));
+    if (X.tmpl == NULL) { fprintf(stderr, "rx: out of memory\n"); return 1; }
     if (nsfsk_build_template(p, NSFSK_TMPL_SYM0(X.p), NSFSK_TMPL_SYMS,
                              X.tmpl) != tn) {
         fprintf(stderr, "error: template build failed\n");
@@ -410,11 +436,16 @@ int main(int argc, char **argv)
     g.win = win; g.arm = arm;
     g.decay = exp(-2.0 / (double)p->rate);     /* pmax tau ~ 0.5 s */
     g.hist = calloc(win, sizeof(float));
+    if (g.hist == NULL) { fprintf(stderr, "rx: out of memory\n"); return 1; }
     g.armed = 1;
     g.nco = nco_crcf_create(LIQUID_NCO);
-    nco_crcf_set_frequency(g.nco, 2.0f * (float)M_PI * p->fc / (float)p->rate);
     g.lpfc = firfilt_crcf_create_kaiser(X.nf, nsfsk_rx_cutoff(p)
                                         / (float)p->rate, 80.0f, 0.0f);
+    if (g.nco == NULL || g.lpfc == NULL) {
+        fprintf(stderr, "rx: gate filter allocation failed\n");
+        return 1;
+    }
+    nco_crcf_set_frequency(g.nco, 2.0f * (float)M_PI * p->fc / (float)p->rate);
 
     size_t consumed = 0;                       /* samples read since start */
     size_t safe_after = 0;                     /* absolute: every frame that
@@ -458,17 +489,55 @@ int main(int argc, char **argv)
             X.abs_lo = nl;
             len = consumed - X.abs_lo;
         }
+        /* If the producer stalls, a plain blocking read() would never let the
+         * idle timer fire; poll for the remaining idle budget first.  When
+         * idle_exit is 0 this is skipped and the read stays blocking. */
+        if (idle_exit > 0.0) {
+            double rem = idle_exit - (nowd() - t_act);
+            if (rem <= 0.0) {
+                if (X.verbose) fprintf(stderr, "rx: idle, exiting\n");
+                break;
+            }
+            if (rem > 3600.0) rem = 3600.0;
+            struct pollfd pfd;
+            pfd.fd = 0; pfd.events = POLLIN; pfd.revents = 0;
+            int pr = poll(&pfd, 1, (int)(rem * 1000.0) + 1);
+            if (pr == 0) {
+                if (X.verbose) fprintf(stderr, "rx: idle, exiting\n");
+                break;
+            }
+            if (pr < 0) {
+                if (errno == EINTR) { if (g_stop) break; }
+                else { fprintf(stderr, "rx: poll error: %s\n", strerror(errno)); break; }
+            }
+        }
         size_t want = X.cap - len < READ_CHUNK ? X.cap - len : READ_CHUNK;
-        ssize_t r = read(0, X.ring + len, want * sizeof(int16_t));
+        if (want == 0) {
+            fprintf(stderr, "rx: internal window full\n");
+            break;
+        }
+        /* read bytes, not samples: a pipe may split an s16 sample across
+         * reads, and dropping the odd byte would desynchronize the whole
+         * stream.  Carry it into the next read (pending_byte). */
+        unsigned char bytes[READ_CHUNK * 2];
+        size_t boff = 0;
+        if (X.pending_byte >= 0) { bytes[0] = (unsigned char)X.pending_byte; boff = 1; }
+        ssize_t r = read(0, bytes + boff, want * sizeof(int16_t) - boff);
         size_t got;
         if (r > 0) {
-            got = (size_t)r / 2u;
+            X.pending_byte = -1;
+            size_t total = (size_t)r + boff;
+            if (total & 1u) { X.pending_byte = bytes[total - 1u]; total--; }
+            memcpy(X.ring + len, bytes, total);
+            got = total / 2u;
         } else if (r == 0) {
             eof = 1; got = 0;
+            X.pending_byte = -1;          /* trailing half sample unusable */
         } else {
             if (errno == EINTR) { if (g_stop) break; continue; }
             fprintf(stderr, "rx: read error: %s\n", strerror(errno));
             eof = 1; got = 0;
+            X.pending_byte = -1;
         }
         if (got) {
             gate_advance(&g, X.ring + len, got, consumed);
@@ -519,7 +588,7 @@ int main(int argc, char **argv)
         }
 
         if (eof || g_stop) break;
-        if (max_frames && X.ok_tot >= max_frames) break;
+        if (X.max_frames && X.ok_tot >= X.max_frames) break;
         if (idle_exit > 0.0 && nowd() - t_act > idle_exit) {
             if (X.verbose) fprintf(stderr, "rx: idle, exiting\n");
             break;

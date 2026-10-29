@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +46,8 @@ const char *nsfsk_params_validate(const nsfsk_params *p)
     if (!(p->h > 0.0f))                    return "h must be > 0";
     if (!(p->bt > 0.0f) || p->bt > 1.0f)   return "bt must be in (0,1]";
     if (p->delay == 0u || p->delay > 8u)   return "delay must be within 1..8";
+    if (p->preamble > NSFSK_MAX_PREAMBLE)
+        return "preamble too long (max 65536 symbols)";
     if (p->preamble < NSFSK_TMPL_SYM0(*p) + NSFSK_TMPL_SYMS)
         return "preamble too short for sync template";
     if (!(p->fc > 0.0f) || p->fc >= 0.49f * (float)p->rate)
@@ -173,7 +176,7 @@ unsigned nsfsk_build_frame_syms(const nsfsk_params *p, uint8_t type,
                                 unsigned char *out, unsigned out_cap)
 {
     uint8_t msg[NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN];
-    unsigned msg_len, nsym_data, need, i;
+    size_t msg_len, nsym_data, need, i;
 
     if (plen > NSFSK_MAX_PAYLOAD)
         return 0;
@@ -181,21 +184,22 @@ unsigned nsfsk_build_frame_syms(const nsfsk_params *p, uint8_t type,
     msg[0] = type;
     msg[1] = (uint8_t)(plen >> 8);
     msg[2] = (uint8_t)(plen & 0xffu);
-    memcpy(msg + NSFSK_HDR_LEN, payload, plen);
+    if (plen) memcpy(msg + NSFSK_HDR_LEN, payload, plen);
     msg_len = NSFSK_HDR_LEN + plen;
-    nsfsk_crc32(msg, msg_len, msg + msg_len);
+    nsfsk_crc32(msg, (unsigned)msg_len, msg + msg_len);
     msg_len += NSFSK_CRC_LEN;
 
     nsym_data = 4u * msg_len;
-    need = p->preamble + NSFSK_SYNC_LEN + nsym_data;
-    if (out_cap < need)
+    need = (size_t)p->preamble + NSFSK_SYNC_LEN + nsym_data;
+    if (need > (size_t)out_cap || need > UINT_MAX)
         return 0;
 
-    for (i = 0; i < p->preamble + NSFSK_SYNC_LEN; i++)
-        out[i] = nsfsk_prefix_sym(p, i);
+    for (i = 0; i < (size_t)p->preamble + NSFSK_SYNC_LEN; i++)
+        out[i] = nsfsk_prefix_sym(p, (unsigned)i);
 
-    nsfsk_data_to_symbols(msg, msg_len, out + p->preamble + NSFSK_SYNC_LEN);
-    return need;
+    nsfsk_data_to_symbols(msg, (unsigned)msg_len,
+                          out + (size_t)p->preamble + NSFSK_SYNC_LEN);
+    return (unsigned)need;
 }
 
 unsigned nsfsk_lpf_taps(const nsfsk_params *p)
@@ -210,9 +214,15 @@ unsigned nsfsk_lpf_taps(const nsfsk_params *p)
     float tmin = fminf(trans, trans2);
     if (!(tmin > 1.0f)) tmin = 1.0f;
 
-    /* kaiser As~80: transition ~ 4.5*fs/n; round so group delay = int symbols */
-    float nf0 = 4.5f * (float)p->rate / tmin;
-    unsigned nf = (unsigned)((nf0 - 1.0f) / (2.0f * (float)p->k) + 1.0f)
+    /* kaiser As~80: transition ~ 4.5*fs/n; round so group delay = int
+     * symbols.  Clamp the ideal length BEFORE converting to unsigned:
+     * a degenerate fc (fc only infinitesimally above the cutoff) gives a
+     * tiny transition and would otherwise make the float->unsigned cast
+     * undefined/wrapped. */
+    double nf0 = 4.5 * (double)p->rate / (double)tmin;
+    if (!(nf0 > 1.0)) nf0 = 1.0;
+    if (nf0 > 2401.0) nf0 = 2401.0;
+    unsigned nf = (unsigned)((nf0 - 1.0) / (2.0 * (double)p->k) + 1.0)
                 * 2u * p->k + 1u;
     if (nf < 2u * p->k + 1u) nf = 2u * p->k + 1u;
     if (nf > 2401u) nf = 2401u;
@@ -247,6 +257,11 @@ unsigned nsfsk_build_template(const nsfsk_params *p, unsigned sym0,
     }
 
     y = (float complex *)malloc(p->k * sizeof(float complex));
+    if (y == NULL) {
+        fprintf(stderr, "error: out of memory\n");
+        cpfskmod_destroy(mod);
+        return 0;
+    }
     for (i = 0; i < sym0 + nsyms; i++) {
         cpfskmod_modulate(mod, nsfsk_prefix_sym(p, i), y);
         if (i >= sym0)

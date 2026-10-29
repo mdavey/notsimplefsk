@@ -66,30 +66,48 @@ int main(int argc, char **argv)
         }
     }
     if (seed == 0) seed = 1;
+    /* reject inputs that would make the resampling walk / Hilbert turn
+     * into NaN or a division by zero */
+    double ratio = 1.0 + ppm * 1e-6;
+    if (!isfinite(fdelay) || !isfinite(ppm) || !isfinite(gain_db) ||
+        !isfinite(cfo) || !isfinite(sigma) || !(ratio > 0.0)) {
+        fprintf(stderr, "channel: invalid numeric argument\n");
+        return 1;
+    }
 
     size_t cap = 1u << 16, n = 0;
     int16_t *in = malloc(cap * sizeof(int16_t));
+    if (in == NULL) { fprintf(stderr, "channel: out of memory\n"); return 1; }
     for (;;) {
         if (n == cap) {
             if (cap > 1u << 26) { fprintf(stderr, "channel: input too large\n"); return 1; }
-            cap *= 2; in = realloc(in, cap * sizeof(int16_t));
+            int16_t *ni = realloc(in, cap * 2u * sizeof(int16_t));
+            if (ni == NULL) {
+                fprintf(stderr, "channel: out of memory\n");
+                free(in);
+                return 1;
+            }
+            in = ni;
+            cap *= 2;
         }
         size_t got = fread(in + n, sizeof(int16_t), cap - n, stdin);
         n += got;
         if (!got) break;
     }
-    n -= n & 1u;
 
     /* ---- resampling walk: integer+fractional delay and ppm rate error ---- */
-    double ratio = 1.0 + ppm * 1e-6;               /* out n -> in pos n*ratio - delay */
-    size_t m = (size_t)(((double)n + (double)delay) / ratio);
+    /* out n -> in pos n*ratio - delay */
+    double md = ((double)n + (double)delay) / ratio;
+    size_t m = (n > 0 && md > 0.0) ? (size_t)md : 0u;
     float *x = malloc((m + 4) * sizeof(float));
+    if (x == NULL) { fprintf(stderr, "channel: out of memory\n"); free(in); return 1; }
     for (size_t i = 0; i < m; i++) {
         double pos = (double)i * ratio - (double)delay - fdelay;
         if (pos < 0.0 || pos > (double)(n - 1)) { x[i] = 0.0f; continue; }
         size_t i0 = (size_t)pos;
         double f = pos - (double)i0;
-        x[i] = (float)((1.0 - f) * (double)in[i0] + f * (double)in[i0 + 1]);
+        size_t i1 = (i0 + 1u < n) ? i0 + 1u : i0;
+        x[i] = (float)((1.0 - f) * (double)in[i0] + f * (double)in[i1]);
     }
 
     /* ---- gain ---- */
@@ -108,8 +126,9 @@ int main(int argc, char **argv)
             v *= 0.5 - 0.5 * cos(2.0 * M_PI * (double)j / (double)(HL - 1));
             h[j] = v;
         }
-        float *xi = malloc((m + HL) * sizeof(float));
-        memcpy(xi + c, x, m * sizeof(float));      /* zero-padded */
+        float *xi = calloc(m + HL, sizeof(float));   /* zero both pads */
+        if (xi == NULL) { fprintf(stderr, "channel: out of memory\n"); free(in); free(x); return 1; }
+        memcpy(xi + c, x, m * sizeof(float));
         double th = 0.0, dtheta = 2.0 * M_PI * cfo / (double)rate;
         for (size_t i = 0; i < m; i++) {
             double hb = 0.0;
@@ -128,6 +147,7 @@ int main(int argc, char **argv)
             x[i] += (float)(sigma * 32768.0 * gauss_next(&seed));
 
     int16_t *out = malloc((m + 8) * sizeof(int16_t));
+    if (out == NULL) { fprintf(stderr, "channel: out of memory\n"); free(in); free(x); return 1; }
     for (size_t i = 0; i < m; i++) {
         double v = x[i];
         if (v > 32767.0) v = 32767.0;
@@ -138,5 +158,6 @@ int main(int argc, char **argv)
     fprintf(stderr, "channel: %zu -> %zu samples (delay=%ld fdelay=%+.2f "
                     "ppm=%+.1f gain=%+.1fdB cfo=%+.1fHz sigma=%g)\n",
             n, m, delay, fdelay, ppm, gain_db, cfo, sigma);
+    free(in); free(x); free(out);
     return 0;
 }

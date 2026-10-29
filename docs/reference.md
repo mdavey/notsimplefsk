@@ -11,8 +11,9 @@ programs compose in pipelines. RX PHY options must match the TX exactly.
 
 ## Build
 
-    make            # bin/{fsk_tx,fsk_rx,modem_smoke,channel}
-    make test       # full regression battery (tests/roundtrip.sh, ~60 cases)
+    make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel}
+    make test       # full regression battery (tests/roundtrip.sh + tests/stream.sh,
+                    # ~130 cases)
 
 Requires libliquid >= 1.6 (`-lliquid`).
 
@@ -65,7 +66,7 @@ multiple frames separated by 40 ms silence (the RX energy gate re-arms on it).
                                   alignment at all (probe5), MLSE would be
                                   needed; < 0.5 always needs MLSE)
     -d N      CPM filter delay, symbols (default 1, 1..8)
-    -P N      preamble symbols    (default 72)
+    -P N      preamble symbols    (default 72, max 65536)
        --pulse gmsk|rcos|square   (default gmsk)
 
 Tone frequencies: fc + (2s+1-M)*h*Rs/2, i.e. fc + {-3,-1,+1,+3} * h*Rs/2.
@@ -109,7 +110,8 @@ fc >= ~4300; h=1.0 (12 kHz) wants fc >= ~6100 or a lower symbol rate
 
 Physically rejected by design (hard error or guaranteed CRC gate, never a
 false decode): fc <= dev + 0.85*Rs at the given k on EITHER band side
-(mixer image cannot be filtered: k <= 10 @ fc=4000), non-integer-friendly
+(mixer image cannot be filtered: at fc=4000 and the default h=0.25 this
+rejects k <= 14; k=16 is the first usable value), non-integer-friendly
 band edges. The former h < 1/3 cap is gone: it was a limit of the
 phase-advance detector only, now bypassed by the tone bank.
 
@@ -120,7 +122,7 @@ a decoder envelope limit, not a streaming regression).
 
 ## Streaming reception (fsk_rx_stream)
 
-    arecord -D default -f S16_LE -r 48000 -c 1 -B 2000000 | ./bin/fsk_rx_stream > out.bin
+    arecord -D pipewire -f S16_LE -r 48000 -c 1 -B 2000000 | ./bin/fsk_rx_stream > out.bin
 
 Decodes as audio arrives — no EOF, no whole-file rescan. An energy gate
 (causal DDC + single-pass LPF reference) closes 20 ms after the carrier
