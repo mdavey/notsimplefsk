@@ -79,11 +79,29 @@ static double merge_tolerance(const nsfsk_params *p)
  * position is s0*ratio), so copies of one frame from different trials
  * collapse to the same t0 while distinct frames stay one frame period
  * apart. */
-typedef struct { double t0; unsigned len; const unsigned char *p; } gfrm;
+typedef struct { double t0; unsigned len, fix; const unsigned char *p; } gfrm;
 static int cmp_gfrm(const void *a, const void *b)
 {
     const gfrm *x = (const gfrm *)a, *y = (const gfrm *)b;
     return (x->t0 > y->t0) - (x->t0 < y->t0);
+}
+static int cmp_double(const void *a, const void *b)
+{
+    const double x = *(const double *)a, y = *(const double *)b;
+    return (x > y) - (x < y);
+}
+
+/* 1 if t is within tol of any entry of the sorted list v[0..n-1]. */
+static int near_sorted(const double *v, size_t n, double t, double tol)
+{
+    size_t lo = 0, hi = n;
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2u;
+        if (v[mid] < t) lo = mid + 1u; else hi = mid;
+    }
+    if (lo < n && fabs(v[lo] - t) < tol) return 1;
+    if (lo > 0u && fabs(v[lo - 1u] - t) < tol) return 1;
+    return 0;
 }
 
 static void usage(const char *prog){
@@ -314,6 +332,7 @@ int main(int argc, char **argv)
              * un-resampled position is s0 * ratio */
             all[na_fill].t0  = (double)f->s0 * ratio;
             all[na_fill].len = f->len;
+            all[na_fill].fix = f->fix;
             all[na_fill].p   = tr[t].buf + f->off;
             na_fill++;
         }
@@ -323,8 +342,20 @@ int main(int argc, char **argv)
      * different ppm trials; see merge_tolerance().  The 25% spacing cap
      * keeps adjacent identical-payload frames distinct. */
     const double tol = merge_tolerance(&p);
-    unsigned nout = 0, ndup = 0; size_t nbytes = 0;
+    unsigned nout = 0, ndup = 0, nfix = 0; unsigned long long rs_bits = 0;
+    size_t nbytes = 0;
     double acc_t0 = 0.0; unsigned acc_len = 0; const unsigned char *acc_p = NULL;
+    /* positions of the delivered frames (sorted, same order as output) so
+     * the lost-frame list below can tell "rejected by every trial" from
+     * "rejected by one trial, decoded by another". */
+    double *kt = na_fill ? malloc(na_fill * sizeof *kt) : NULL;
+    if (na_fill && kt == NULL) {          /* the lost-frame dedupe needs it too */
+        fprintf(stderr, "rx: out of memory merging trials\n");
+        free(all);
+        for (unsigned t = 0; t < ntrial; t++) rx_result_free(&tr[t]);
+        free(in); free(y); free(tmpl);
+        return 1;
+    }
     for (size_t i = 0; i < na_fill; i++) {
         /* copies of one frame from different trials have the same payload
          * and land within refit jitter of each other after rescaling; two
@@ -338,10 +369,46 @@ int main(int argc, char **argv)
         }
         if (all[i].len) fwrite(all[i].p, 1, all[i].len, stdout);
         nbytes += all[i].len;
+        kt[nout] = all[i].t0;
+        /* the RS count of the copy that wins the merge is the one reported:
+         * a different ppm trial may have needed a couple more corrections on
+         * the same frame, but only this decode is what reached the output. */
+        nfix += all[i].fix ? 1u : 0u;
+        rs_bits += 8ull * all[i].fix;
         acc_t0 = all[i].t0; acc_len = all[i].len; acc_p = all[i].p;
         nout++;
     }
     if (nout) fflush(stdout);
+
+    /* ---- lost frames across the trials ----
+     * Every trial re-reads the same capture, so a codeword that RS/CRC
+     * turned down appears once per trial that got that far.  Map the reject
+     * positions back to the original timebase, dedupe them with the same
+     * tolerance as the delivered frames, then drop the ones that sit on a
+     * frame some trial did decode: only a codeword every trial lost is
+     * really gone. */
+    size_t nl_all = 0;
+    for (unsigned t = 0; t < ntrial; t++) nl_all += tr[t].nlost;
+    double *lp = nl_all ? malloc(nl_all * sizeof *lp) : NULL;
+    unsigned nlostu = 0;
+    if (nl_all && lp != NULL) {
+        size_t nf2 = 0;
+        for (unsigned t = 0; t < ntrial; t++) {
+            const double ratio = 1.0 + ppm_t[t] * 1e-6;
+            for (unsigned i = 0; i < tr[t].nlost; i++)
+                lp[nf2++] = (double)tr[t].lost[i] * ratio;
+        }
+        qsort(lp, nf2, sizeof lp[0], cmp_double);
+        double last = -1.0;
+        for (size_t i = 0; i < nf2; i++) {
+            if (i > 0u && fabs(lp[i] - last) < tol) continue;
+            /* decoded elsewhere -> recovered, not lost */
+            if (near_sorted(kt, nout, lp[i], tol)) continue;
+            last = lp[i];
+            nlostu++;
+        }
+    }
+    free(lp);
     if (verbose)
         fprintf(stderr, "rx: merge tol=%.1f sample(s), suppressed %u "
                         "duplicate copy/copies\n", tol, ndup);
@@ -352,7 +419,9 @@ int main(int argc, char **argv)
             p.rate, p.fc, p.k, p.h, p.bt, p.delay,
             p.pulse == LIQUID_CPFSK_GMSK ? "gmsk" :
             p.pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square");
+    rx_fec_report(stderr, nout, nfix, nlostu, rs_bits);
 
+    free(kt);
     free(all);
     for (unsigned t = 0; t < ntrial; t++) rx_result_free(&tr[t]);
     free(in); free(y); free(tmpl);

@@ -184,6 +184,11 @@ typedef struct {
     int pending_byte;              /* odd trailing byte of a split s16 sample */
     unsigned ok_tot, bad_tot, rej_tot;
     size_t bytes_tot;
+    /* FEC totals for the delivered frames: ok_rs_tot counts the ones RS had
+     * to correct, rs_bits_tot the wire bits it fixed, lost_tot the complete
+     * codewords the RS+CRC gate rejected (see rx_result). */
+    unsigned ok_rs_tot, lost_tot;
+    unsigned long long rs_bits_tot;
 } rx_ctx;
 
 /* Trials on one burst slice; returns the winning result (caller frees). */
@@ -297,7 +302,8 @@ static void deliver(rx_ctx *X, rx_result *R, size_t stamp_abs)
      * frames than the remaining budget, so deliver only the first `want`
      * of its recorded frames (fr[] stores each payload's offset/length). */
     size_t nbytes = R->nbytes;
-    unsigned ok = R->ok;
+    unsigned ok = R->ok, ok_rs = R->ok_rs;
+    unsigned long long rs_bits = R->rs_bits;
     if (X->max_frames && X->ok_tot + ok > X->max_frames) {
         unsigned want = X->max_frames - X->ok_tot;
         if (want > R->nfr) want = R->nfr;   /* OOM bookkeeping degradation */
@@ -308,16 +314,26 @@ static void deliver(rx_ctx *X, rx_result *R, size_t stamp_abs)
             nbytes = R->fr[want].off;       /* start of the next frame */
         else
             nbytes = R->fr[R->nfr - 1u].off + R->fr[R->nfr - 1u].len;
+        /* the FEC counters follow the frames actually delivered, so rebuild
+         * them from the per-frame records of the prefix that survives */
+        ok_rs = 0; rs_bits = 0;
+        for (unsigned i = 0; i < ok && i < R->nfr; i++) {
+            rs_bits += 8ull * R->fr[i].fix;
+            if (R->fr[i].fix) ok_rs++;
+        }
     }
     if (nbytes) { fwrite(R->buf, 1, nbytes, stdout); fflush(stdout); }
     X->ok_tot   += ok;
+    X->ok_rs_tot += ok_rs;
+    X->rs_bits_tot += rs_bits;
     X->bad_tot  += R->bad;
+    X->lost_tot += R->nlost;
     X->bytes_tot += nbytes;
     if (R->ok == 0 && R->bad == 0) X->rej_tot++;
     if (X->verbose)
-        fprintf(stderr, "rx: burst @%.1f ms ok=%u bad=%u byte(s)=%zu ppm=%+.0f\n",
+        fprintf(stderr, "rx: burst @%.1f ms ok=%u bad=%u rs=%u byte(s)=%zu ppm=%+.0f\n",
                 1000.0 * (double)stamp_abs / (double)X->p.rate,
-                ok, R->bad, nbytes, X->last_ppm);
+                ok, R->bad, ok_rs, nbytes, X->last_ppm);
     rx_result_free(R);
 }
 
@@ -624,6 +640,7 @@ int main(int argc, char **argv)
             p->rate, p->fc, p->k, p->h, p->bt, p->delay,
             p->pulse == LIQUID_CPFSK_GMSK ? "gmsk" :
             p->pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square");
+    rx_fec_report(stderr, X.ok_tot, X.ok_rs_tot, X.lost_tot, X.rs_bits_tot);
 
     free(X.ring); free(X.y); free(X.tmpl); free(g.hist);
     nco_crcf_destroy(g.nco);

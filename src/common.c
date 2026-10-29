@@ -196,14 +196,20 @@ void nsfsk_frame_encode(const nsfsk_params *p, uint8_t type,
 }
 
 int nsfsk_frame_decode(const nsfsk_params *p, const uint8_t *wire,
-                       uint8_t *type, uint8_t *payload, unsigned *plen)
+                       uint8_t *type, uint8_t *payload, unsigned *plen,
+                       unsigned *fixed)
 {
     uint8_t blk[NSFSK_WIRE_BYTES], crc[4];
     unsigned len, maxp = nsfsk_max_payload(p);
+    int cor;
 
     memcpy(blk, wire, NSFSK_WIRE_BYTES);
-    if (nsfsk_rs_decode(p->fec, blk, blk) < 0)
-        return 0;                       /* uncorrectable: reject outright */
+    cor = nsfsk_rs_decode(p->fec, blk, blk);
+    if (cor < 0) {                      /* uncorrectable: reject outright */
+        if (fixed != NULL) *fixed = 0;
+        return 0;
+    }
+    if (fixed != NULL) *fixed = (unsigned)cor;
     len = blk[1];
     if (len > maxp)
         return 0;

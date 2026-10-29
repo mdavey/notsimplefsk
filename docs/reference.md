@@ -99,6 +99,26 @@ acoustic dropouts, the bt ≤ 0.5 ISI pattern floor) turn from a lost frame
 into a clean decode — pinned by the fecwin cases in roundtrip.sh, which the
 pre-FEC binary fails on identical channel output.
 
+### FEC reporting
+
+Both receivers close stderr with the same two lines
+(`rx_fec_report()`, src/rx_core.c):
+
+    rx: FEC frames: 45 attempted, 42 recovered, 3 lost, 5 (11.90% of recovered) recovered via RS
+    rx: FEC bits: 91800 total, 85680 recovered (93.33%), 6120 unrecovered (6.67%), 2040 bit(s)/frame, 72 RS-corrected (0.08% of total)
+
+One frame is one codeword, so the bit totals are frame counts times the
+2040-bit wire width: *recovered* bits ride in CRC-verified frames (correct
+by definition, whether or not RS fixed them), *unrecovered* bits are the
+frames the RS+CRC gate rejected, and *RS-corrected* is what FEC actually
+changed — the post-detection error estimate to read against the tier's t.
+A frame counts as *attempted* (hence as lost) only if a complete codeword
+reached the gate: a candidate pruned on the 8-symbol header peek, or cut
+short by the end of the window, is still a `bad` decision but never
+presented 2040 bits.  The offline RX dedupes reject positions across the
+ppm trials with the same tolerance as delivered frames, so a codeword is
+lost only if every trial that reached it rejected it.
+
 Airtime per frame (1116 syms incl. preamble+sync; tier-independent):
 
     300 Bd  (k=160 @ 48k)   ~3.7 s   any message <= max payload

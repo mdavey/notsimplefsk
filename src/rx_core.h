@@ -21,6 +21,7 @@
 #include <complex.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 /* Decoded frames appended to buf; ok/bad count RS+CRC gate passes/failures;
  * qual/ndec accumulate per-decision quality for ppm trial selection. */
@@ -31,14 +32,27 @@
  * CRC-verified frame from any trial can be delivered.  The record list
  * grows on demand (an arbitrary capture can contain any number of
  * frames); duplicates across trials are identified by rescaled position
- * + payload in fsk_rx.c, never by a position window alone. */
-typedef struct { size_t s0, off; unsigned len; } rx_frame;
+ * + payload in fsk_rx.c, never by a position window alone.
+ * fix = wire bytes RS had to correct (0 = the block arrived clean), so the
+ * merged frame list can also report how much of the delivery is FEC work. */
+typedef struct { size_t s0, off; unsigned len, fix; } rx_frame;
 
 typedef struct {
     unsigned char *buf; size_t cap, nbytes;
     unsigned ok, bad; double qual; size_t ndec;
+    /* FEC accounting: ok_rs counts accepted frames that only cleared the
+     * RS+CRC gate because RS corrected something, rs_bits is the wire bits
+     * RS fixed in accepted frames (8 per corrected byte).  lost[] holds the
+     * start sample of every COMPLETE codeword the RS/CRC gate rejected
+     * (candidates pruned on the 8-symbol header peek, or cut off by the end
+     * of the window, are 'bad' but were never a whole block, so they are not
+     * lost frames); the offline RX dedupes those positions across ppm trials
+     * the same way it dedupes delivered frames. */
+    unsigned ok_rs;
+    unsigned long long rs_bits;
     unsigned acq;              /* expensive candidate acquisitions */
     rx_frame *fr; unsigned nfr, fr_cap;
+    size_t *lost; unsigned nlost, lost_cap;
     /* -vv diagnostics: per-symbol bank quality of the last decoded frame */
     float dbg_q[4200]; unsigned dbg_n;
 } rx_result;
@@ -50,6 +64,14 @@ int rx_result_append(rx_result *R, const unsigned char *b, size_t n);
 /* Release everything owned by R and zero it (safe on a zeroed/empty
  * result and safe to call twice). */
 void rx_result_free(rx_result *R);
+
+/* Shared FEC report line pair (stderr in both receivers): frames attempted /
+ * recovered / lost and how many recovered frames needed RS, then the same
+ * in wire bits (recovered + unrecovered = total, percentages, plus the bits
+ * RS actually fixed).  ok = accepted frames, ok_rs = accepted frames that
+ * needed RS, lost = rejected complete codewords, rs_bits = bits RS fixed. */
+void rx_fec_report(FILE *f, unsigned ok, unsigned ok_rs, unsigned lost,
+                   unsigned long long rs_bits);
 
 /* complex linear-interpolation resampler: out[i] = in[i * ratio] */
 float complex *resample_lin(const float complex *x, size_t n,

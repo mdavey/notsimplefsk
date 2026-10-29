@@ -153,7 +153,46 @@ void rx_result_free(rx_result *R)
 {
     free(R->buf);
     free(R->fr);
+    free(R->lost);
     memset(R, 0, sizeof *R);
+}
+
+/* Record a rejected complete codeword's position (stats only: an allocation
+ * failure just undercounts, the RX keeps running). */
+static void rx_result_note_lost(rx_result *R, size_t s0)
+{
+    if (R->nlost == R->lost_cap) {
+        unsigned ncap = R->lost_cap ? R->lost_cap * 2u : 64u;
+        size_t *nl = realloc(R->lost, (size_t)ncap * sizeof *nl);
+        if (nl == NULL) return;
+        R->lost = nl;
+        R->lost_cap = ncap;
+    }
+    R->lost[R->nlost++] = s0;
+}
+
+void rx_fec_report(FILE *f, unsigned ok, unsigned ok_rs, unsigned lost,
+                   unsigned long long rs_bits)
+{
+    /* One data frame is exactly one shortened RS(255, 255-P) codeword, so
+     * the bit totals are frame counts times the wire width; a recovered
+     * frame is CRC-verified and therefore counted error-free even when RS
+     * had to fix bits inside it (those are the RS-corrected subtotal). */
+    const unsigned long long bf  = (unsigned long long)NSFSK_WIRE_BYTES * 8ull;
+    const unsigned long long rec = (unsigned long long)ok * bf;
+    const unsigned long long tot = (unsigned long long)(ok + lost) * bf;
+    const unsigned long long unre = tot - rec;
+
+#define PCT(x, d) ((d) ? 100.0 * (double)(x) / (double)(d) : 0.0)
+    fprintf(f, "rx: FEC frames: %u attempted, %u recovered, %u lost, "
+               "%u (%.2f%% of recovered) recovered via RS\n",
+            ok + lost, ok, lost, ok_rs, PCT(ok_rs, ok));
+    fprintf(f, "rx: FEC bits: %llu total, %llu recovered (%.2f%%), "
+               "%llu unrecovered (%.2f%%), %llu bit(s)/frame, "
+               "%llu RS-corrected (%.2f%% of total)\n",
+            tot, rec, PCT(rec, tot), unre, PCT(unre, tot), bf,
+            rs_bits, PCT(rs_bits, tot));
+#undef PCT
 }
 
 float nsfsk_rx_cutoff(const nsfsk_params *p)
@@ -638,7 +677,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                      * (float)(p.k - 1u) / (float)p.k;
         unsigned need_syn = 4u * NSFSK_HDR_LEN;      /* type + len: 8 syms */
         unsigned got = 0, iter, frameok = 0, hdr_bad;
-        unsigned len = 0;
+        unsigned len = 0, fix = 0;
         uint8_t ftype = 0;
         for (iter = 0; iter < (bank ? 1u : 3u); iter++) {
             if (iter) { dphi = 2.0f * (float)M_PI * cfo * (float)p.k
@@ -692,7 +731,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             if (hdr_bad || got < max_syn) break;
 
             nsfsk_symbols_to_data(wire + D0, max_syn, blk);
-            if (nsfsk_frame_decode(&p, blk, &ftype, pay, &len)) {
+            if (nsfsk_frame_decode(&p, blk, &ftype, pay, &len, &fix)) {
                 frameok = 1;
                 break;
             }
@@ -719,6 +758,10 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                 }
                 R->dbg_n = 0;
             }
+            /* Only a full codeword that RS/CRC turned down is a LOST frame:
+             * a candidate pruned on the header peek or cut short by the end
+             * of the window never presented 2040 wire bits. */
+            if (!hdr_bad && got >= max_syn) rx_result_note_lost(R, s0);
             R->bad++; continue;
         }
 
@@ -736,16 +779,19 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             R->fr[R->nfr].s0  = s0;
             R->fr[R->nfr].off = R->nbytes - len;  /* payload start in buf */
             R->fr[R->nfr].len = len;
+            R->fr[R->nfr].fix = fix;
             R->nfr++;
         } else {
             fprintf(stderr, "rx: out of memory recording frame\n");
         }
         R->ok++;
+        R->rs_bits += 8ull * fix;
+        if (fix) R->ok_rs++;
         if (verbose)
             fprintf(stderr, "rx: frame @%.1f ms type=%u len=%u "
-                            "cfo=%+.1f Hz lag=%u mism=%u\n",
+                            "cfo=%+.1f Hz lag=%u mism=%u rs=%u\n",
                     1000.0 * (double)s0 / (double)p.rate, ftype, len,
-                    cfo, (int)best_lag, (int)best_mis);
+                    cfo, (int)best_lag, (int)best_mis, fix);
     }
 
     free(prof); free(wire); free(blk); free(pay);

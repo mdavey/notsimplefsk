@@ -128,9 +128,13 @@ void nsfsk_frame_encode(const nsfsk_params *p, uint8_t type,
                         const uint8_t *payload, unsigned plen,
                         uint8_t *wire /* 255 B */);
 /* RS correction + len sanity + CRC gate.  Returns 1 and fills type/plen and
- * payload (up to 249 B) on a verified frame, 0 otherwise. */
+ * payload (up to 249 B) on a verified frame, 0 otherwise.  *fixed (optional,
+ * may be NULL) receives the wire bytes RS had to correct: >0 means the frame
+ * was only recovered by FEC, 0 means it arrived clean.  Meaningless when the
+ * frame is rejected (the block holds garbage). */
 int  nsfsk_frame_decode(const nsfsk_params *p, const uint8_t *wire /* 255 B */,
-                        uint8_t *type, uint8_t *payload, unsigned *plen);
+                        uint8_t *type, uint8_t *payload, unsigned *plen,
+                        unsigned *fixed);
 
 /* Build a complete frame's wire symbols (prefix + data section).
  * Returns number of symbols written, or 0 on error. */
