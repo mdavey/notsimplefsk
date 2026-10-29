@@ -269,13 +269,14 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
 
     const unsigned tn = NSFSK_TMPL_SYMS * p.k;
     const unsigned D0      = p.preamble + NSFSK_SYNC_LEN;  /* first data sym */
-    const unsigned max_msg = NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN;
-    const size_t   max_syn = (size_t)4u * max_msg;
+    const size_t   max_syn = NSFSK_WIRE_SYMS; /* fixed 1020 data symbols    */
+    const unsigned max_pl  = nsfsk_max_payload(&p);
     unsigned char *wire    = malloc((size_t)D0 + max_syn); /* full frame syms */
-    uint8_t  *msg  = malloc(max_msg);
-    if (wire == NULL || msg == NULL) {
+    uint8_t  *blk  = malloc(NSFSK_WIRE_BYTES);  /* descrambled codeword     */
+    uint8_t  *pay  = malloc(NSFSK_WIRE_BYTES);  /* delivered payload        */
+    if (wire == NULL || blk == NULL || pay == NULL) {
         fprintf(stderr, "rx: out of memory\n");
-        free(prof); free(wire); free(msg);
+        free(prof); free(wire); free(blk); free(pay);
         return;
     }
     /* The decision window is k samples wide (boundary_phi compares
@@ -301,7 +302,8 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     float *cand_a   = malloc((size_t)D0 * sizeof(float));
     if (cand_phi == NULL || cand_a == NULL) {
         fprintf(stderr, "rx: out of memory\n");
-        free(prof); free(wire); free(msg); free(cand_phi); free(cand_a);
+        free(prof); free(wire); free(blk); free(pay);
+        free(cand_phi); free(cand_a);
         return;
     }
 
@@ -313,7 +315,8 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
     float *dn_sc = malloc(dn_span * sizeof(float));
     if (dn_sc == NULL) {
         fprintf(stderr, "rx: out of memory\n");
-        free(prof); free(wire); free(msg); free(cand_phi); free(cand_a);
+        free(prof); free(wire); free(blk); free(pay);
+        free(cand_phi); free(cand_a);
         return;
     }
     long   cnd[1024];
@@ -614,7 +617,11 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         size_t s0 = (size_t)(s0_ref + best_dnb);
         float cfo = best_cfo;
 
-        /* --- decode data-section symbols, header first, CRC gate ---
+        /* --- decode the fixed 1020 data symbols, RS + CRC gate ---
+         * The data section is one 255-byte shortened RS codeword, so the
+         * symbol count is known before decoding; only an 8-symbol sanity
+         * peek (type+len: len <= 249-fec) runs before the full pass, and
+         * wrong-alignment candidates die at the RS+CRC gate instead.
          * best_dsc is calibrated on the alternating 0,3 preamble, whose
          * heavy same-pulse ISI pulls it ~25% below the pattern-average
          * per-unit phase of random payload data.  The decision-directed
@@ -629,10 +636,10 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         float retry_fsc = best_dsc;
         float fsc_lo = 0.45f * best_dsc, fsc_hi = 1.6f * (float)M_PI * p.h
                      * (float)(p.k - 1u) / (float)p.k;
-        unsigned need_syn = 4u * NSFSK_HDR_LEN;      /* type + len16 */
-        unsigned got = 0, need_total = 0, iter, crcok = 0;
+        unsigned need_syn = 4u * NSFSK_HDR_LEN;      /* type + len: 8 syms */
+        unsigned got = 0, iter, frameok = 0, hdr_bad;
         unsigned len = 0;
-        uint8_t crc[4];
+        uint8_t ftype = 0;
         for (iter = 0; iter < (bank ? 1u : 3u); iter++) {
             if (iter) { dphi = 2.0f * (float)M_PI * cfo * (float)p.k
                                    / (float)p.rate;
@@ -642,7 +649,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
              * see bank_decide) */
             double bpos = (double)s0
                         + (double)(D0 + best_lag) * (double)p.k;
-            got = 0; need_total = 0;
+            got = 0; hdr_bad = 0;
             for (; got < max_syn; got++) {
                 unsigned s;
                 if (bank) {
@@ -670,25 +677,23 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
                 nq++;
                 wire[D0 + got] = (unsigned char)s;
 
-                if (need_total == 0 && got + 1u >= need_syn) {
-                    nsfsk_symbols_to_data(wire + D0, need_syn, msg);
-                    unsigned hl = ((unsigned)msg[1] << 8) | msg[2];
+                /* cheap early prune: the 2-byte header must carry a legal
+                 * length (weaker than the old 24-sym header: junk
+                 * alignments now fall to the RS+CRC gate below) */
+                if (got + 1u == need_syn) {
+                    nsfsk_symbols_to_data(wire + D0, need_syn, blk);
                     if (verbose > 1)
                         fprintf(stderr, "rx: hdr type=%u len=%u\n",
-                                msg[0], hl);
-                    if (hl > NSFSK_MAX_PAYLOAD) break;
-                    need_total = 4u * (NSFSK_HDR_LEN + hl + NSFSK_CRC_LEN);
+                                blk[0], blk[1]);
+                    if (blk[1] > max_pl) { hdr_bad = 1; break; }
                 }
-                if (need_total && got + 1u >= need_total) break;
             }
             R->qual += q; R->ndec += nq;
-            if (need_total == 0 || got + 1u < need_total) break;
+            if (hdr_bad || got < max_syn) break;
 
-            nsfsk_symbols_to_data(wire + D0, need_total, msg);
-            len = ((unsigned)msg[1] << 8) | msg[2];
-            nsfsk_crc32(msg, NSFSK_HDR_LEN + len, crc);
-            if (memcmp(crc, msg + NSFSK_HDR_LEN + len, 4) == 0) {
-                crcok = 1;
+            nsfsk_symbols_to_data(wire + D0, max_syn, blk);
+            if (nsfsk_frame_decode(&p, blk, &ftype, pay, &len)) {
+                frameok = 1;
                 break;
             }
             if (got >= 40u) retry_fsc = fsc;    /* seed the next pass */
@@ -696,10 +701,10 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         i = s0 + (size_t)(D0 + got) * p.k + p.k;   /* resume after frame */
         armed = 0; below = 0;
 
-        if (!crcok) {
+        if (!frameok) {
             if (verbose) {
-                fprintf(stderr, "rx: frame @%.1f ms len=%u CRC BAD",
-                        1000.0 * (double)s0 / (double)p.rate, len);
+                fprintf(stderr, "rx: frame @%.1f ms RS/CRC REJECT",
+                        1000.0 * (double)s0 / (double)p.rate);
                 if (verbose > 1 && R->dbg_n > 0) {
                     float mn = 9; size_t mi = 0; double s = 0;
                     for (unsigned t = 0; t < R->dbg_n; t++) {
@@ -717,7 +722,7 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
             R->bad++; continue;
         }
 
-        if (rx_result_append(R, msg + NSFSK_HDR_LEN, len)) {
+        if (rx_result_append(R, pay, len)) {
             fprintf(stderr, "rx: out of memory appending payload\n");
             R->bad++;
             continue;
@@ -739,10 +744,10 @@ void rx_run(const float complex *y, size_t N, unsigned nf,
         if (verbose)
             fprintf(stderr, "rx: frame @%.1f ms type=%u len=%u "
                             "cfo=%+.1f Hz lag=%u mism=%u\n",
-                    1000.0 * (double)s0 / (double)p.rate, msg[0], len,
+                    1000.0 * (double)s0 / (double)p.rate, ftype, len,
                     cfo, (int)best_lag, (int)best_mis);
     }
 
-    free(prof); free(wire); free(msg);
+    free(prof); free(wire); free(blk); free(pay);
     free(cand_phi); free(cand_a); free(dn_sc);
 }

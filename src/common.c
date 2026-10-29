@@ -27,6 +27,12 @@ void nsfsk_params_default(nsfsk_params *p)
     p->delay    = 1u;
     p->pulse    = LIQUID_CPFSK_GMSK;
     p->preamble = 72u;
+    p->fec      = NSFSK_FEC_DEFAULT;
+}
+
+unsigned nsfsk_max_payload(const nsfsk_params *p)
+{
+    return NSFSK_WIRE_BYTES - NSFSK_HDR_LEN - NSFSK_CRC_LEN - p->fec;
 }
 
 int nsfsk_parse_pulse(const char *s, int *out)
@@ -48,6 +54,8 @@ const char *nsfsk_params_validate(const nsfsk_params *p)
     if (p->delay == 0u || p->delay > 8u)   return "delay must be within 1..8";
     if (p->preamble > NSFSK_MAX_PREAMBLE)
         return "preamble too long (max 65536 symbols)";
+    if (p->fec != 16u && p->fec != 32u && p->fec != 64u && p->fec != 84u)
+        return "fec must be one of 16, 32, 64, 84";
     if (p->preamble < NSFSK_TMPL_SYM0(*p) + NSFSK_TMPL_SYMS)
         return "preamble too short for sync template";
     if (!(p->fc > 0.0f) || p->fc >= 0.49f * (float)p->rate)
@@ -103,9 +111,10 @@ unsigned char nsfsk_prefix_sym(const nsfsk_params *p, unsigned i)
  * the TX did at the start of the data section, both sides implicitly
  * resyncing on the sync table.  PN = Fibonacci LFSR with primitive
  * x^23 + x^18 + 1 (ADSL G.992 lineage, period verified 2^23-1), all-ones
- * seed; the period exceeds the longest frame (1031 B), so one run of the
- * sequence covers any payload and single-symbol runs are bounded by the
- * m-sequence's own max run (~23 bits -> ~12 symbols). */
+ * seed; the period (2^23-1 bits) far exceeds the fixed 1020-symbol data
+ * section, so one run of the sequence covers any frame and single-symbol
+ * runs are bounded by the m-sequence's own max run (~23 bits -> ~12
+ * symbols). */
 #define PN_MASK 0x7fffffu
 #define PN_SEED 0x7fffffu
 
@@ -171,33 +180,62 @@ void nsfsk_crc32(const uint8_t *buf, unsigned n, uint8_t out[4])
     out[3] = (uint8_t)(crc      );
 }
 
+void nsfsk_frame_encode(const nsfsk_params *p, uint8_t type,
+                        const uint8_t *payload, unsigned plen, uint8_t *wire)
+{
+    unsigned k = NSFSK_WIRE_BYTES - p->fec;
+
+    if (plen > nsfsk_max_payload(p)) plen = nsfsk_max_payload(p);
+    wire[0] = type;
+    wire[1] = (uint8_t)plen;
+    if (plen) memcpy(wire + NSFSK_HDR_LEN, payload, plen);
+    nsfsk_crc32(wire, NSFSK_HDR_LEN + plen, wire + NSFSK_HDR_LEN + plen);
+    memset(wire + NSFSK_HDR_LEN + plen + NSFSK_CRC_LEN, 0,
+           k - (NSFSK_HDR_LEN + plen + NSFSK_CRC_LEN));
+    nsfsk_rs_encode(p->fec, wire, wire + k);
+}
+
+int nsfsk_frame_decode(const nsfsk_params *p, const uint8_t *wire,
+                       uint8_t *type, uint8_t *payload, unsigned *plen)
+{
+    uint8_t blk[NSFSK_WIRE_BYTES], crc[4];
+    unsigned len, maxp = nsfsk_max_payload(p);
+
+    memcpy(blk, wire, NSFSK_WIRE_BYTES);
+    if (nsfsk_rs_decode(p->fec, blk, blk) < 0)
+        return 0;                       /* uncorrectable: reject outright */
+    len = blk[1];
+    if (len > maxp)
+        return 0;
+    nsfsk_crc32(blk, NSFSK_HDR_LEN + len, crc);
+    if (memcmp(crc, blk + NSFSK_HDR_LEN + len, NSFSK_CRC_LEN) != 0)
+        return 0;
+    *type = blk[0];
+    *plen = len;
+    if (len) memcpy(payload, blk + NSFSK_HDR_LEN, len);
+    return 1;
+}
+
 unsigned nsfsk_build_frame_syms(const nsfsk_params *p, uint8_t type,
                                 const uint8_t *payload, unsigned plen,
                                 unsigned char *out, unsigned out_cap)
 {
-    uint8_t msg[NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN];
-    size_t msg_len, nsym_data, need, i;
+    uint8_t wire[NSFSK_WIRE_BYTES];
+    size_t need, i;
 
-    if (plen > NSFSK_MAX_PAYLOAD)
+    if (plen > nsfsk_max_payload(p))
         return 0;
 
-    msg[0] = type;
-    msg[1] = (uint8_t)(plen >> 8);
-    msg[2] = (uint8_t)(plen & 0xffu);
-    if (plen) memcpy(msg + NSFSK_HDR_LEN, payload, plen);
-    msg_len = NSFSK_HDR_LEN + plen;
-    nsfsk_crc32(msg, (unsigned)msg_len, msg + msg_len);
-    msg_len += NSFSK_CRC_LEN;
-
-    nsym_data = 4u * msg_len;
-    need = (size_t)p->preamble + NSFSK_SYNC_LEN + nsym_data;
+    need = (size_t)p->preamble + NSFSK_SYNC_LEN + NSFSK_WIRE_SYMS;
     if (need > (size_t)out_cap || need > UINT_MAX)
         return 0;
+
+    nsfsk_frame_encode(p, type, payload, plen, wire);
 
     for (i = 0; i < (size_t)p->preamble + NSFSK_SYNC_LEN; i++)
         out[i] = nsfsk_prefix_sym(p, (unsigned)i);
 
-    nsfsk_data_to_symbols(msg, (unsigned)msg_len,
+    nsfsk_data_to_symbols(wire, NSFSK_WIRE_BYTES,
                           out + (size_t)p->preamble + NSFSK_SYNC_LEN);
     return (unsigned)need;
 }

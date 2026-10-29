@@ -53,6 +53,7 @@ PHY=${PHY:-}             # extra PHY flags for both fsk_tx and fsk_rx_stream
 ./bin/fsk_tx $PHY < "$PAY" > "$AUD" 2>/dev/null || { echo "FAIL: tx"; exit 1; }
 PAYLEN=$(stat -c%s "$PAY")
 ABYTES=$(stat -c%s "$AUD")
+FMAX=217                              # max payload per frame at fec=32
 # capture window: audio seconds (2 B/sample) + RX spin-up + buffer drain
 SECS=$(( ABYTES / (2 * RATE) + 4 ))
 
@@ -84,10 +85,10 @@ pass_join() {
     rc=$?
     wait $APJOB 2>/dev/null
     got=$(stat -c%s "$OUT")
-    [ $rc -eq 0 ] && [ "$got" -ge 2048 ] || return 1
+    [ $rc -eq 0 ] && [ "$got" -ge 434 ] || return 1
     # last payload frame must have arrived intact (final frame may be short)
-    nfr=$(( (PAYLEN + 1023) / 1024 ))
-    lsz=$(( PAYLEN - 1024*(nfr-1) ))
+    nfr=$(( (PAYLEN + FMAX - 1) / FMAX ))
+    lsz=$(( PAYLEN - FMAX*(nfr-1) ))
     tail -c $lsz "$PAY" > "$OUT.exp"
     tail -c $lsz "$OUT" | cmp -s - "$OUT.exp" || return 1
     # greedy: OUT must be an in-order concatenation of whole payload frames
@@ -95,8 +96,8 @@ pass_join() {
     while [ "$qi" -lt "$got" ]; do
         k=$pi; found=0
         while [ "$k" -lt "$nfr" ]; do
-            fsz=1024; [ "$k" -eq $((nfr-1)) ] && fsz=$(( PAYLEN - 1024*(nfr-1) ))
-            dd if="$PAY" bs=1024 skip=$k count=1 2>/dev/null | head -c $fsz > "$OUT.pk"
+            fsz=$FMAX; [ "$k" -eq $((nfr-1)) ] && fsz=$(( PAYLEN - FMAX*(nfr-1) ))
+            dd if="$PAY" bs=$FMAX skip=$k count=1 2>/dev/null | head -c $fsz > "$OUT.pk"
             dd if="$OUT" bs=1 skip=$qi count=$fsz 2>/dev/null > "$OUT.qi"
             if cmp -s "$OUT.pk" "$OUT.qi"; then found=1; break; fi
             k=$((k+1))
@@ -120,7 +121,7 @@ while [ "$i" -le "$REPS" ]; do
     i=$((i+1))
     sleep 0.5                                 # let the sink go quiet again
 done
-if [ "$PAYLEN" -lt 2048 ]; then
+if [ "$PAYLEN" -lt 434 ]; then
     echo "SKIP join (payload < 2 frames)"
 elif pass_join; then
     echo "PASS join (mid-stream RX start, $(stat -c%s "$OUT") bytes, in-order subsequence)"

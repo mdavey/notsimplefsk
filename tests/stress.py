@@ -38,6 +38,10 @@ CHANNEL = os.path.join(BIN, "channel")
 BASELINE = os.path.join(ROOT, "tests", "stress_baseline.json")
 FIXTURES = os.path.join(ROOT, "tests", "fixtures")
 
+# TX chunks stdin at the max single-frame payload (249 - fec, default tier
+# fec=32 -> 217); the matrix runs at the default tier for every PHY.
+MAX_PAYLOAD = 249 - 32
+
 PHYS = {
     "p0-default": ["-r", "48000", "-c", "4000", "-k", "20", "-H", "0.25",
                    "-b", "0.8", "-d", "1", "-P", "72"],
@@ -122,11 +126,13 @@ SCENARIOS = {
                        phys=["p0-default", "p3-tonebank", "p5-rcos"],
                        timeout=300),
     "idle-gap": dict(channel=[], payload=8192, tx_gain=-12, gated=True,
-                     quick=False, split=4096, gap_s=2.0,
+                     quick=False, split=4340, gap_s=2.0,
                      phys=["p0-default", "p3-tonebank", "p5-rcos"],
                      timeout=300),
+    # frame_size=1 now costs 1116 syms per frame (fixed RS block), 8x the
+    # pre-FEC airtime: 65 frames keep this case at a comparable runtime
     "many-one-byte": dict(channel=["-r", "300", "--snr-db", "25"],
-                          payload=520, frame_size=1, tx_gain=-12, gated=True,
+                          payload=65, frame_size=1, tx_gain=-12, gated=True,
                           quick=False, phys=["p0-default"], timeout=180),
 
     # ---- deterministic but outside the current RX envelope (XFAIL) ----
@@ -173,9 +179,11 @@ SCENARIOS = {
                      tolerance=1),
     "low-snr12": dict(channel=["--snr-db", "12"], payload=8192, tx_gain=-12,
                       gated=False, quick=True, tolerance=1),
-    # Cross-trial merge regression: two identical-looking frames at k=160
-    # under noise.  Gated now that the derived merge window is in place.
-    "p4-dup-awgn25": dict(channel=["--snr-db", "25"], payload=1536,
+    # Cross-trial merge regression: two frames back to back at k=160 under
+    # noise (434 B = exactly 2 max-payload frames; 1536 would be 8 frames of
+    # ~3.7 s each at 300 Bd).  Gated now that the derived merge window is in
+    # place.
+    "p4-dup-awgn25": dict(channel=["--snr-db", "25"], payload=434,
                           tx_gain=-12, gated=True, quick=True,
                           phys=["p4-acoustic"], tolerance=0, no_cap=True),
     "realistic-acoustic": dict(
@@ -223,12 +231,13 @@ def make_payload(n, key):
 
 
 def split_frames(payload):
-    return [payload[i:i + 1024] for i in range(0, len(payload), 1024)]
+    return [payload[i:i + MAX_PAYLOAD]
+            for i in range(0, len(payload), MAX_PAYLOAD)]
 
 
 def expected_frames_for(phy, scenario, payload):
-    """TX frame layout for a scenario (normal 1024-B chunks, split gap, or
-    frame_size one-frame-per-part)."""
+    """TX frame layout for a scenario (normal MAX_PAYLOAD-B chunks, split
+    gap, or frame_size one-frame-per-part)."""
     fs = scenario.get("frame_size")
     if fs:
         return [payload[i:i + int(fs)]

@@ -11,12 +11,13 @@ programs compose in pipelines. RX PHY options must match the TX exactly.
 
 ## Build
 
-    make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel}
-    make test       # fast gate: roundtrip.sh + stream.sh + channel_selftest.py
+    make            # bin/{fsk_tx,fsk_rx,fsk_rx_stream,modem_smoke,channel,rs_selftest}
+    make test       # fast gate: rs_selftest + roundtrip.sh + stream.sh
+                    #            + channel_selftest.py
                     #            + rx_speed.sh (pathological + live-noise RX)
     make stress     # realistic impairment/PHY matrix (quick, opt-in)
     make stress-full # full matrix, 4 seeds (long; use --update-baseline)
-    make speed-full # opt-in 8 KB pathological RX timing case
+    make speed-full # opt-in 2 KB pathological RX timing case
 
 Requires libliquid >= 1.6 (`-lliquid`) and python3 for the stress harness.
 
@@ -33,27 +34,75 @@ The channel simulator adds impairments for testing:
 
 ## Wire format (per frame)
 
-    [ preamble 0,3,0,3,... x P ][ sync 24-sym table ][ Gray(NRZI(PN( data ))) ][ pad ]
+    [ preamble 0,3,0,3,... x P ][ sync 24-sym table ][ Gray(NRZI(PN( codeword ))) ][ pad ]
 
-    data   = type(1) | len16_be(2) | payload(0..1024) | crc32_be(4)
-    crc32  = liquid LIQUID_CRC_32 over type|len|payload
-    PN     = additive whitening, m-sequence LFSR x^23+x^18+1, all-ones seed,
-             re-armed per frame; keeps payload statistics off the air -- un-
-             whitened, 640 zero bytes modulate as 2560 identical symbols
-             (one pure tone) and JPEG entropy data still runs 50+; descramble
-             is the same local PN (no error multiplication, prefix-safe for
-             the header-first decode)
-    NRZI   = enc[n] = enc[n-1] XOR d[n] (d = whitened bit), state 0 at first bit (kills 180-deg
-             ambiguity of non-coherent detection)
-    Gray   = dibit -> symbol index  v ^ (v>>1)  = {0,1,3,2}
-    pad    = nsfsk_tx_pad() dummy symbols: covers the detector lag and the
-             RX zero-phase LPF edge reach so the CRC trailer is never
-             filtered against the end of the buffer
-    sync   = non-periodic 24-symbol table; the periodic 0,3 preamble has an
-             MF sidelobe every +-2 symbols, only the sync table resolves it
+The data section is always exactly ONE shortened Reed–Solomon codeword:
+RS(255, 255−P) over GF(256), prim poly 0x11d, generator roots α..α^P.
+The 255-byte block is independent of tier and payload, so its wire image is
+always 1020 symbols (4 syms/byte at 2 bits/sym):
 
-TX emits one frame per <= 1024-byte chunk of stdin; larger inputs become
-multiple frames separated by 40 ms silence (the RX energy gate re-arms on it).
+    codeword (255 B) = [ type 1 | len 1 | payload 0..249−P | crc32_be 4 | zeros to k ][ parity P ]
+    data region k = 255 − P; RS parity P bytes; t = P/2 corrected bytes/block
+
+    type    1 byte, arbitrary
+    len     payload length, single byte (max payload = 249 − P)
+    crc32   liquid LIQUID_CRC_32 over type|len|payload — INSIDE the codeword.
+            RS correction + CRC is the frame gate: an uncorrectable block or a
+            CRC mismatch rejects the whole frame (all-or-nothing, R->bad++).
+            Padding lives inside the RS data region and is excluded from the
+            CRC, so RX never discovers lengths or padding.
+    parity  systematic RS parity over the full k-byte data region
+    PN      additive whitening, m-sequence LFSR x^23+x^18+1, all-ones seed,
+            re-armed per frame at the data section (period 2^23−1 bits ≫
+            2040); keeps payload statistics off the air -- un-whitened, runs
+            of zeros modulate as one pure tone; descramble is the same local
+            PN (no error multiplication)
+    NRZI    enc[n] = enc[n-1] XOR d[n] (d = whitened bit), state 0 at first
+            bit (kills the 180-deg ambiguity of non-coherent detection)
+    Gray    dibit -> symbol index v ^ (v>>1) = {0,1,3,2}: one wrong symbol
+            corrupts at most ONE codeword byte, matching the RS byte-error
+            model exactly
+    pad     nsfsk_tx_pad() dummy symbols: covers detector lag and the RX
+            zero-phase LPF edge reach
+    sync    non-periodic 24-symbol table; the periodic 0,3 preamble has an
+            MF sidelobe every +-2 symbols, only the sync table resolves it
+
+### FEC tiers (`--fec P`, TX and RX must match)
+
+    P    t corrected B/frame   max payload B    RS rate
+    16           8                 233          239/255
+    32 (dfl)    16                 217          223/255  (~7/8)
+    64          32                 185          191/255
+    84          42                 165          171/255
+
+The decoder (src/rs.c, ~200 lines: syndromes → Berlekamp–Massey → Chien →
+Forney) re-verifies the syndromes after correcting and returns −1 unless the
+result is syndrome-clean — it never emits a bogus correction; the CRC then
+gates the frame anyway.  Liquid-dsp's RS API is NOT used: the `.so` shipped
+on the dev box contains only "libfec not installed" stubs (verified via
+nm/strings).
+
+Why one fixed block per frame: GF(256) caps any codeword at 255 B, so a
+single-block frame gives a data section whose length is known BEFORE
+decoding (no length discovery, no per-length decode paths); frame airtime
+becomes tier-independent; and the decode loop is one straight path.  The
+cost: tiny messages now occupy a full frame too (~3.7 s at 300 Bd where the
+old 124-sym minimum cost ~0.4 s), and bulk transfers lose ~25 % airtime to
+per-frame preamble/sync versus the old 1024-byte frames.  Decode-side benefit: ≤ t corrupt bytes per frame (short
+acoustic dropouts, the bt ≤ 0.5 ISI pattern floor) turn from a lost frame
+into a clean decode — pinned by the fecwin cases in roundtrip.sh, which the
+pre-FEC binary fails on identical channel output.
+
+Airtime per frame (1116 syms incl. preamble+sync; tier-independent):
+
+    300 Bd  (k=160 @ 48k)   ~3.7 s   any message <= max payload
+    1200 Bd (k=40  @ 48k)   ~0.93 s
+    2400 Bd (k=20  @ 48k)   ~0.47 s
+
+Inputs larger than the tier's max payload are chunked exactly as before:
+TX emits one frame per ≤ (249−P)-byte chunk of stdin separated by 40 ms of
+silence (the RX energy gate re-arms on it); larger payloads become multiple
+frames and the consumer concatenates the delivered payloads in order.
 
 ## PHY parameters (identical flags on both programs)
 
@@ -71,10 +120,12 @@ multiple frames separated by 40 ms silence (the RX energy gate re-arms on it).
     -d N      CPM filter delay, symbols (default 1, 1..8)
     -P N      preamble symbols    (default 72, max 65536)
        --pulse gmsk|rcos|square   (default gmsk)
+       --fec N RS parity bytes 16|32|64|84 (default 32, see Wire format)
 
 Tone frequencies: fc + (2s+1-M)*h*Rs/2, i.e. fc + {-3,-1,+1,+3} * h*Rs/2.
-Defaults: 2400 baud, 4800 bps, Carson occupied bandwidth 6.6 kHz, ~97 %
-payload efficiency at 1024-byte frames.
+Defaults: 2400 baud, 4800 bps gross, Carson occupied bandwidth 6.6 kHz.
+At fec=32 a max-size frame carries 217 payload bytes in 1116 symbols
+(2232 bits): ~78 % end-to-end payload efficiency (RS alone costs 32/255).
 
 The receiver picks its symbol detector from h: below h*(M-1) = 0.95 it
 decodes the phase advance across each symbol (works for any h*(M-1) < 2,
@@ -94,7 +145,10 @@ fc >= ~4300; h=1.0 (12 kHz) wants fc >= ~6100 or a lower symbol rate
 
 ## Achieved tolerances (tests/roundtrip.sh, all default PHY unless noted)
 
-    payload sizes        0, 1..1023, 1024, multi-frame 1025..5000
+    payload sizes        0, 1..217, multi-frame 218..5000 (fec=32 chunks)
+    FEC tiers            small + max payload round-trip at P=16/64/84;
+                         6..40 ms deterministic mid-frame dropouts repaired
+                         byte-exact (tier 16/32/84), > t damage rejects
     CFO                  +-295 Hz full tolerance (estimator range rate/(8k))
     sample-rate error    +-1000 ppm (offline: fixed 23-point trial grid
                          0..+-1200 ppm, CRC-good frames merged across
@@ -166,12 +220,12 @@ budget (`src/fsk_rx.c`; `-v` prints `acq=` per trial).  A continuous tone,
 fade or reverb tail cannot trigger dozens of MF/prefix sweeps; a real frame
 after the normal 40 ms gap re-arms the gate.  The budget is applied to
 expensive `k >= 32` sweeps; lower-k sweeps are cheap and are left uncapped
-so sparse-frame stochastic/ppm-ramp cases keep their baseline.  The 1 KB
-pathological cases run in single-digit or low-tens of seconds; the full
-8 KB p2 case is opt-in via `make speed-full`.
+so sparse-frame stochastic/ppm-ramp cases keep their baseline.  The
+pathological p2 cases run in single-digit or low-tens of seconds; the full
+2 KB (10-frame) p2 case is opt-in via `make speed-full`.
 
 `rx_speed.sh` also has a live-readiness case: 5 s of full-scale random noise
-followed by a 40 ms gap and one 1024-byte p1-highrate frame, fed strictly at
+followed by a 40 ms gap and one max-payload p1-highrate frame, fed strictly at
 1x.  The stream RX must decode that packet and finish within the feed
 duration plus a small margin, proving it does not fall behind on pure noise.
 
@@ -259,19 +313,23 @@ Full rationale lives in the source comments; the load-bearing facts:
    pattern folds the outer tones and mirrors the CFO phase.
 4. Decision thresholds use a decision-directed scale loop: the prefix-
    calibrated scale measures the alternating-preamble ISI (~25 % low vs.
-   random data), which would clip the +-1 clusters. Failed CRCs re-decode
-   (<= 3 passes) seeded from the converged scale.
+   random data), which would clip the +-1 clusters. Frames failing RS+CRC
+   re-decode (<= 3 passes) seeded from the converged scale — kept for the
+   scale-convergence case, not for error repair (that is RS's job now).
 5. After the CFO hypothesis is removed, |phi| > pi - 0.03 triggers a +-2*pi
    wrap-undo; the outer tones plus CFO sit close to pi by the non-coherent
    limit 3*pi*h*(k-1)/k + 2*pi*|cfo|*(k-1)/rate < pi.
 
 ## Files
 
-    src/common.{h,c}   wire format, NRZI/Gray/CRC, params, LPF+pad rule
+    src/common.{h,c}   wire format + frame codec, NRZI/Gray/CRC, params,
+                       LPF+pad rule
+    src/rs.{h,c}       shortened systematic RS(255,255-P), GF(256)/0x11d
     src/rx_core.{h,c}  shared detector: filter slice + rx_run() burst scan
     src/fsk_tx.c       transmitter
     src/fsk_rx.c       offline receiver (pipeline comment has the design)
     src/fsk_rx_stream.c live receiver (arecord | ...) + energy gate
+    tests/rs_selftest.c RS codec self-test, all tiers (make test)
     tests/roundtrip.sh regression battery (make test)
     tests/stream.sh    streaming regression battery (make test)
     tests/channel_selftest.py fast channel property tests (make test)

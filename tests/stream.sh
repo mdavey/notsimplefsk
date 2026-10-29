@@ -128,8 +128,8 @@ expect() {
     fi
 }
 
-echo "== clean sizes (fast pipe) =="
-for n in 0 1 64 1024 1025 3000 10000; do run "size$n" $n; done
+echo "== clean sizes (fast pipe; max payload 217) =="
+for n in 0 1 64 217 218 3000 10000; do run "size$n" $n; done
 
 echo "== paced real-time feeds =="
 runrt rt3000 3000
@@ -175,31 +175,33 @@ PHY=""
 echo "== mid-stream join =="
 pay 1500 join1 > "$TMP/p"
 $TX < "$TMP/p" > "$TMP/a" 2>/dev/null
-# start inside frame 1's preamble: frame 1 lost, frame 2 (476 B) must arrive
+# start inside frame 1's preamble: frame 1 lost, frames 2..7 (1283 B) arrive
 tail -c +1001 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
-rc=$?; tail -c 476 "$TMP/p" > "$TMP/x"; expect join-preamble $rc 0
-# start inside frame 1's payload: frame 1 lost, nothing complete -> exit 1
-head -c 110000 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
+rc=$?; tail -c 1283 "$TMP/p" > "$TMP/x"; expect join-preamble $rc 0
+# start inside frame 1's payload (frame 1 ends at sample 22540 = byte 45080):
+# nothing complete -> exit 1
+head -c 30000 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
 rc=$?; : > "$TMP/x"; expect join-midframe $rc 1
 
 echo "== mid-stream join into 7 max-size frames =="
-# one 1024 B frame period = (4220 syms + 11 syms tx pad)*20 + 40 ms gap
-#                           = 86540 samples = 173080 bytes
+# one 217 B frame period = (1116 syms + 11 syms tx pad)*20 + 40 ms gap
+#                        = 24460 samples = 48920 bytes (frame 1: 0..45080,
+#                        frame 2 starts at byte 48920)
 # cut offsets MUST be even bytes (s16le): an odd head-drop shifts every
 # sample by half and byte-mangles the whole capture into undecodable noise
-pay 7168 join7 > "$TMP/p"
+pay 1519 join7 > "$TMP/p"
 $TX < "$TMP/p" > "$TMP/a" 2>/dev/null
-for off in 20000 90000 165000; do     # all inside frame 1
+for off in 2000 20000 44000; do       # all inside frame 1
     tail -c +$((off + 1)) "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
-    rc=$?; tail -c 6144 "$TMP/p" > "$TMP/x"
+    rc=$?; tail -c 1302 "$TMP/p" > "$TMP/x"
     expect "join7-1@$off" $rc 0
 done
-# inside frame 2 (starts at byte 173080): frames 3..7 must arrive
-tail -c +200001 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
-rc=$?; tail -c 5120 "$TMP/p" > "$TMP/x"; expect join7-inframe2 $rc 0
+# inside frame 2: frames 3..7 must arrive
+tail -c +70001 "$TMP/a" | timeout 120 $RX > "$TMP/o" 2>/dev/null
+rc=$?; tail -c 1085 "$TMP/p" > "$TMP/x"; expect join7-inframe2 $rc 0
 # and the stream RX must agree byte-for-byte with offline fsk_rx on the
 # same joined capture
-tail -c +200001 "$TMP/a" > "$TMP/j"
+tail -c +70001 "$TMP/a" > "$TMP/j"
 timeout 120 $RX < "$TMP/j" > "$TMP/o" 2>/dev/null
 rc=$?
 timeout 120 $RXOFF < "$TMP/j" > "$TMP/off" 2>/dev/null
@@ -216,7 +218,7 @@ echo "== idle lead before max-size frames (ring-capacity phase pin) =="
 # (idle slide leaves retain + up to 2 read chunks when the gate opens);
 # the force decode then destroyed that frame's head.  The silence lengths
 # below are the failing phases of the old build (2-read slide period).
-pay 7168 idlelead > "$TMP/p"
+pay 1519 idlelead > "$TMP/p"
 $TX < "$TMP/p" > "$TMP/a" 2>/dev/null
 for sl in 28672 61440 94208 122880; do
     head -c $sl /dev/zero > "$TMP/z"
@@ -236,12 +238,12 @@ else
     FAIL=$((FAIL+1))
 fi
 # long idle between two max-size frames (gate re-arm after silence)
-pay 1024 ig1 > "$TMP/p1"; pay 1024 ig2 > "$TMP/p2"
+pay 217 ig1 > "$TMP/p1"; pay 217 ig2 > "$TMP/p2"
 $TX < "$TMP/p1" > "$TMP/a1" 2>/dev/null
 $TX < "$TMP/p2" > "$TMP/a2" 2>/dev/null
 head -c 192000 /dev/zero > "$TMP/z"      # 2 s silence
 cat "$TMP/a1" "$TMP/z" "$TMP/a2" | timeout 120 $RX > "$TMP/o" 2>/dev/null
-rc=$?; cat "$TMP/p1" "$TMP/p2" > "$TMP/x"; expect idle-gap-1024 $rc 0
+rc=$?; cat "$TMP/p1" "$TMP/p2" > "$TMP/x"; expect idle-gap-217 $rc 0
 
 echo "== idle gap between streams =="
 pay 700 g1 > "$TMP/p1"; pay 900 g2 > "$TMP/p2"
@@ -261,7 +263,7 @@ echo "== --max-frames =="
 pay 3000 mf > "$TMP/p"
 $TX < "$TMP/p" > "$TMP/a" 2>/dev/null
 timeout 60 $RX --max-frames 1 < "$TMP/a" > "$TMP/o" 2>/dev/null
-rc=$?; head -c 1024 "$TMP/p" > "$TMP/x"; expect max-frames $rc 0
+rc=$?; head -c 217 "$TMP/p" > "$TMP/x"; expect max-frames $rc 0
 
 echo
 echo "PASS=$PASS FAIL=$FAIL"

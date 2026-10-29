@@ -22,12 +22,17 @@
  *
  * Frame (on the wire):
  *      [ preamble: 0,3,0,3,... x P ][ sync: 24-sym shift-distinguishing table ]
- *      [ Gray( NRZI( PN( type | len_hi | len_lo | payload | crc32_be ) ) ) ]
+ *      [ Gray( NRZI( PN( RS codeword, 255 B ) ) ) ]   -- always 1020 symbols
  *      [ pad: 0,3,... x nsfsk_tx_pad()  -- detector lag + RX LPF edge reach ]
  *
+ *  The data section is ONE fixed shortened Reed-Solomon codeword (see rs.h):
+ *  k = 255 - fec data bytes then fec parity bytes, independent of tier and
+ *  payload size, so RX knows the frame length before decoding:
+ *      [0] type | [1] len | payload | crc32_be | zeros to k | parity
  *  - type  : 1 byte, arbitrary
- *  - len   : payload length, 16-bit big-endian, 0..NSFSK_MAX_PAYLOAD
- *  - crc32 : LIQUID_CRC_32 over type|len|payload, big-endian trailer
+ *  - len   : payload length, 0..249-fec (249 = 255 - hdr - crc)
+ *  - crc32 : LIQUID_CRC_32 over type|len|payload, inside the codeword;
+ *            RS correction + CRC is the frame gate (all-or-nothing)
  *  - PN    : additive whitening with a 2^23-1 m-sequence (x^23+x^18+1,
  *            all-ones seed, re-armed per frame at the data section) so
  *            payload runs (zeros, repeated bytes) never become single-tone
@@ -45,11 +50,18 @@
 #include <stdint.h>
 #include <complex.h>
 
+#include "rs.h"
+
 #define NSFSK_BPS           2u
 #define NSFSK_M             (1u << NSFSK_BPS)
-#define NSFSK_MAX_PAYLOAD   1024u
-#define NSFSK_HDR_LEN       3u                 /* type + len16 */
+#define NSFSK_HDR_LEN       2u                 /* type + len8 */
 #define NSFSK_CRC_LEN       4u
+
+/* data section: one shortened RS codeword, always 255 B = 1020 wire
+ * symbols (2 bits/sym -> 4 syms/byte; the design doc's "510" was a 2x slip) */
+#define NSFSK_WIRE_BYTES    NSFSK_RS_N
+#define NSFSK_WIRE_SYMS     (NSFSK_WIRE_BYTES * 8u / NSFSK_BPS)
+#define NSFSK_FEC_DEFAULT   32u
 
 #define NSFSK_SYNC_REPS     6u
 #define NSFSK_SYNC_LEN      (4u * NSFSK_SYNC_REPS)   /* 24 symbols */
@@ -65,10 +77,9 @@
 #define NSFSK_TMPL_SYMS     32u
 #define NSFSK_TMPL_SYM0(p)  ((p).delay + 4u)
 
-/* worst-case wire symbols per frame (size_t so the arithmetic cannot wrap) */
+/* wire symbols per frame: fixed 1020 data symbols (size_t for safety) */
 #define NSFSK_MAX_FRAME_SYMS(p) \
-    ((size_t)(p).preamble + NSFSK_SYNC_LEN \
-     + 4u * (size_t)(NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD + NSFSK_CRC_LEN))
+    ((size_t)(p).preamble + NSFSK_SYNC_LEN + NSFSK_WIRE_SYMS)
 
 typedef struct {
     unsigned rate;        /* sample rate, Hz                              */
@@ -79,7 +90,11 @@ typedef struct {
     unsigned delay;       /* filter delay, symbols 1..8                   */
     int      pulse;       /* LIQUID_CPFSK_GMSK (default) | RCOS_FULL | SQUARE */
     unsigned preamble;    /* preamble length, symbols                     */
+    unsigned fec;         /* RS parity bytes: 16 | 32 (default) | 64 | 84  */
 } nsfsk_params;
+
+/* largest payload that fits one frame's RS data region (249 - fec) */
+unsigned nsfsk_max_payload(const nsfsk_params *p);
 
 void          nsfsk_params_default(nsfsk_params *p);
 /* returns NULL when valid, else a short reason string; prints warnings */
@@ -103,6 +118,17 @@ void nsfsk_symbols_to_data(const unsigned char *sym, unsigned nsym,
 
 /* CRC-32 (liquid LIQUID_CRC_32) over buf[0..n-1], big-endian out */
 void nsfsk_crc32(const uint8_t *buf, unsigned n, uint8_t out[4]);
+
+/* Frame codec: the single definition of the 255-byte data-region layout,
+ * shared by TX and RX (see the header block for the layout).
+ * nsfsk_frame_encode: plen must be <= nsfsk_max_payload(p); wire is 255 B. */
+void nsfsk_frame_encode(const nsfsk_params *p, uint8_t type,
+                        const uint8_t *payload, unsigned plen,
+                        uint8_t *wire /* 255 B */);
+/* RS correction + len sanity + CRC gate.  Returns 1 and fills type/plen and
+ * payload (up to 249 B) on a verified frame, 0 otherwise. */
+int  nsfsk_frame_decode(const nsfsk_params *p, const uint8_t *wire /* 255 B */,
+                        uint8_t *type, uint8_t *payload, unsigned *plen);
 
 /* Build a complete frame's wire symbols (prefix + data section).
  * Returns number of symbols written, or 0 on error. */

@@ -87,6 +87,7 @@ static void usage(const char *prog)
         "  -d, --delay N      cpfsk filter delay symbols  (1)\n"
         "  -P, --preamble N   preamble symbols             (72, max 65536)\n"
         "      --pulse P      gmsk | rcos | square        (gmsk)\n"
+        "      --fec N        RS parity bytes             (16|32|64|84, 32)\n"
         "      --max-frames N exit after N good frames\n"
         "      --idle-exit S  exit after S seconds with no carrier\n"
         "      --trial-budget S  wall-clock ppm-sweep budget per burst\n"
@@ -334,6 +335,7 @@ int main(int argc, char **argv)
         {"delay",      required_argument, 0, 'd'},
         {"preamble",   required_argument, 0, 'P'},
         {"pulse",      required_argument, 0,  1 },
+        {"fec",        required_argument, 0,  5 },
         {"max-frames", required_argument, 0,  2 },
         {"idle-exit",  required_argument, 0,  3 },
         {"trial-budget", required_argument, 0, 4 },
@@ -363,6 +365,16 @@ int main(int argc, char **argv)
         case  2 : max_frames = (unsigned)strtoul(optarg, NULL, 0); break;
         case  3 : idle_exit = strtod(optarg, NULL); break;
         case  4 : X.trial_budget = strtod(optarg, NULL); break;
+        case  5 : {
+            char *end = NULL;
+            unsigned long v = strtoul(optarg, &end, 0);
+            if (end == optarg || *end != '\0') {
+                fprintf(stderr, "error: bad --fec '%s'\n", optarg);
+                return 1;
+            }
+            X.p.fec = (unsigned)v;
+            break;
+        }
         case 'v': X.verbose++; break;
         case 'h': usage(argv[0]); return 0;
         default:  usage(argv[0]); return 1;
@@ -393,8 +405,7 @@ int main(int argc, char **argv)
     X.retain = X.back + arm + (p->preamble + 4u) * p->k + 2u * X.nf
              + (X.nf - 1u) / 2u;
     size_t maxframe = (size_t)(p->preamble + NSFSK_SYNC_LEN
-                               + 4u * (NSFSK_HDR_LEN + NSFSK_MAX_PAYLOAD
-                                       + NSFSK_CRC_LEN)) * p->k;
+                               + NSFSK_WIRE_SYMS) * p->k;
     /* worst-case occupancy: the ring holds up to retain + 2 read chunks
      * when a gate opens (the idle slide runs once per main-loop pass), and
      * open -> close+tail spans one max frame PLUS the TX trailing pad PLUS

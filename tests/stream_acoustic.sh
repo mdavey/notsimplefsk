@@ -3,7 +3,7 @@
 # microphone.  NOT part of make test (physical path; user runs by hand).
 #
 #   PHY="-r 48000 -c 1000 -k 160 -H 1.0 -b 1.0 -d 4 -P 72" \
-#       tests/stream_acoustic.sh [payload_bytes]        (default 1100)
+#       tests/stream_acoustic.sh [payload_bytes]        (default 217)
 #
 # Requires: aplay's device is audible from the mic that arecord reads.
 # Defaults use the PipeWire default sink/source (-D pipewire).
@@ -25,7 +25,7 @@ command -v aplay   >/dev/null 2>&1 || { echo "SKIP: no aplay";   exit 0; }
 
 PHY=${PHY:--c 1000 -k 160 -H 1.0 -b 1.0 -d 4}
 RATE=${RATE:-48000}      # must match the PHY -r (default 48000)
-N=${1:-1100}
+N=${1:-217}               # keep small: at 300 Bd one 217 B frame is ~4 s
 DEV_REC=${DEV_REC:-pipewire}
 DEV_PLAY=${DEV_PLAY:-pipewire}
 RXV=${RXV:--v}

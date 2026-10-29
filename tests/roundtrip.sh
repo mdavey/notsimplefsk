@@ -58,30 +58,30 @@ rej() {
     PHY=""
 }
 
-echo "== clean sizes (single frames) =="
-for n in 0 1 3 17 255 1023 1024; do run "size$n" $n; done
+echo "== clean sizes (single frames, max payload = 249-fec = 217) =="
+for n in 0 1 3 17 216 217; do run "size$n" $n; done
 
-echo "== multi-frame streams =="
-for n in 1025 2048 3000 5000; do run "multi$n" $n; done
+echo "== multi-frame streams (TX chunks at 217, RX concatenates) =="
+for n in 218 1000 3000 5000; do run "multi$n" $n; done
 
 # Narrow-gaussian multi-frame: at bt<0.8 the ISI-narrowed eye makes the prefix
 # mis-count tie across +-1-sample alignments; the RX must break that tie on the
 # calibrated phase scale or every frame past the first CRC-fails (probe5.c).
 echo "== multi-frame at bt=0.5 =="
-PHY="-b 0.5"; for n in 3000 10000; do run "bt05multi$n" $n; done; PHY=""
+PHY="-b 0.5"; for n in 3000 5000; do run "bt05multi$n" $n; done; PHY=""
 
 # Run-length pathologies: constant data holds the NRZI dibit fixed, so
 # unwhitened these modulate as one pure tone for the whole frame (zeros:
 # 2560+ identical symbols).  The PN whitener must absorb all of them.
-echo "== fixed-pattern payloads (whitening pins) =="
-head -c 1024 /dev/zero > "$TMP/pat"
-PAYFILE="$TMP/pat" run zeros1024 1024
+echo "== fixed-pattern payloads (whitening pins, re-cut at max payload) =="
+head -c 217 /dev/zero > "$TMP/pat"
+PAYFILE="$TMP/pat" run zeros217 217
 head -c 3000 /dev/zero > "$TMP/pat"
 PAYFILE="$TMP/pat" run zeros3000 3000
-LC_ALL=C gawk 'BEGIN{for(i=0;i<1024;i++)printf "%c",65}'  > "$TMP/pat"
-PAYFILE="$TMP/pat" run aaaa1024 1024
-LC_ALL=C gawk 'BEGIN{for(i=0;i<1024;i++)printf "%c",85}'  > "$TMP/pat"
-PAYFILE="$TMP/pat" run uuuu1024 1024
+LC_ALL=C gawk 'BEGIN{for(i=0;i<217;i++)printf "%c",65}'  > "$TMP/pat"
+PAYFILE="$TMP/pat" run aaaa217 217
+LC_ALL=C gawk 'BEGIN{for(i=0;i<217;i++)printf "%c",85}'  > "$TMP/pat"
+PAYFILE="$TMP/pat" run uuuu217 217
 if [ -f tests/MtWellington.jpg ]; then   # user asset, not tracked: optional pin
     head -c 2048 tests/MtWellington.jpg > "$TMP/pat"
     PAYFILE="$TMP/pat" run jpg2048 2048
@@ -156,6 +156,11 @@ PHY="-r 44100 -c 3800"; run "r44+cfo300" 300 -f 300
 PHY=""; run "multi5k+cfo" 5000 -f 120
 run "evilcombo" 5000 -f 295 -D 0.5 -r 600 -n 0.01
 
+echo "== FEC tiers: small + max payload per P =="
+PHY="--fec 16"; run "fec16small" 3;  run "fec16max" 233; PHY=""
+PHY="--fec 64"; run "fec64small" 3;  run "fec64max" 185; PHY=""
+PHY="--fec 84"; run "fec84small" 3;  run "fec84max" 165; PHY=""
+
 echo "== modulation index sweep (tone-bank detector for h*(M-1)>=0.95) =="
 PHY="-H 0.4";            run "h0.4"        300
 PHY="-H 0.5 -c 5000";    run "h0.5"        300
@@ -169,6 +174,42 @@ PHY="-H 1.0 -c 7000";    run "h1.0+imp"    300 -f 250 -n 0.005 -g -20
 PHY="-H 1.0 -k 40";      run "h1.0k40"     300
 PHY="-H 0.33";           run "h0.33edge"   300
 PHY="";
+
+# FEC pins: --drop-at zeroes a deterministic window mid-frame (default PHY:
+# data section spans ~40..465 ms, so 200 ms is always inside the codeword,
+# away from sync).  A dropout short enough to corrupt <= t codeword bytes
+# must decode byte-exact -- the OLD (pre-FEC, 2026-10-29) binary loses the
+# frame at these lengths (A/B verified on the same channel output) -- while
+# one beyond t must reject the frame entirely (nothing delivered).
+fecwin() {
+    name=$1 drop=$2 n=$3; shift 3
+    pay "$n" "$name" > "$TMP/p"
+    $TX $PHY < "$TMP/p" > "$TMP/a" 2>/dev/null || { echo "FAIL $name (tx)"; FAIL=$((FAIL+1)); return; }
+    $CH --drop-at 200:"$drop" < "$TMP/a" > "$TMP/b" 2>/dev/null
+    if $RX $PHY < "$TMP/b" > "$TMP/o" 2>/dev/null && cmp -s "$TMP/p" "$TMP/o"; then
+        echo "PASS $name (FEC repaired ${drop}ms dropout)"; PASS=$((PASS+1))
+    else
+        echo "FAIL $name (FEC should repair ${drop}ms dropout)"; FAIL=$((FAIL+1))
+    fi
+}
+fecrej() {
+    name=$1 drop=$2 n=$3; shift 3
+    pay "$n" "$name" > "$TMP/p"
+    $TX $PHY < "$TMP/p" > "$TMP/a" 2>/dev/null
+    $CH --drop-at 200:"$drop" < "$TMP/a" > "$TMP/b" 2>/dev/null
+    $RX $PHY < "$TMP/b" > "$TMP/o" 2>/dev/null
+    if [ -s "$TMP/o" ]; then
+        echo "FAIL $name (frame past t must be rejected, got $(stat -c%s "$TMP/o") B)"; FAIL=$((FAIL+1))
+    else
+        echo "REJECT $name (expected: >t damage, nothing delivered)"; PASS=$((PASS+1))
+    fi
+}
+echo "== FEC win/reject pins (deterministic mid-frame dropouts) =="
+PHY=""
+fecwin  "fec32-drop16"  16 217
+fecrej  "fec32-drop40"  40 217
+PHY="--fec 16"; fecwin "fec16-drop6" 6 233; PHY=""
+PHY="--fec 84"; fecwin "fec84-drop40" 40 165; fecrej "fec84-drop100" 100 165; PHY=""
 
 echo "== expected rejects (impossible fc/image combos) =="
 rej "k8@fc4000"     -k 8

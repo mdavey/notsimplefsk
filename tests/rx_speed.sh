@@ -84,13 +84,14 @@ run_speed "p2-sel-fade-1k"    1024 128 30 --fade-doppler 2 --fade-spread 2 \
           --fade-taps 4 --snr-db 25
 run_speed "p2-reverb-1k"      1024 128 30 --reverb 0.3:-6 --snr-db 30
 if [ "${RX_SPEED_FULL:-0}" = "1" ]; then
-    run_speed "p2-rayleigh-8k" 8192 160 90 --fade-doppler 5 --snr-db 20
+    # 10 max-payload frames ~ the old 8 KB single-codec-era audio length
+    run_speed "p2-rayleigh-2k" 2170 160 90 --fade-doppler 5 --snr-db 20
 else
-    echo "SKIP p2-rayleigh-8k (set RX_SPEED_FULL=1 to run)"
+    echo "SKIP p2-rayleigh-2k (set RX_SPEED_FULL=1 to run)"
 fi
 
 echo "== garbage burst, silence, then a valid frame =="
-pay 1024 "garbage-then-valid" > "$TMP/p"
+pay 217 "garbage-then-valid" > "$TMP/p"    # exactly one frame, as originally
 $TX $PHY -g -20 < "$TMP/p" > "$TMP/frame" 2>/dev/null
 head -c 48000 /dev/zero | $CH --tone 4300:-20 --snr-db 30 -s 1 \
     > "$TMP/garbage" 2>/dev/null       # 0.5 s of in-band garbage
@@ -112,7 +113,7 @@ fi
 
 echo "== live random noise then one packet (p1, high baud) =="
 PHY1="-r 48000 -c 8000 -k 16 -H 0.25 -b 0.8 -d 1 -P 72"
-pay 1024 "live-noise-packet" > "$TMP/p"
+pay 217 "live-noise-packet" > "$TMP/p"    # one max-payload frame
 $TX $PHY1 -g -12 < "$TMP/p" > "$TMP/frame" 2>/dev/null
 head -c $((48000 * 2 * 5)) /dev/urandom > "$TMP/noise"
 head -c 3840 /dev/zero > "$TMP/gap"

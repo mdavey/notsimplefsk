@@ -1,9 +1,10 @@
 /*
  * fsk_tx — G4FSK frame transmitter: bytes on stdin, s16le mono audio on stdout
  *
- * Frames: stdin is chunked into payloads of at most 1024 bytes; each becomes
- * one frame [preamble][sync][Gray(NRZI(type|len16|payload|crc32))].
- * See common.h for the wire format and PHY notes.
+ * Frames: stdin is chunked into payloads of at most 249-fec bytes; each
+ * becomes one frame [preamble][sync][Gray(NRZI(RS(type|len|payload|crc32)))],
+ * the data section always a fixed 255-byte shortened RS codeword (1020
+ * symbols).  See common.h for the wire format and PHY notes.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +33,7 @@ static void usage(const char *prog)
 "  -d, --delay N      CPM filter delay, symbols (default 1)\n"
 "  -P, --preamble N   preamble length, symbols (default 72, max 65536)\n"
 "      --pulse STR    gmsk | rcos | square (default gmsk)\n"
+"      --fec N        RS parity bytes per frame: 16|32|64|84 (default 32)\n"
 "  -h, --help         this text\n"
 "\n"
 "phy: tones at fc + {-3,-1,1,3}*h*Rs/2, Rs=rate/k; 2 bits/symbol\n"
@@ -58,6 +60,7 @@ int main(int argc, char **argv)
         {"delay",    required_argument, 0, 'd'},
         {"preamble", required_argument, 0, 'P'},
         {"pulse",    required_argument, 0,  1 },
+        {"fec",      required_argument, 0,  2 },
         {"help",     no_argument,       0, 'h'},
         {0, 0, 0, 0}
     };
@@ -96,6 +99,16 @@ int main(int argc, char **argv)
                       return 1;
                   }
                   break;
+        case 2: {
+            char *end = NULL;
+            unsigned long v = strtoul(optarg, &end, 0);
+            if (end == optarg || *end != '\0') {
+                fprintf(stderr, "error: bad --fec '%s'\n", optarg);
+                return 1;
+            }
+            p.fec = (unsigned)v;
+            break;
+        }
         case 'h': usage(argv[0]); return 0;
         default:  usage(argv[0]); return 1;
         }
@@ -152,9 +165,10 @@ int main(int argc, char **argv)
     size_t off = 0;
     unsigned nframes = 0;
     double total_samples = 0.0;
+    unsigned max_pl = nsfsk_max_payload(&p);
     while (off < n || nframes == 0) {
         unsigned plen = (unsigned)(n - off);
-        if (plen > NSFSK_MAX_PAYLOAD) plen = NSFSK_MAX_PAYLOAD;
+        if (plen > max_pl) plen = max_pl;
 
         unsigned nsym = nsfsk_build_frame_syms(&p, (uint8_t)type,
                                                buf + off, plen, syms, cap_syms);
@@ -196,11 +210,14 @@ int main(int argc, char **argv)
     fflush(stdout);
 
     fprintf(stderr, "tx: %u frame(s), %zu byte(s), %.0f samples (%.3f s) "
-                    "rate=%u fc=%.0f k=%u h=%.3f bt=%.2f delay=%u pulse=%s\n",
+                    "rate=%u fc=%.0f k=%u h=%.3f bt=%.2f delay=%u pulse=%s "
+                    "fec=%u(t=%u) max_pl=%u wire=%lu syms/frame\n",
             nframes, n, total_samples, total_samples / p.rate,
             p.rate, p.fc, p.k, p.h, p.bt, p.delay,
             p.pulse == LIQUID_CPFSK_GMSK ? "gmsk" :
-            p.pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square");
+            p.pulse == LIQUID_CPFSK_RCOS_FULL ? "rcos" : "square",
+            p.fec, p.fec / 2u, max_pl,
+            (unsigned long)(NSFSK_MAX_FRAME_SYMS(p)));
 
     free(buf); free(syms); free(yk); free(out);
     cpfskmod_destroy(mod);

@@ -63,7 +63,7 @@ static unsigned env_cap(const char *name, unsigned def)
 static double merge_tolerance(const nsfsk_params *p)
 {
     double min_frame_syms = (double)p->preamble + NSFSK_SYNC_LEN
-                          + 4.0 * (NSFSK_HDR_LEN + NSFSK_CRC_LEN);
+                          + (double)NSFSK_WIRE_SYMS;
     double min_spacing = min_frame_syms * (double)p->k;
     double lag_max = 2.0 * (double)p->delay + 3.0;
     double lag_bound = 2.0 * lag_max * (double)p->k
@@ -103,6 +103,7 @@ static void usage(const char *prog){
         "  -d, --delay N      cpfsk filter delay symbols  (1)\n"
         "  -P, --preamble N   preamble symbols             (72, max 65536)\n"
         "      --pulse P      gmsk | rcos | square        (gmsk)\n"
+        "      --fec N        RS parity bytes             (16|32|64|84, 32)\n"
         "  -v, --verbose      per-frame detail on stderr (-vv tracing)\n"
         "  -h, --help         this text\n",
         prog);
@@ -123,6 +124,7 @@ int main(int argc, char **argv)
         {"delay",    required_argument, 0, 'd'},
         {"preamble", required_argument, 0, 'P'},
         {"pulse",    required_argument, 0,  1 },
+        {"fec",      required_argument, 0,  2 },
         {"verbose",  no_argument,       0, 'v'},
         {"help",     no_argument,       0, 'h'},
         {0, 0, 0, 0}
@@ -144,6 +146,16 @@ int main(int argc, char **argv)
                       return 1;
                   }
                   break;
+        case 2: {
+            char *end = NULL;
+            unsigned long v = strtoul(optarg, &end, 0);
+            if (end == optarg || *end != '\0') {
+                fprintf(stderr, "error: bad --fec '%s'\n", optarg);
+                return 1;
+            }
+            p.fec = (unsigned)v;
+            break;
+        }
         case 'v': verbose++; break;
         case 'h': usage(argv[0]); return 0;
         default:  usage(argv[0]); return 1;

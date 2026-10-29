@@ -25,6 +25,7 @@ DEFAULTS = {
     "bt": "0.8",
     "delay": "1",
     "preamble": "72",
+    "fec": "32",
 }
 
 FIELDS = [
@@ -36,6 +37,7 @@ FIELDS = [
     ("bt", "BT"),
     ("delay", "Delay (symbols)"),
     ("preamble", "Preamble (symbols)"),
+    ("fec", "FEC parity (16/32/64/84)"),
 ]
 
 
@@ -72,7 +74,7 @@ def build_args(kind, params):
         args += ["-g", params["gain"]]
     args += ["-r", params["rate"], "-c", params["fc"], "-k", params["k"],
              "-H", params["h"], "-b", params["bt"], "-d", params["delay"],
-             "-P", params["preamble"]]
+             "-P", params["preamble"], "--fec", params["fec"]]
     if kind != "tx":
         args.append("--verbose")
     return args

@@ -22,7 +22,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* Decoded frames appended to buf; ok/bad count CRC passes/failures;
+/* Decoded frames appended to buf; ok/bad count RS+CRC gate passes/failures;
  * qual/ndec accumulate per-decision quality for ppm trial selection. */
 /* Per-frame record so the offline RX can MERGE frames across ppm trials:
  * each frame's sensitivity to residual sample-rate error is several

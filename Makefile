@@ -6,31 +6,37 @@ BINDIR  := bin
 SRC     := src
 
 BINS    := $(BINDIR)/fsk_tx $(BINDIR)/fsk_rx $(BINDIR)/fsk_rx_stream \
-           $(BINDIR)/modem_smoke $(BINDIR)/channel
+           $(BINDIR)/modem_smoke $(BINDIR)/channel $(BINDIR)/rs_selftest
 
 all: $(BINS)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
-$(BINDIR)/fsk_tx: $(SRC)/fsk_tx.c $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_tx.c $(SRC)/common.c $(LDLIBS)
+$(BINDIR)/fsk_tx: $(SRC)/fsk_tx.c $(SRC)/common.c $(SRC)/common.h \
+                   $(SRC)/rs.c $(SRC)/rs.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_tx.c $(SRC)/common.c $(SRC)/rs.c $(LDLIBS)
 
 $(BINDIR)/fsk_rx: $(SRC)/fsk_rx.c $(SRC)/rx_core.c $(SRC)/rx_core.h \
-                   $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx.c $(SRC)/rx_core.c $(SRC)/common.c $(LDLIBS)
+                   $(SRC)/common.c $(SRC)/common.h $(SRC)/rs.c $(SRC)/rs.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx.c $(SRC)/rx_core.c $(SRC)/common.c $(SRC)/rs.c $(LDLIBS)
 
 $(BINDIR)/fsk_rx_stream: $(SRC)/fsk_rx_stream.c $(SRC)/rx_core.c $(SRC)/rx_core.h \
-                         $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx_stream.c $(SRC)/rx_core.c $(SRC)/common.c $(LDLIBS)
+                         $(SRC)/common.c $(SRC)/common.h $(SRC)/rs.c $(SRC)/rs.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(SRC)/fsk_rx_stream.c $(SRC)/rx_core.c $(SRC)/common.c $(SRC)/rs.c $(LDLIBS)
 
-$(BINDIR)/modem_smoke: tests/modem_smoke.c $(SRC)/common.c $(SRC)/common.h | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ tests/modem_smoke.c $(SRC)/common.c $(LDLIBS)
+$(BINDIR)/modem_smoke: tests/modem_smoke.c $(SRC)/common.c $(SRC)/common.h \
+                        $(SRC)/rs.c $(SRC)/rs.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ tests/modem_smoke.c $(SRC)/common.c $(SRC)/rs.c $(LDLIBS)
+
+$(BINDIR)/rs_selftest: tests/rs_selftest.c $(SRC)/rs.c $(SRC)/rs.h | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ tests/rs_selftest.c $(SRC)/rs.c
 
 $(BINDIR)/channel: tests/channel.c | $(BINDIR)
 	$(CC) $(CFLAGS) -o $@ tests/channel.c $(LDLIBS)
 
 test: all
+	$(BINDIR)/rs_selftest
 	sh tests/roundtrip.sh
 	sh tests/stream.sh
 	python3 tests/channel_selftest.py
