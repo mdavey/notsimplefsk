@@ -1,5 +1,18 @@
 # Notes for agents
 
+## Commit message style
+
+Commit only when explicitly asked - never on your own initiative, and not
+as an automatic follow-up to finishing work ("Please commit" is the ask;
+"implement X" is not).
+
+Short imperative subject ("Add ...", "Fix ...", "FEC: ..." - see git log),
+followed by a body that describes the *design*, not a file-by-file recap:
+what the change does and why, the load-bearing decisions (formats, tier
+choices, defaults, deliberate deviations from a plan - e.g. a correction
+with its rationale), and what evidence pins it (test/pin results, A/B
+against the previous binary). ~72-column wrap.
+
 ## Audio loopback tests: the "pipewire" device is not one fixed path
 
 `make loopback`, `make acoustic` and `tests/stream_loopback.sh` /
